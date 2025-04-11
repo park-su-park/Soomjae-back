@@ -1,0 +1,68 @@
+name: Discord Notifications
+
+on:
+  pull_request:
+    types: [ opened, reopened, closed ]
+
+jobs:
+  notify:
+    name: Discord Notification
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Send PR Opened Notification
+        if: ${{ github.event_name == 'pull_request' && (github.event.action == 'opened' || github.event.action == 'reopened') }}
+        uses: Ilshidur/action-discord@0.3.2
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_SERVER_PR }}
+          DISCORD_USERNAME: GitHub
+          DISCORD_AVATAR: https://github.com/user-attachments/assets/f48ce758-689e-4e2c-8cba-d9397905c90f
+          DISCORD_EMBEDS: |
+            [
+              {
+                "title": "새로운 PR이 생성되었다냥 🚀\n${{ github.event.pull_request.title }}",
+                "color": 5763719,
+                "description": "${{ github.event.pull_request.html_url }}",
+                "fields": [
+                  {
+                    "name": "PR Number",
+                    "value": "#${{ github.event.pull_request.number }}",
+                    "inline": true
+                  },
+                  {
+                    "name": "Author",
+                    "value": "${{ github.event.pull_request.user.login }}",
+                    "inline": true
+                  }
+                ]
+              }
+            ]
+
+      - name: Send PR Merged Notification
+        if: ${{ github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true }}
+        uses: Ilshidur/action-discord@0.3.2
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_SERVER_PR }}
+          DISCORD_USERNAME: GitHub
+          DISCORD_AVATAR: https://github.com/user-attachments/assets/f48ce758-689e-4e2c-8cba-d9397905c90f
+          DISCORD_EMBEDS: |
+            [
+              {
+                "title": "PR이 머지되었다냥 🎉\n${{ github.event.pull_request.title }}",
+                "color": 15844367,
+                "description": "${{ github.event.pull_request.html_url }}",
+                "fields": [
+                  {
+                    "name": "PR Number",
+                    "value": "#${{ github.event.pull_request.number }}",
+                    "inline": true
+                  },
+                  {
+                    "name": "Merged by",
+                    "value": "${{ github.event.sender.login }}",
+                    "inline": true
+                  }
+                ]
+              }
+            ]
+              
