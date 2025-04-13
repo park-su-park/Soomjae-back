@@ -1,0 +1,67 @@
+name: Dev Branch Merge Build Validation
+
+on:
+  pull_request:
+    branches:
+      - dev  # dev 브랜치로 향하는 PR 이벤트에서 트리거
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. 리포지토리 체크아웃
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Make gradlew executable
+        run: chmod +x gradlew
+
+      # 2. Java 환경 설정
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      # 3. Gradle 캐시 설정
+      - name: Cache Gradle dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      # 4. Gradle 빌드 실행
+      - name: Build with Gradle
+        run: ./gradlew build -x test
+
+      # CI 실패 시 디스코드 알림
+      - name: Notify Failure on Discord
+        if: ${{ failure() }}
+        uses: Ilshidur/action-discord@0.3.2
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_SERVER_CI}}
+          DISCORD_USERNAME: CI_CAT
+          DISCORD_AVATAR: https://github.com/user-attachments/assets/f4a333ae-c6e0-43ed-abe7-4e50a519a3be
+          DISCORD_EMBEDS: |
+            [
+              {
+                "title": "빌드 실패했다냥 ❌",
+                "color": 15158332,
+                "description": "[#${{ github.event.pull_request.number }}] ${{ github.event.pull_request.title }}\n${{ github.event.pull_request.html_url }}",
+                "fields": [
+                  {
+                    "name": "브랜치",
+                    "value": "${{ github.ref }}",
+                    "inline": true
+                  },
+                  {
+                    "name": "작성자",
+                    "value": "${{ github.event.pull_request.user.login }}",
+                    "inline": true
+                  }
+                ]
+              }
+            ]
