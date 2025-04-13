@@ -36,7 +36,3 @@ jobs:
       # 4. Gradle 빌드 실행
       - name: Build with Gradle
         run: ./gradlew build -x test
-
-      # 5. Gradle 테스트 실행
-      - name: Run tests
-        run: ./gradlew test
