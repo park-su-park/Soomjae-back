@@ -27,7 +27,7 @@ spring.security.oauth2.client.provider.google.user-name-attribute=sub
 
 # ========= Kakao OAuth2 =========
 spring.security.oauth2.client.registration.kakao.client-id=
-spring.security.oauth2.client.registration.kakao.client-secret= # ??
+spring.security.oauth2.client.registration.kakao.client-secret= # 선택
 spring.security.oauth2.client.registration.kakao.redirect-uri=
 spring.security.oauth2.client.registration.kakao.authorization-grant-type=
 spring.security.oauth2.client.registration.kakao.scope=
@@ -39,7 +39,7 @@ spring.security.oauth2.client.provider.kakao.user-info-uri=https://kapi.kakao.co
 spring.security.oauth2.client.provider.kakao.user-name-attribute=id
 
 # ========= Apple OAuth2 =========
-# Apple ???? ??? ??
+# Apple 로그인은 추후에 구현
 
 # ===============================
 # MyBatis
