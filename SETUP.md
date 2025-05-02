@@ -12,14 +12,16 @@ cd Soomjae-back
 - 현재 사용 버전: JDK 17
 
 ## 🧪 3. 로컬 실행 환경
-### 3.1 application.properties 직접 생성
-다음 경로에 application.properties 파일을 생성합니다.
-```
-src/main/resources/application.properties
-```
-제공된 application.properties.template 파일을 복사한뒤 로컬에서 사용할 값들을 채워 주시면 됩니다.
+### 3.1 .env 파일 생성 및 설정
+프로젝트 루트 경로에 .env 파일을 생성합니다.
 
-**⚠️로컬에서 사용하는 application.properties 는 절대로 Git에 올리지 말아주세요⚠️**
+application.properties 에서 사용하는 변수들을 아래와 같은 형식으로 본인의 로컬 값에 맞게 채워 주시면 됩니다.
+
+```text
+DB_URL=my-url
+DB_USERNAME=userA
+DB_PASSWORD=abcd1234
+```
 
 ## 🧼 4. 코드 스타일 (Code Style)
 
