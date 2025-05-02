@@ -37,5 +37,5 @@ out/
 ### VS Code ###
 .vscode/
 
-###⚠️로컬에서 사용하는 application.properties 는 절대로 Git에 올리지 말아주세요⚠️###
-src/main/resources/application.properties
+### env file ###
+.env
