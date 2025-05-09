@@ -1,5 +1,10 @@
 name: Dev Branch Merge Build Validation
 
+env:
+  DB_URL: ${{ secrets.DB_URL }}
+  DB_USERNAME: ${{ secrets.DB_USERNAME }}
+  DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+
 on:
   pull_request:
     branches:
