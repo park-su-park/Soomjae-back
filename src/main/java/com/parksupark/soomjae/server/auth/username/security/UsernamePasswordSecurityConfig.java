@@ -12,10 +12,12 @@ import org.springframework.security.web.SecurityFilterChain;
 public class UsernamePasswordSecurityConfig {
 
     /**
-     * <p><b>why csrf is disabled:</b></p>
+     * Configures the security filter chain for username-password based authentication.
+     *
+     * <p><b>Why CSRF is disabled:</b></p>
      * <ul>
-     *     <li>csrf는 세션 기반 인증(stateful) 방식에 사용 되는 공격 -> jwt 인증시(stateless) 효과 없음</li>
-     *     <li>오작동 방지</li>
+     *     <li>CSRF는 세션 기반 인증(stateful)에 대한 공격으로, JWT 기반 stateless 인증에는 의미 없음</li>
+     *     <li>불필요한 403 오류와 CSRF 토큰 처리 방지를 위해 disable함</li>
      * </ul>
      *
      * <p><b>Security settings overview:</b></p>
@@ -23,7 +25,7 @@ public class UsernamePasswordSecurityConfig {
      *     <li>Disables CSRF protection</li>
      *     <li>Sets session creation policy to {@code STATELESS}</li>
      * </ul>
-
+     *
      * @param http the {@link HttpSecurity} to configure
      * @return the configured {@link SecurityFilterChain}
      * @throws Exception in case of any configuration error
@@ -32,7 +34,6 @@ public class UsernamePasswordSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(httpSecurityCsrfConfigurer -> httpSecurityCsrfConfigurer.disable())
-
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         return http.build();
