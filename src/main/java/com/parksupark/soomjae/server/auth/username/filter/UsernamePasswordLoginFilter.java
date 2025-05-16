@@ -1,7 +1,7 @@
 package com.parksupark.soomjae.server.auth.username.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.parksupark.soomjae.server.auth.common.AuthenticationFailedException;
+import com.parksupark.soomjae.server.auth.common.FilterAuthenticationFailedException;
 import com.parksupark.soomjae.server.auth.username.dto.UsernamePasswordLoginRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -41,7 +41,7 @@ public class UsernamePasswordLoginFilter extends UsernamePasswordAuthenticationF
             return authenticationManager.authenticate(token);
 
         } catch (IOException e) {
-            throw new AuthenticationFailedException(
+            throw new FilterAuthenticationFailedException(
                 "error occurred while processing username/password authorization", e);
         }
     }
