@@ -64,7 +64,7 @@ class UsernamePasswordLoginFilterTest {
     }
 
     @Test
-    void attemptAuthentication_withInvalidJson_throwsAuthenticationFailedException() throws Exception {
+    void attemptAuthentication_withInvalidJson_throwsAuthenticationFailedException() {
 
         final String invalidJson = "{ bad json }";
         MockHttpServletRequest request = new MockHttpServletRequest();
