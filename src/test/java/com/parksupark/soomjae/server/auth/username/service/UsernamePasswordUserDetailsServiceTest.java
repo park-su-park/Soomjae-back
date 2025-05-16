@@ -1,6 +1,7 @@
 package com.parksupark.soomjae.server.auth.username.service;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 import com.parksupark.soomjae.server.member.entity.Member;
