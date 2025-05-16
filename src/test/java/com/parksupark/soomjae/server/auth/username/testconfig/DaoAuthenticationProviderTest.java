@@ -1,8 +1,8 @@
 package com.parksupark.soomjae.server.auth.username.testconfig;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.junit.jupiter.api.Assertions.*;
 
 import com.parksupark.soomjae.server.auth.username.service.UsernamePasswordUserDetailsService;
 import java.util.Collections;
