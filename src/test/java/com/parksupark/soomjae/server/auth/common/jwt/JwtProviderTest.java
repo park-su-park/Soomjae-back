@@ -27,7 +27,7 @@ class JwtProviderTest {
     }
     
     @Test
-    void generator_shouldCreate_validSignedJWT() throws Exception {
+    void generator_shouldCreate_validSignedJwt() throws Exception {
         final String username = "test username";
 
         byte[] keyBytes = Base64.getDecoder().decode(secret);
