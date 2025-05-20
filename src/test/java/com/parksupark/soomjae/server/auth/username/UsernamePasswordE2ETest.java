@@ -36,6 +36,7 @@ import org.springframework.transaction.annotation.Transactional;
  *
  * <p>MockMvc를 통해 실제 HTTP 요청을 시뮬레이션하며,
  * 테스트용 application-test.properties에서 설정한 H2 메모리 DB를 기반으로
+ *
  * @BeforeEach 단계에서 사용자 정보를 사전 등록한 뒤 인증을 수행한다.</p>
  */
 @ActiveProfiles("test")
@@ -82,7 +83,9 @@ class UsernamePasswordE2ETest {
 
     @Test
     void usernamePasswordLogin_invalidUsername_unsuccessfulFlow() throws Exception {
-        UsernamePasswordLoginRequest loginRequest = new UsernamePasswordLoginRequest("wrongusername",
+        
+        UsernamePasswordLoginRequest loginRequest = new UsernamePasswordLoginRequest(
+            "wrongusername",
             password);
 
         mockMvc.perform(post("/auth/login")
