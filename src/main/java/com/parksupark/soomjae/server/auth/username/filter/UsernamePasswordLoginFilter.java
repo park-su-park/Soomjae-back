@@ -19,7 +19,8 @@ public class UsernamePasswordLoginFilter extends UsernamePasswordAuthenticationF
     private final AuthenticationManager authenticationManager;
     private final ObjectMapper objectMapper;
 
-    public UsernamePasswordLoginFilter(AuthenticationManager authenticationManager, ObjectMapper objectMapper) {
+    public UsernamePasswordLoginFilter(AuthenticationManager authenticationManager,
+        ObjectMapper objectMapper) {
         this.authenticationManager = authenticationManager;
         this.objectMapper = objectMapper;
         super.setFilterProcessesUrl("/auth/login");
