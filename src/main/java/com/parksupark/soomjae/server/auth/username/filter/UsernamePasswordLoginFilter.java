@@ -17,9 +17,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class UsernamePasswordLoginFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
+    private final ObjectMapper objectMapper;
 
-    public UsernamePasswordLoginFilter(AuthenticationManager authenticationManager) {
+    public UsernamePasswordLoginFilter(AuthenticationManager authenticationManager, ObjectMapper objectMapper) {
         this.authenticationManager = authenticationManager;
+        this.objectMapper = objectMapper;
         super.setFilterProcessesUrl("/auth/login");
     }
 
@@ -28,7 +30,6 @@ public class UsernamePasswordLoginFilter extends UsernamePasswordAuthenticationF
         HttpServletResponse response) throws AuthenticationException {
 
         try {
-            ObjectMapper objectMapper = new ObjectMapper();
             UsernamePasswordLoginRequest loginRequest = objectMapper.readValue(request.getReader(),
                 UsernamePasswordLoginRequest.class);
 
