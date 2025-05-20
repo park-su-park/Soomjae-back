@@ -94,7 +94,7 @@ class UsernamePasswordLoginFilterTest {
     }
 
     @Test
-    void successfulAuthentication_withValidAuthentication_shouldWriteJWTToResponse()
+    void successfulAuthentication_withValidAuthentication_shouldWriteJwtToResponse()
         throws Exception {
         final String username = "test";
         final String fakeToken = "fake token";
@@ -111,7 +111,8 @@ class UsernamePasswordLoginFilterTest {
 
         filter.successfulAuthentication(request, response, filterChain, authResult);
 
-        String expectedResponseJson = objectMapper.writeValueAsString(new UsernamePasswordAuthSuccessResponse(fakeToken));
+        String expectedResponseJson = objectMapper.writeValueAsString(
+            new UsernamePasswordAuthSuccessResponse(fakeToken));
         assertEquals(response.getContentAsString(), expectedResponseJson);
         assertEquals("UTF-8", response.getCharacterEncoding());
         assertEquals("application/json;charset=UTF-8", response.getContentType());
