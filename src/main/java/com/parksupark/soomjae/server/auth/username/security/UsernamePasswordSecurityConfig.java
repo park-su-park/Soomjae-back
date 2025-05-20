@@ -29,7 +29,7 @@ public class UsernamePasswordSecurityConfig {
     private final UserDetailsService userDetailsService;
 
     /**
-     * <p><b>Why CSRF is disabled:</b></p>
+     * <b>Why CSRF is disabled:</b>
      * <ul>
      *     <li>CSRF는 세션 기반 인증(stateful)에 대한 공격으로, JWT 기반 stateless 인증에는 의미 없음</li>
      *     <li>불필요한 403 오류와 CSRF 토큰 처리 방지를 위해 disable함</li>
@@ -66,7 +66,9 @@ public class UsernamePasswordSecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration)
+        throws Exception {
+
         return configuration.getAuthenticationManager();
     }
 
