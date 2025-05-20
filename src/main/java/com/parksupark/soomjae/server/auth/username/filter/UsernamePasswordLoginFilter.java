@@ -62,8 +62,8 @@ public class UsernamePasswordLoginFilter extends UsernamePasswordAuthenticationF
         String username = authResult.getName();
         String token = jwtProvider.generateToken(username);
 
-        UsernamePasswordAuthSuccessResponse successResponse = new UsernamePasswordAuthSuccessResponse(
-            token);
+        UsernamePasswordAuthSuccessResponse successResponse =
+            new UsernamePasswordAuthSuccessResponse(token);
 
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
