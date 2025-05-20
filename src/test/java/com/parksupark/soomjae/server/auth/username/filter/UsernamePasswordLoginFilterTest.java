@@ -6,9 +6,9 @@ import static org.mockito.Mockito.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.parksupark.soomjae.server.auth.common.FilterAuthenticationFailedException;
 import com.parksupark.soomjae.server.auth.username.dto.UsernamePasswordLoginRequest;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -23,8 +23,15 @@ class UsernamePasswordLoginFilterTest {
     @Mock
     private AuthenticationManager authenticationManager;
 
-    @InjectMocks
+    private final ObjectMapper objectMapper = new ObjectMapper();
+
     private UsernamePasswordLoginFilter filter;
+
+    @BeforeEach
+    void setUp() {
+        filter = new UsernamePasswordLoginFilter(authenticationManager, objectMapper);
+    }
+
 
     @Test
     void attemptAuthentication_withValidRequest_shouldCallAuthenticationManager() throws Exception {
