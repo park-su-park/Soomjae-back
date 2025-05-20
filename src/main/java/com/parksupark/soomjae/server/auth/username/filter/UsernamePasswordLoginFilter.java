@@ -1,8 +1,12 @@
 package com.parksupark.soomjae.server.auth.username.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.parksupark.soomjae.server.auth.common.FilterAuthenticationFailedException;
+import com.parksupark.soomjae.server.auth.common.exception.FilterAuthenticationFailedException;
+import com.parksupark.soomjae.server.auth.common.jwt.JwtProvider;
+import com.parksupark.soomjae.server.auth.username.dto.UsernamePasswordAuthSuccessResponse;
 import com.parksupark.soomjae.server.auth.username.dto.UsernamePasswordLoginRequest;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -18,11 +22,13 @@ public class UsernamePasswordLoginFilter extends UsernamePasswordAuthenticationF
 
     private final AuthenticationManager authenticationManager;
     private final ObjectMapper objectMapper;
+    private final JwtProvider jwtProvider;
 
     public UsernamePasswordLoginFilter(AuthenticationManager authenticationManager,
-        ObjectMapper objectMapper) {
+        ObjectMapper objectMapper, JwtProvider jwtProvider) {
         this.authenticationManager = authenticationManager;
         this.objectMapper = objectMapper;
+        this.jwtProvider = jwtProvider;
         super.setFilterProcessesUrl("/auth/login");
     }
 
@@ -46,5 +52,33 @@ public class UsernamePasswordLoginFilter extends UsernamePasswordAuthenticationF
             throw new FilterAuthenticationFailedException(
                 "error occurred while processing username/password authorization", e);
         }
+    }
+
+    @Override
+    protected void successfulAuthentication(HttpServletRequest request,
+        HttpServletResponse response, FilterChain chain, Authentication authResult)
+        throws IOException, ServletException {
+
+        String username = authResult.getName();
+        String token = jwtProvider.generateToken(username);
+
+        UsernamePasswordAuthSuccessResponse successResponse = new UsernamePasswordAuthSuccessResponse(token);
+
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+
+        objectMapper.writeValue(response.getWriter(), successResponse);
+    }
+
+    @Override
+    protected void unsuccessfulAuthentication(HttpServletRequest request,
+        HttpServletResponse response, AuthenticationException failed)
+        throws IOException, ServletException {
+
+        log.warn("username/password login failed: {}", failed.toString());
+
+        // 로그인 실패 응답 처리
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        // 응답 바디는 추후 구현
     }
 }
