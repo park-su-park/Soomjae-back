@@ -4,8 +4,11 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.parksupark.soomjae.server.auth.common.FilterAuthenticationFailedException;
+import com.parksupark.soomjae.server.auth.common.exception.FilterAuthenticationFailedException;
+import com.parksupark.soomjae.server.auth.common.jwt.JwtProvider;
+import com.parksupark.soomjae.server.auth.username.dto.UsernamePasswordAuthSuccessResponse;
 import com.parksupark.soomjae.server.auth.username.dto.UsernamePasswordLoginRequest;
+import jakarta.servlet.FilterChain;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,13 +26,16 @@ class UsernamePasswordLoginFilterTest {
     @Mock
     private AuthenticationManager authenticationManager;
 
+    @Mock
+    private JwtProvider jwtProvider;
+
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     private UsernamePasswordLoginFilter filter;
 
     @BeforeEach
     void setUp() {
-        filter = new UsernamePasswordLoginFilter(authenticationManager, objectMapper);
+        filter = new UsernamePasswordLoginFilter(authenticationManager, objectMapper, jwtProvider);
     }
 
 
@@ -85,6 +91,32 @@ class UsernamePasswordLoginFilterTest {
         assertThrows(FilterAuthenticationFailedException.class, () -> {
             filter.attemptAuthentication(request, response);
         });
+    }
+
+    @Test
+    void successfulAuthentication_withValidAuthentication_shouldWriteJwtToResponse()
+        throws Exception {
+        final String username = "test";
+        final String fakeToken = "fake token";
+
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        FilterChain filterChain = mock(FilterChain.class);
+
+        Authentication authResult = mock(Authentication.class);
+
+        when(authResult.getName()).thenReturn(username);
+
+        when(jwtProvider.generateToken(username)).thenReturn(fakeToken);
+
+        filter.successfulAuthentication(request, response, filterChain, authResult);
+
+        String expectedResponseJson = objectMapper.writeValueAsString(
+            new UsernamePasswordAuthSuccessResponse(fakeToken));
+        assertEquals(response.getContentAsString(), expectedResponseJson);
+        assertEquals("UTF-8", response.getCharacterEncoding());
+        assertEquals("application/json;charset=UTF-8", response.getContentType());
+
     }
 
 }
