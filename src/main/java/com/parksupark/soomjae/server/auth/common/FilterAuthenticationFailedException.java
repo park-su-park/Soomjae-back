@@ -1,4 +1,4 @@
-package com.parksupark.soomjae.server.auth.common.exception;
+package com.parksupark.soomjae.server.auth.common;
 
 public class FilterAuthenticationFailedException extends RuntimeException {
 
