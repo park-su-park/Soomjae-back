@@ -3,9 +3,11 @@ package com.parksupark.soomjae.server.auth.username.dto;
 import com.parksupark.soomjae.server.member.entity.Member;
 import java.util.Collection;
 import java.util.List;
+import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+@Getter
 public class UsernamePasswordUserDetails implements UserDetails {
     private final transient Member member;
 
