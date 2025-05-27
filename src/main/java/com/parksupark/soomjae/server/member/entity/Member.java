@@ -17,8 +17,8 @@ import lombok.Setter;
 public class Member {
 
     @Id
-    @GeneratedValue
     @Column(name = "member_id")
+    @GeneratedValue
     private Long id;
 
     private String email;
