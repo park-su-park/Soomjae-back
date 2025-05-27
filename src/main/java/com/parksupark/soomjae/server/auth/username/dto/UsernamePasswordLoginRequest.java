@@ -5,19 +5,19 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class UsernamePasswordLoginRequest {
 
-    private final String username;
+    private final String email;
     private final String password;
 
     @JsonCreator
     public UsernamePasswordLoginRequest(
-        @JsonProperty("username") String username,
+        @JsonProperty("email") String email,
         @JsonProperty("password") String password) {
-        this.username = username;
+        this.email = email;
         this.password = password;
     }
 
-    public String getUsername() {
-        return username;
+    public String getEmail() {
+        return email;
     }
 
     public String getPassword() {
