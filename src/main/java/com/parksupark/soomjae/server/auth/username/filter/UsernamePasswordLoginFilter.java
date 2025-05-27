@@ -40,7 +40,7 @@ public class UsernamePasswordLoginFilter extends UsernamePasswordAuthenticationF
             UsernamePasswordLoginRequest loginRequest = objectMapper.readValue(request.getReader(),
                 UsernamePasswordLoginRequest.class);
 
-            String principal = loginRequest.getUsername();
+            String principal = loginRequest.getEmail();
             String credential = loginRequest.getPassword();
 
             UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
