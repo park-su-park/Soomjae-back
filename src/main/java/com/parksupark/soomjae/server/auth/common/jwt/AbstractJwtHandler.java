@@ -8,7 +8,7 @@ import java.util.Date;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
-public abstract class AbstractJwtHandler implements JwtHandler{
+public abstract class AbstractJwtHandler implements JwtHandler {
 
     protected final SecretKey key;
 
