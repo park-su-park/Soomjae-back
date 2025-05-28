@@ -1,8 +1,8 @@
 package com.parksupark.soomjae.server.auth.common.jwt;
 
+import java.util.Date;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import java.util.Date;
 
 @Component
 public class DefaultJwtHandler extends AbstractJwtHandler {

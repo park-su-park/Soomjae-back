@@ -44,7 +44,8 @@ class JwtProviderTest {
 
         String token = jwtProvider.generateToken(username, Role.USER);
 
-        UsernamePasswordUserDetails userDetails = new UsernamePasswordUserDetails(Member.create(username, "password"));
+        UsernamePasswordUserDetails userDetails = new UsernamePasswordUserDetails(
+            Member.create(username, "password"));
         when(userDetailsService.loadUserByUsername(username)).thenReturn(userDetails);
 
         Authentication authentication = jwtProvider.getAuthentication(token);

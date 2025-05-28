@@ -61,7 +61,8 @@ public class UsernamePasswordLoginFilter extends UsernamePasswordAuthenticationF
         HttpServletResponse response, FilterChain chain, Authentication authResult)
         throws IOException, ServletException {
 
-        UsernamePasswordUserDetails principal = (UsernamePasswordUserDetails) authResult.getPrincipal();
+        UsernamePasswordUserDetails principal =
+            (UsernamePasswordUserDetails) authResult.getPrincipal();
 
         String username = principal.getUsername();
         Role role = principal.getMember().getRole();
