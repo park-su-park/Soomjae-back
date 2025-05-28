@@ -1,43 +1,63 @@
 package com.parksupark.soomjae.server.auth.common.jwt;
 
-import io.jsonwebtoken.Jwts;
-import jakarta.annotation.PostConstruct;
-import java.security.Key;
-import java.util.Base64;
+import com.parksupark.soomjae.server.member.Role;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.Date;
-import javax.crypto.spec.SecretKeySpec;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class JwtProvider {
 
-    private final String secret;
-    private Key key;
+    private final UserDetailsService userDetailsService;
+    private final JwtHandler jwtHandler;
 
-    public JwtProvider(@Value("${jwt.secret}") String secret) {
-        this.secret = secret;
+
+    public String generateToken(String subject, Role role) {
+        return jwtHandler.generate(subject, role);
     }
 
-    @PostConstruct
-    public void init() {
-        byte[] keyBytes = Base64.getDecoder().decode(secret);
-        this.key = new SecretKeySpec(keyBytes, "HmacSHA256");
+    public Authentication getAuthentication(String token) {
+        Claims claims = getClaimsFromToken(token);
+        String username = claims.getSubject();
+        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+
+        return new UsernamePasswordAuthenticationToken(userDetails, "",
+            userDetails.getAuthorities());
     }
 
-    public String generateToken(String subject) {
-
-        long nowMillis = System.currentTimeMillis();
-        long expirationMillis = nowMillis + 1000 * 60 * 60;
-
-        return Jwts.builder()
-            .subject(subject)
-            .signWith(key)
-            .issuedAt(new Date(nowMillis))
-            .expiration(new Date(expirationMillis))
-            .compact();
+    public Claims getClaimsFromToken(String token) {
+        return jwtHandler.parse(token);
     }
 
+    public boolean validateToken(String token) {
+        try {
+            Claims claims = getClaimsFromToken(token);
+            return !claims.getExpiration().before(new Date());
+        } catch (ExpiredJwtException e) {
+            log.warn("expired JWT token: {}", e.getMessage());
+            return false;
+        } catch (JwtException e) {
+            log.warn("invalid JWT token: {}", e.getMessage());
+            return false;
+        }
+    }
+
+    public String resolveToken(HttpServletRequest request) {
+        String bearer = request.getHeader("Authorization");
+        if (bearer != null && bearer.startsWith("Bearer ")) {
+            return bearer.substring(7);
+        }
+        return null;
+    }
 }

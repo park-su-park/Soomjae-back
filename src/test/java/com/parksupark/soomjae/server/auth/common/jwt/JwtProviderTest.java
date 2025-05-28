@@ -1,51 +1,67 @@
 package com.parksupark.soomjae.server.auth.common.jwt;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
 
+import com.parksupark.soomjae.server.auth.common.jwt.helper.JwtTestHelper;
+import com.parksupark.soomjae.server.auth.username.dto.UsernamePasswordUserDetails;
+import com.parksupark.soomjae.server.auth.username.service.UsernamePasswordUserDetailsService;
+import com.parksupark.soomjae.server.member.Role;
+import com.parksupark.soomjae.server.member.entity.Member;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import java.util.Base64;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.core.Authentication;
 
 @ExtendWith(MockitoExtension.class)
 class JwtProviderTest {
 
-    private final String secret = Base64.getEncoder()
-        .encodeToString("test-secret-key-1234567890123456789012345678901234567890".getBytes());
+    @Mock
+    private UsernamePasswordUserDetailsService userDetailsService;
 
-    private JwtProvider jwtProvider;
-
-    @BeforeEach
-    void setUp() {
-        this.jwtProvider = new JwtProvider(secret);
-        jwtProvider.init();
-    }
-    
     @Test
-    void generator_shouldCreate_validSignedJwt() throws Exception {
+    void generator_shouldCreate_validSignedJwt() {
         final String username = "test username";
+        JwtProvider jwtProvider = JwtTestHelper.getDefaultFwtProvider(userDetailsService);
 
-        byte[] keyBytes = Base64.getDecoder().decode(secret);
-        SecretKey key = new SecretKeySpec(keyBytes, "HmacSHA256");
+        String token = jwtProvider.generateToken(username, Role.USER);
 
-        String token = jwtProvider.generateToken(username);
-
-        Claims claims = Jwts.parser()
-            .verifyWith(key)
-            .build()
-            .parseSignedClaims(token)
-            .getPayload();
+        Claims claims = jwtProvider.getClaimsFromToken(token);
 
         System.out.println("token: " + token);
         System.out.println("issued at: " + claims.getIssuedAt());
         System.out.println("expiration: " + claims.getExpiration());
         assertEquals(username, claims.getSubject());
     }
-    
 
+    @Test
+    void getAuthentication_withValidToken_shouldReturnAuthentication() throws Exception {
+        final String username = "test username";
+
+        JwtProvider jwtProvider = JwtTestHelper.getDefaultFwtProvider(userDetailsService);
+
+        String token = jwtProvider.generateToken(username, Role.USER);
+
+        UsernamePasswordUserDetails userDetails = new UsernamePasswordUserDetails(
+            Member.create(username, "password"));
+        when(userDetailsService.loadUserByUsername(username)).thenReturn(userDetails);
+
+        Authentication authentication = jwtProvider.getAuthentication(token);
+        assertNotNull(authentication);
+        assertEquals(userDetails, authentication.getPrincipal());
+        assertEquals("", authentication.getCredentials());
+        System.out.println("authentication.getAuthorities() = " + authentication.getAuthorities());
+    }
+
+    @Test
+    void validateToken_withExpiredToken_shouldReturnExpiredJwtException() {
+        final String username = "expired_user";
+
+        JwtProvider jwtProvider = JwtTestHelper.getExpiredJwtProvider(userDetailsService);
+        String token = jwtProvider.generateToken(username, Role.USER);
+
+        assertFalse(jwtProvider.validateToken(token));
+    }
 }

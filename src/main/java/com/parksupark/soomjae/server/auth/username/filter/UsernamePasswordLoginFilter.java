@@ -5,6 +5,8 @@ import com.parksupark.soomjae.server.auth.common.exception.FilterAuthenticationF
 import com.parksupark.soomjae.server.auth.common.jwt.JwtProvider;
 import com.parksupark.soomjae.server.auth.username.dto.UsernamePasswordAuthSuccessResponse;
 import com.parksupark.soomjae.server.auth.username.dto.UsernamePasswordLoginRequest;
+import com.parksupark.soomjae.server.auth.username.dto.UsernamePasswordUserDetails;
+import com.parksupark.soomjae.server.member.Role;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -59,8 +61,13 @@ public class UsernamePasswordLoginFilter extends UsernamePasswordAuthenticationF
         HttpServletResponse response, FilterChain chain, Authentication authResult)
         throws IOException, ServletException {
 
-        String username = authResult.getName();
-        String token = jwtProvider.generateToken(username);
+        UsernamePasswordUserDetails principal =
+            (UsernamePasswordUserDetails) authResult.getPrincipal();
+
+        String username = principal.getUsername();
+        Role role = principal.getMember().getRole();
+
+        String token = jwtProvider.generateToken(username, role);
 
         UsernamePasswordAuthSuccessResponse successResponse =
             new UsernamePasswordAuthSuccessResponse(token);
