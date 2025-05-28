@@ -8,6 +8,7 @@ import com.parksupark.soomjae.server.auth.common.exception.FilterAuthenticationF
 import com.parksupark.soomjae.server.auth.common.jwt.JwtProvider;
 import com.parksupark.soomjae.server.auth.username.dto.UsernamePasswordAuthSuccessResponse;
 import com.parksupark.soomjae.server.auth.username.dto.UsernamePasswordLoginRequest;
+import com.parksupark.soomjae.server.member.Role;
 import jakarta.servlet.FilterChain;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -107,7 +108,7 @@ class UsernamePasswordLoginFilterTest {
 
         when(authResult.getName()).thenReturn(username);
 
-        when(jwtProvider.generateToken(username)).thenReturn(fakeToken);
+        when(jwtProvider.generateToken(username, Role.USER)).thenReturn(fakeToken);
 
         filter.successfulAuthentication(request, response, filterChain, authResult);
 
