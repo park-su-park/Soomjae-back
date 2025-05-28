@@ -2,6 +2,7 @@ package com.parksupark.soomjae.server.auth.username.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.parksupark.soomjae.server.auth.common.jwt.JwtProvider;
+import com.parksupark.soomjae.server.auth.common.jwt.filter.JwtAuthenticationFilter;
 import com.parksupark.soomjae.server.auth.username.filter.UsernamePasswordLoginFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -10,6 +11,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -21,6 +23,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
+@EnableMethodSecurity(prePostEnabled = true)
 public class UsernamePasswordSecurityConfig {
 
     private final JwtProvider jwtProvider;
@@ -52,7 +55,7 @@ public class UsernamePasswordSecurityConfig {
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/auth/login",  "/v1/create-member").permitAll()
+                .requestMatchers("/auth/login", "/v1/create-member").permitAll()
                 .anyRequest().authenticated()
             )
 
@@ -60,6 +63,8 @@ public class UsernamePasswordSecurityConfig {
 
             .authenticationManager(authenticationManager)
 
+            .addFilterBefore(jwtAuthenticationFilter(),
+                UsernamePasswordAuthenticationFilter.class)
             .addFilterAt(usernamePasswordLoginFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
@@ -78,6 +83,11 @@ public class UsernamePasswordSecurityConfig {
         provider.setPasswordEncoder(passwordEncoder);
         provider.setUserDetailsService(userDetailsService);
         return provider;
+    }
+
+    @Bean
+    public JwtAuthenticationFilter jwtAuthenticationFilter() {
+        return new JwtAuthenticationFilter(jwtProvider);
     }
 
 }
