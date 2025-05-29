@@ -10,7 +10,6 @@ import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,6 +17,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 
 @RestController
 @RequiredArgsConstructor
@@ -39,8 +40,8 @@ public class CommunityPostController {
 
     //유저 마이페이지 위한 memberId로 다건 조회
     @GetMapping("/v1/members/{memberId}/activities/posts/community")
-    ResponseEntity<CommunityPostListResponse> getByMemberId(@PathVariable Long memberId) {
-        return ResponseEntity.status(200).body(communityPostService.readByMemberId(memberId));
+    ResponseEntity<CommunityPostListResponse> getByMemberId(@PathVariable Long memberId, @PageableDefault(size = 10) Pageable pageable) {
+        return ResponseEntity.status(200).body(communityPostService.readByMemberId(memberId, pageable));
     }
 
 
@@ -52,8 +53,8 @@ public class CommunityPostController {
 
     //리스트 조회
     @GetMapping("/v1/boards/community/posts/list")
-    ResponseEntity<CommunityPostListResponse> getCommunityList() {
-        return ResponseEntity.status(200).body(communityPostService.readByFilter());
+    ResponseEntity<CommunityPostListResponse> getCommunityList(@PageableDefault(size = 10) Pageable pageable) {
+        return ResponseEntity.status(200).body(communityPostService.readByFilter(pageable));
     }
 
     //수정
@@ -66,9 +67,9 @@ public class CommunityPostController {
 
     //삭제
     @DeleteMapping("/v1/boards/community/posts/{postId}")
-    ResponseEntity<Void> deleteCommunityPost(@PathVariable Long postId, @AuthenticationPrincipal UserDetails userDetail) {
+    ResponseEntity<Void> deleteCommunityPost(@PathVariable Long postId) {
         communityPostService.delete(postId);
-        return ResponseEntity.status(200).body(null);
+        return ResponseEntity.ok().build();
     }
 
 }

@@ -3,17 +3,16 @@ package com.parksupark.soomjae.server.community.community_post.service;
 import static com.parksupark.soomjae.server.common.exception.ErrorMessages.COMMUNITY_POST_NOT_FOUND;
 
 import com.parksupark.soomjae.server.auth.username.dto.UsernamePasswordUserDetails;
-import com.parksupark.soomjae.server.common.exception.ErrorMessages;
 import com.parksupark.soomjae.server.community.community_post.dto.CommunityPostListResponse;
 import com.parksupark.soomjae.server.community.community_post.dto.CommunityPostRequest;
 import com.parksupark.soomjae.server.community.community_post.dto.CommunityPostResponse;
 import com.parksupark.soomjae.server.community.community_post.entity.CommunityPost;
 import com.parksupark.soomjae.server.community.community_post.repository.CommunityPostRepository;
 import com.parksupark.soomjae.server.member.entity.Member;
-import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,11 +30,12 @@ public class CommunityPostService {
         return communityPostRepository.save(entity).getId();
     }
 
-    public CommunityPostListResponse readByFilter() {
-        List<CommunityPostResponse> communityPostResponseList = communityPostRepository.findAll().stream()
-            .map(CommunityPostResponse::of).toList();
-        return new CommunityPostListResponse(communityPostResponseList);
+    public CommunityPostListResponse readByFilter(Pageable pageable) {
+        Page<CommunityPost> postPage = communityPostRepository.findAll(pageable);
+        List<CommunityPostResponse> postResponseList = postPage.map(CommunityPostResponse::of).getContent();
+        return new CommunityPostListResponse(postResponseList);
     }
+
 
     public CommunityPostResponse readBypostId(Long postId) {
         CommunityPost communityPost = communityPostRepository.findById(postId)
@@ -44,10 +44,10 @@ public class CommunityPostService {
     }
 
     //페이징 기능 추 후 구현
-    public CommunityPostListResponse readByMemberId(Long memberId) {
-        List<CommunityPostResponse> posts = new ArrayList<>();
-        communityPostRepository.findByMemberId(memberId).forEach(p -> posts.add(CommunityPostResponse.of(p)));
-        return new CommunityPostListResponse(posts);
+    public CommunityPostListResponse readByMemberId(Long memberId, Pageable pageable) {
+        Page<CommunityPost> postPage = communityPostRepository.findByMemberId(memberId, pageable);
+        List<CommunityPostResponse> postResponseList = postPage.map(CommunityPostResponse::of).getContent();
+        return new CommunityPostListResponse(postResponseList);
     }
 
     @Transactional
