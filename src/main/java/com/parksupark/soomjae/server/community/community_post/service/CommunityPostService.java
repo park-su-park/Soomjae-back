@@ -1,6 +1,9 @@
 package com.parksupark.soomjae.server.community.community_post.service;
 
+import static com.parksupark.soomjae.server.common.exception.ErrorMessages.COMMUNITY_POST_NOT_FOUND;
+
 import com.parksupark.soomjae.server.auth.username.dto.UsernamePasswordUserDetails;
+import com.parksupark.soomjae.server.common.exception.ErrorMessages;
 import com.parksupark.soomjae.server.community.community_post.dto.CommunityPostListResponse;
 import com.parksupark.soomjae.server.community.community_post.dto.CommunityPostRequest;
 import com.parksupark.soomjae.server.community.community_post.dto.CommunityPostResponse;
@@ -21,15 +24,22 @@ public class CommunityPostService {
 
     private final CommunityPostRepository communityPostRepository;
 
+    @Transactional
     public Long create(CommunityPostRequest communityPostRequest, UsernamePasswordUserDetails userDetails) {
         Member member = userDetails.getMember();
         CommunityPost entity = communityPostRequest.toEntity(member);
         return communityPostRepository.save(entity).getId();
     }
 
+    public CommunityPostListResponse readByFilter() {
+        List<CommunityPostResponse> communityPostResponseList = communityPostRepository.findAll().stream()
+            .map(CommunityPostResponse::of).toList();
+        return new CommunityPostListResponse(communityPostResponseList);
+    }
+
     public CommunityPostResponse readBypostId(Long postId) {
         CommunityPost communityPost = communityPostRepository.findById(postId)
-            .orElseThrow(() -> new IllegalStateException("해당 Id를 가진 커뮤니티 게시글이 존재하지 않습니다."));
+            .orElseThrow(() -> new IllegalStateException(COMMUNITY_POST_NOT_FOUND));
         return CommunityPostResponse.of(communityPost);
     }
 
@@ -43,7 +53,7 @@ public class CommunityPostService {
     @Transactional
     public Long update(Long communityPostId, CommunityPostRequest communityPostRequest) {
         CommunityPost communityPost = communityPostRepository.findById(communityPostId)
-            .orElseThrow(() -> new IllegalStateException("해당 Id를 가진 커뮤니티 게시글이 존재하지 않습니다."));
+            .orElseThrow(() -> new IllegalStateException(COMMUNITY_POST_NOT_FOUND));
         updateCommunityPost(communityPostRequest, communityPost);
         return communityPost.getId();
     }
@@ -57,7 +67,7 @@ public class CommunityPostService {
     @Transactional
     public void delete(Long postId) {
         CommunityPost communityPost = communityPostRepository.findById(postId)
-            .orElseThrow(() -> new IllegalStateException("해당 Id를 가진 커뮤니티 게시글이 존재하지 않습니다."));
+            .orElseThrow(() -> new IllegalStateException(COMMUNITY_POST_NOT_FOUND));
         communityPostRepository.delete(communityPost);
     }
 
