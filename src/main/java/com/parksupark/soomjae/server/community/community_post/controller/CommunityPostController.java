@@ -11,24 +11,24 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/v1/boards/community/posts")
 @RequiredArgsConstructor
 public class CommunityPostController {
 
     private final CommunityPostService communityPostService;
 
-    @PostMapping
+    @PostMapping("/v1/boards/community/posts")
     public ResponseEntity<Map<String, Object>> postCommunityPost(@RequestBody CommunityPostRequest communityPostRequest,@AuthenticationPrincipal
     UsernamePasswordUserDetails userDetails) {
         Long postId = communityPostService.create(communityPostRequest, userDetails);
-        System.out.println(userDetails);
-
         Map<String, Object> response = new HashMap<>();
         response.put("postId", postId);
         response.put("postType", "community");
@@ -36,22 +36,38 @@ public class CommunityPostController {
         return ResponseEntity.status(200).body(response);
     }
 
-    ResponseEntity<CommunityPostListResponse> getByMemberId(Long memberId) {
+
+    //유저 마이페이지 위한 memberId로 다건 조회
+    @GetMapping("/v1/members/{memberId}/activities/posts/community")
+    ResponseEntity<CommunityPostListResponse> getByMemberId(@PathVariable Long memberId) {
         return ResponseEntity.status(200).body(communityPostService.readByMemberId(memberId));
     }
 
-    ResponseEntity<CommunityPostResponse> getByPostId(Long postId) {
+
+    //postId로 상세 조회
+    @GetMapping("/v1/boards/community/posts/{postId}")
+    ResponseEntity<CommunityPostResponse> getByPostId(@PathVariable Long postId) {
         return ResponseEntity.status(200).body(communityPostService.readBypostId(postId));
     }
 
-    ResponseEntity<Long> putCommunityPost(Long communityPostId,
-        CommunityPostRequest request) {
-        return ResponseEntity.status(200)
-            .body(communityPostService.update(communityPostId, request));
+    //리스트 조회
+    @GetMapping("/v1/boards/community/posts/list")
+    ResponseEntity<CommunityPostListResponse> getCommunityList() {
+        return ResponseEntity.status(200).body(communityPostService.readByFilter());
     }
 
-    ResponseEntity<Void> deleteCommunityPost(Long communityPostId, @AuthenticationPrincipal UserDetails userDetail) {
-        communityPostService.delete(communityPostId);
+    //수정
+    @PutMapping("/v1/boards/community/posts/{postId}")
+    ResponseEntity<Long> putCommunityPost(@PathVariable Long postId,
+        @RequestBody CommunityPostRequest request) {
+        return ResponseEntity.status(200)
+            .body(communityPostService.update(postId, request));
+    }
+
+    //삭제
+    @DeleteMapping("/v1/boards/community/posts/{postId}")
+    ResponseEntity<Void> deleteCommunityPost(@PathVariable Long postId, @AuthenticationPrincipal UserDetails userDetail) {
+        communityPostService.delete(postId);
         return ResponseEntity.status(200).body(null);
     }
 
