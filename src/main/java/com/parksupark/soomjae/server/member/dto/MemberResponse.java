@@ -1,7 +1,9 @@
 package com.parksupark.soomjae.server.member.dto;
 
 import com.parksupark.soomjae.server.member.entity.Member;
+import lombok.Getter;
 
+@Getter
 public class MemberResponse {
     private Long memberId;
 
