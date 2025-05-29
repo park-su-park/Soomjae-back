@@ -20,11 +20,12 @@ import org.springframework.stereotype.Component;
 public class JwtProvider {
 
     private final UserDetailsService userDetailsService;
-    private final JwtHandler jwtHandler;
+    private final JwtGenerator jwtGenerator;
+    private final JwtParser jwtParser;
 
 
     public String generateToken(String subject, Role role) {
-        return jwtHandler.generate(subject, role);
+        return jwtGenerator.generate(subject, role);
     }
 
     public Authentication getAuthentication(String token) {
@@ -37,7 +38,7 @@ public class JwtProvider {
     }
 
     public Claims getClaimsFromToken(String token) {
-        return jwtHandler.parse(token);
+        return jwtParser.parse(token);
     }
 
     public boolean validateToken(String token) {
