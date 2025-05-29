@@ -1,6 +1,6 @@
-package com.parksupark.soomjae.server.community.community_post.repository;
+package com.parksupark.soomjae.server.community.communitypost.repository;
 
-import com.parksupark.soomjae.server.community.community_post.entity.CommunityPost;
+import com.parksupark.soomjae.server.community.communitypost.entity.CommunityPost;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

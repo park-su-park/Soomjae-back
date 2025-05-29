@@ -1,4 +1,4 @@
-package com.parksupark.soomjae.server.community.community_post.entity;
+package com.parksupark.soomjae.server.community.communitypost.entity;
 
 import com.parksupark.soomjae.server.common.entity.BaseEntity;
 import com.parksupark.soomjae.server.member.entity.Member;
