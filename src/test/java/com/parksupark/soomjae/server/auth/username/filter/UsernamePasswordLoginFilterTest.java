@@ -109,13 +109,11 @@ class UsernamePasswordLoginFilterTest {
         throws Exception {
         final String username = "test";
         final String fakeToken = "fake token";
-
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        MockHttpServletResponse response = new MockHttpServletResponse();
-        FilterChain filterChain = mock(FilterChain.class);
-        Member member = mock(Member.class);
-
-        Authentication authResult = mock(Authentication.class);
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        final MockHttpServletResponse response = new MockHttpServletResponse();
+        final FilterChain filterChain = mock(FilterChain.class);
+        final Member member = mock(Member.class);
+        final Authentication authResult = mock(Authentication.class);
 
         when(authResult.getPrincipal()).thenReturn(new UsernamePasswordUserDetails(member));
         when(member.getEmail()).thenReturn(username);
