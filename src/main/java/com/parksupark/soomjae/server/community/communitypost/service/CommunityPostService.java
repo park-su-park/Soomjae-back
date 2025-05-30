@@ -1,8 +1,11 @@
 package com.parksupark.soomjae.server.community.communitypost.service;
 
 import static com.parksupark.soomjae.server.common.exception.ErrorMessages.COMMUNITY_POST_NOT_FOUND;
+import static com.parksupark.soomjae.server.community.category.constant.CategoryConstant.CATEGORY_NOT_FOUND;
 
 import com.parksupark.soomjae.server.auth.username.dto.UsernamePasswordUserDetails;
+import com.parksupark.soomjae.server.community.category.entity.Category;
+import com.parksupark.soomjae.server.community.category.repository.CategoryRepository;
 import com.parksupark.soomjae.server.community.communitypost.dto.CommunityPostListResponse;
 import com.parksupark.soomjae.server.community.communitypost.dto.CommunityPostRequest;
 import com.parksupark.soomjae.server.community.communitypost.dto.CommunityPostResponse;
@@ -22,26 +25,29 @@ import org.springframework.transaction.annotation.Transactional;
 public class CommunityPostService {
 
     private final CommunityPostRepository communityPostRepository;
+    private final CategoryRepository categoryRepository;
 
     @Transactional
     public Long create(
-        CommunityPostRequest communityPostRequest, UsernamePasswordUserDetails userDetails) {
+            CommunityPostRequest communityPostRequest, UsernamePasswordUserDetails userDetails) {
         Member member = userDetails.getMember();
-        CommunityPost entity = communityPostRequest.toEntity(member);
+        Category category = categoryRepository.findByName(communityPostRequest.getCategory())
+                .orElseThrow(() -> new IllegalStateException(CATEGORY_NOT_FOUND));
+        CommunityPost entity = communityPostRequest.toEntity(member, category);
         return communityPostRepository.save(entity).getId();
     }
 
     public CommunityPostListResponse readByFilter(Pageable pageable) {
         Page<CommunityPost> postPage = communityPostRepository.findAll(pageable);
         List<CommunityPostResponse> postResponseList = postPage.map(CommunityPostResponse::of)
-            .getContent();
+                .getContent();
         return new CommunityPostListResponse(postResponseList);
     }
 
 
     public CommunityPostResponse readBypostId(Long postId) {
         CommunityPost communityPost = communityPostRepository.findById(postId)
-            .orElseThrow(() -> new IllegalStateException(COMMUNITY_POST_NOT_FOUND));
+                .orElseThrow(() -> new IllegalStateException(COMMUNITY_POST_NOT_FOUND));
         return CommunityPostResponse.of(communityPost);
     }
 
@@ -49,28 +55,31 @@ public class CommunityPostService {
     public CommunityPostListResponse readByMemberId(Long memberId, Pageable pageable) {
         Page<CommunityPost> postPage = communityPostRepository.findByMemberId(memberId, pageable);
         List<CommunityPostResponse> postResponseList = postPage.map(CommunityPostResponse::of)
-            .getContent();
+                .getContent();
         return new CommunityPostListResponse(postResponseList);
     }
 
     @Transactional
     public Long update(Long communityPostId, CommunityPostRequest communityPostRequest) {
         CommunityPost communityPost = communityPostRepository.findById(communityPostId)
-            .orElseThrow(() -> new IllegalStateException(COMMUNITY_POST_NOT_FOUND));
+                .orElseThrow(() -> new IllegalStateException(COMMUNITY_POST_NOT_FOUND));
         updateCommunityPost(communityPostRequest, communityPost);
         return communityPost.getId();
     }
 
     private void updateCommunityPost(CommunityPostRequest communityPostRequest,
-        CommunityPost communityPost) {
+            CommunityPost communityPost) {
+        Category category = categoryRepository.findByName(communityPostRequest.getCategory())
+                .orElseThrow(() -> new IllegalStateException(CATEGORY_NOT_FOUND));
         communityPost.setTitle(communityPostRequest.getTitle());
         communityPost.setContent(communityPostRequest.getContent());
+        communityPost.setCategory(category);
     }
 
     @Transactional
     public void delete(Long postId) {
         CommunityPost communityPost = communityPostRepository.findById(postId)
-            .orElseThrow(() -> new IllegalStateException(COMMUNITY_POST_NOT_FOUND));
+                .orElseThrow(() -> new IllegalStateException(COMMUNITY_POST_NOT_FOUND));
         communityPostRepository.delete(communityPost);
     }
 
