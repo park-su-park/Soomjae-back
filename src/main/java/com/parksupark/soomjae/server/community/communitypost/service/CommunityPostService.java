@@ -42,7 +42,8 @@ public class CommunityPostService {
         }
         Location location = null;
         if (communityPostRequest.getLocation() != null) {
-            location = locationRepository.findByName(communityPostRequest.getLocation())
+            location = locationRepository.findByCode(
+                            Long.parseLong(communityPostRequest.getLocation()))
                     .orElseThrow(() -> new IllegalStateException(
                             LocationConstant.LOCATION_NOT_FOUND));
         }
@@ -89,7 +90,8 @@ public class CommunityPostService {
         }
         Location location = null;
         if (communityPostRequest.getLocation() != null) {
-            location = locationRepository.findByName(communityPostRequest.getLocation())
+            location = locationRepository.findByCode(
+                            Long.parseLong(communityPostRequest.getLocation()))
                     .orElseThrow(() -> new IllegalStateException(
                             LocationConstant.LOCATION_NOT_FOUND));
         }

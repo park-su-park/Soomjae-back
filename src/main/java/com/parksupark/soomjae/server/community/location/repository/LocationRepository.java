@@ -11,6 +11,8 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
 
     Optional<Location> findByName(String name);
 
+    Optional<Location> findByCode(Long code);
+
     List<Location> findByHierarchy(int hierarchy);
 
     List<Location> findByParentCode(Long parentCode);
