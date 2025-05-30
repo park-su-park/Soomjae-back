@@ -1,8 +1,8 @@
 package com.parksupark.soomjae.server.auth.common.jwt;
 
-import com.parksupark.soomjae.server.member.Role;
+import java.util.Map;
 
 public interface JwtGenerator {
 
-    String generate(String subject, Role role);
+    String generate(String subject, Map<String, Object> claims);
 }

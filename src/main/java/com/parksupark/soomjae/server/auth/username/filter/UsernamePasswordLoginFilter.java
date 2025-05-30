@@ -7,11 +7,14 @@ import com.parksupark.soomjae.server.auth.username.dto.UsernamePasswordAuthSucce
 import com.parksupark.soomjae.server.auth.username.dto.UsernamePasswordLoginRequest;
 import com.parksupark.soomjae.server.auth.username.dto.UsernamePasswordUserDetails;
 import com.parksupark.soomjae.server.member.Role;
+import com.parksupark.soomjae.server.member.entity.Member;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -60,17 +63,21 @@ public class UsernamePasswordLoginFilter extends UsernamePasswordAuthenticationF
     protected void successfulAuthentication(HttpServletRequest request,
         HttpServletResponse response, FilterChain chain, Authentication authResult)
         throws IOException, ServletException {
+        Map<String, Object> claims = new HashMap<>();
 
-        UsernamePasswordUserDetails principal =
+        UsernamePasswordUserDetails userDetails =
             (UsernamePasswordUserDetails) authResult.getPrincipal();
+        Member member = userDetails.getMember();
 
-        String username = principal.getUsername();
-        Role role = principal.getMember().getRole();
+        String username = userDetails.getUsername();
+        Role role = member.getRole();
 
-        String token = jwtProvider.generateToken(username, role);
+        claims.put("role", role.getKey());
+
+        String token = jwtProvider.generateToken(username, claims);
 
         UsernamePasswordAuthSuccessResponse successResponse =
-            new UsernamePasswordAuthSuccessResponse(token);
+            new UsernamePasswordAuthSuccessResponse(token, member.getId());
 
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");

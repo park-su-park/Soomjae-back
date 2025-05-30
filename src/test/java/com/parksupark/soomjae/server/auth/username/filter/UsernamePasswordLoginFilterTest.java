@@ -8,8 +8,12 @@ import com.parksupark.soomjae.server.auth.common.exception.FilterAuthenticationF
 import com.parksupark.soomjae.server.auth.common.jwt.JwtProvider;
 import com.parksupark.soomjae.server.auth.username.dto.UsernamePasswordAuthSuccessResponse;
 import com.parksupark.soomjae.server.auth.username.dto.UsernamePasswordLoginRequest;
+import com.parksupark.soomjae.server.auth.username.dto.UsernamePasswordUserDetails;
 import com.parksupark.soomjae.server.member.Role;
+import com.parksupark.soomjae.server.member.entity.Member;
 import jakarta.servlet.FilterChain;
+import java.util.HashMap;
+import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,6 +37,12 @@ class UsernamePasswordLoginFilterTest {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     private UsernamePasswordLoginFilter filter;
+
+    private final Map<String, Object> claimsWithRole = new HashMap<>() {
+        {
+            put("role", Role.USER.getKey());
+        }
+    };
 
     @BeforeEach
     void setUp() {
@@ -99,22 +109,24 @@ class UsernamePasswordLoginFilterTest {
         throws Exception {
         final String username = "test";
         final String fakeToken = "fake token";
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        final MockHttpServletResponse response = new MockHttpServletResponse();
+        final FilterChain filterChain = mock(FilterChain.class);
+        final Member member = mock(Member.class);
+        final Authentication authResult = mock(Authentication.class);
 
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        MockHttpServletResponse response = new MockHttpServletResponse();
-        FilterChain filterChain = mock(FilterChain.class);
+        when(authResult.getPrincipal()).thenReturn(new UsernamePasswordUserDetails(member));
+        when(member.getEmail()).thenReturn(username);
+        when(member.getRole()).thenReturn(Role.USER);
+        when(member.getId()).thenReturn(1L);
 
-        Authentication authResult = mock(Authentication.class);
-
-        when(authResult.getName()).thenReturn(username);
-
-        when(jwtProvider.generateToken(username, Role.USER)).thenReturn(fakeToken);
+        when(jwtProvider.generateToken(username, claimsWithRole)).thenReturn(fakeToken);
 
         filter.successfulAuthentication(request, response, filterChain, authResult);
 
         String expectedResponseJson = objectMapper.writeValueAsString(
-            new UsernamePasswordAuthSuccessResponse(fakeToken));
-        assertEquals(response.getContentAsString(), expectedResponseJson);
+            new UsernamePasswordAuthSuccessResponse(fakeToken, 1L));
+        assertEquals(expectedResponseJson, response.getContentAsString());
         assertEquals("UTF-8", response.getCharacterEncoding());
         assertEquals("application/json;charset=UTF-8", response.getContentType());
 
