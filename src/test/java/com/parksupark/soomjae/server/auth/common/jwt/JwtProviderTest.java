@@ -9,6 +9,8 @@ import com.parksupark.soomjae.server.auth.username.service.UsernamePasswordUserD
 import com.parksupark.soomjae.server.member.Role;
 import com.parksupark.soomjae.server.member.entity.Member;
 import io.jsonwebtoken.Claims;
+import java.util.HashMap;
+import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -21,12 +23,19 @@ class JwtProviderTest {
     @Mock
     private UsernamePasswordUserDetailsService userDetailsService;
 
+    private final Map<String, Object> claimsWithRole = new HashMap<>() {
+        {
+            put("role", Role.USER.getKey());
+        }
+    };
+
     @Test
     void generator_shouldCreate_validSignedJwt() {
         final String username = "test username";
+
         JwtProvider jwtProvider = JwtTestHelper.getDefaultFwtProvider(userDetailsService);
 
-        String token = jwtProvider.generateToken(username, Role.USER);
+        String token = jwtProvider.generateToken(username, claimsWithRole);
 
         Claims claims = jwtProvider.getClaimsFromToken(token);
 
@@ -42,7 +51,7 @@ class JwtProviderTest {
 
         JwtProvider jwtProvider = JwtTestHelper.getDefaultFwtProvider(userDetailsService);
 
-        String token = jwtProvider.generateToken(username, Role.USER);
+        String token = jwtProvider.generateToken(username, claimsWithRole);
 
         UsernamePasswordUserDetails userDetails = new UsernamePasswordUserDetails(
             Member.create(username, "password"));
@@ -60,7 +69,7 @@ class JwtProviderTest {
         final String username = "expired_user";
 
         JwtProvider jwtProvider = JwtTestHelper.getExpiredJwtProvider(userDetailsService);
-        String token = jwtProvider.generateToken(username, Role.USER);
+        String token = jwtProvider.generateToken(username, claimsWithRole);
 
         assertFalse(jwtProvider.validateToken(token));
     }

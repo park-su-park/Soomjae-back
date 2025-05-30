@@ -1,11 +1,11 @@
 package com.parksupark.soomjae.server.auth.common.jwt;
 
-import com.parksupark.soomjae.server.member.Role;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Date;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -24,8 +24,8 @@ public class JwtProvider {
     private final JwtParser jwtParser;
 
 
-    public String generateToken(String subject, Role role) {
-        return jwtGenerator.generate(subject, role);
+    public String generateToken(String subject, Map<String, Object> claims) {
+        return jwtGenerator.generate(subject, claims);
     }
 
     public Authentication getAuthentication(String token) {
