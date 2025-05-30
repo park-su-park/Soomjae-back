@@ -11,6 +11,9 @@ import com.parksupark.soomjae.server.community.communitypost.dto.CommunityPostRe
 import com.parksupark.soomjae.server.community.communitypost.dto.CommunityPostResponse;
 import com.parksupark.soomjae.server.community.communitypost.entity.CommunityPost;
 import com.parksupark.soomjae.server.community.communitypost.repository.CommunityPostRepository;
+import com.parksupark.soomjae.server.community.location.constant.LocationConstant;
+import com.parksupark.soomjae.server.community.location.entity.Location;
+import com.parksupark.soomjae.server.community.location.repository.LocationRepository;
 import com.parksupark.soomjae.server.member.entity.Member;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -26,14 +29,24 @@ public class CommunityPostService {
 
     private final CommunityPostRepository communityPostRepository;
     private final CategoryRepository categoryRepository;
+    private final LocationRepository locationRepository;
 
     @Transactional
     public Long create(
             CommunityPostRequest communityPostRequest, UsernamePasswordUserDetails userDetails) {
         Member member = userDetails.getMember();
-        Category category = categoryRepository.findByName(communityPostRequest.getCategory())
-                .orElseThrow(() -> new IllegalStateException(CATEGORY_NOT_FOUND));
-        CommunityPost entity = communityPostRequest.toEntity(member, category);
+        Category category = null;
+        if (communityPostRequest.getCategory() != null) {
+            category = categoryRepository.findByName(communityPostRequest.getCategory())
+                    .orElseThrow(() -> new IllegalStateException(CATEGORY_NOT_FOUND));
+        }
+        Location location = null;
+        if (communityPostRequest.getLocation() != null) {
+            location = locationRepository.findByName(communityPostRequest.getLocation())
+                    .orElseThrow(() -> new IllegalStateException(
+                            LocationConstant.LOCATION_NOT_FOUND));
+        }
+        CommunityPost entity = communityPostRequest.toEntity(member, category, location);
         return communityPostRepository.save(entity).getId();
     }
 
@@ -69,11 +82,21 @@ public class CommunityPostService {
 
     private void updateCommunityPost(CommunityPostRequest communityPostRequest,
             CommunityPost communityPost) {
-        Category category = categoryRepository.findByName(communityPostRequest.getCategory())
-                .orElseThrow(() -> new IllegalStateException(CATEGORY_NOT_FOUND));
+        Category category = null;
+        if (communityPostRequest.getCategory() != null) {
+            category = categoryRepository.findByName(communityPostRequest.getCategory())
+                    .orElseThrow(() -> new IllegalStateException(CATEGORY_NOT_FOUND));
+        }
+        Location location = null;
+        if (communityPostRequest.getLocation() != null) {
+            location = locationRepository.findByName(communityPostRequest.getLocation())
+                    .orElseThrow(() -> new IllegalStateException(
+                            LocationConstant.LOCATION_NOT_FOUND));
+        }
         communityPost.setTitle(communityPostRequest.getTitle());
         communityPost.setContent(communityPostRequest.getContent());
         communityPost.setCategory(category);
+        communityPost.setLocation(location);
     }
 
     @Transactional
