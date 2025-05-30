@@ -37,7 +37,7 @@ public class CommunityPostController {
         response.put("postId", postId);
         response.put("postType", "community");
 
-        return ResponseEntity.status(200).body(response);
+        return ResponseEntity.ok(response);
     }
 
 
@@ -45,30 +45,28 @@ public class CommunityPostController {
     @GetMapping("/v1/members/{memberId}/activities/posts/community")
     ResponseEntity<CommunityPostListResponse> getByMemberId(@PathVariable Long memberId,
             @PageableDefault(size = 10) Pageable pageable) {
-        return ResponseEntity.status(200)
-                .body(communityPostService.readByMemberId(memberId, pageable));
+        return ResponseEntity.ok(communityPostService.readByMemberId(memberId, pageable));
     }
 
 
     //postId로 상세 조회
     @GetMapping("/v1/boards/community/posts/{postId}")
     ResponseEntity<CommunityPostResponse> getByPostId(@PathVariable Long postId) {
-        return ResponseEntity.status(200).body(communityPostService.readBypostId(postId));
+        return ResponseEntity.ok(communityPostService.readBypostId(postId));
     }
 
     //리스트 조회
     @GetMapping("/v1/boards/community/posts/list")
     ResponseEntity<CommunityPostListResponse> getCommunityList(
             @PageableDefault(size = 10) Pageable pageable) {
-        return ResponseEntity.status(200).body(communityPostService.readByFilter(pageable));
+        return ResponseEntity.ok(communityPostService.readByFilter(pageable));
     }
 
     //수정
     @PutMapping("/v1/boards/community/posts/{postId}")
     ResponseEntity<Long> putCommunityPost(@PathVariable Long postId,
             @RequestBody CommunityPostRequest request) {
-        return ResponseEntity.status(200)
-                .body(communityPostService.update(postId, request));
+        return ResponseEntity.ok(communityPostService.update(postId, request));
     }
 
     //삭제
