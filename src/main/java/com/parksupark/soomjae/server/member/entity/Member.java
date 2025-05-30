@@ -40,5 +40,5 @@ public class Member {
     public static Member create(String email, String password) {
         return new Member(email, password, Role.USER);
     }
-
+    
 }
