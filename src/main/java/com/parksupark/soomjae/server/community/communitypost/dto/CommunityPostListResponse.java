@@ -1,4 +1,4 @@
-package com.parksupark.soomjae.server.community.community_post.dto;
+package com.parksupark.soomjae.server.community.communitypost.dto;
 
 import java.util.List;
 import lombok.Getter;
