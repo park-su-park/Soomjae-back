@@ -1,7 +1,7 @@
 package com.parksupark.soomjae.server.community.category.service;
 
-import static com.parksupark.soomjae.server.common.exception.ErrorMessages.COMMUNITY_POST_NOT_FOUND;
 import static com.parksupark.soomjae.server.community.category.constant.CategoryConstant.CATEGORY_NAME_DUPLICATE_ERROR;
+import static com.parksupark.soomjae.server.community.category.constant.CategoryConstant.CATEGORY_NOT_FOUND;
 import static com.parksupark.soomjae.server.community.category.constant.CategoryConstant.PARENT_CATEGORY_NOT_FOUND;
 import static com.parksupark.soomjae.server.community.category.constant.CategoryConstant.ROOT_CATEGORY;
 import static com.parksupark.soomjae.server.community.category.constant.CategoryConstant.ROOT_CATEGORY_NOT_FOUND;
@@ -12,13 +12,16 @@ import com.parksupark.soomjae.server.community.category.entity.Category;
 import com.parksupark.soomjae.server.community.category.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class CategoryService {
 
     private final CategoryRepository categoryRepository;
 
+    @Transactional
     public Long createCategory(CategoryRequestDto categoryRequestDto) {
         if (categoryRepository.findByName(categoryRequestDto.getName()).isPresent()) {
             throw new IllegalStateException(CATEGORY_NAME_DUPLICATE_ERROR);
@@ -48,7 +51,7 @@ public class CategoryService {
 
     public CategoryResponseDto readCategory(String name) {
         Category category = categoryRepository.findByName(name)
-                .orElseThrow(() -> new IllegalStateException(COMMUNITY_POST_NOT_FOUND));
+                .orElseThrow(() -> new IllegalStateException(CATEGORY_NOT_FOUND));
         return CategoryResponseDto.of(category);
     }
 
