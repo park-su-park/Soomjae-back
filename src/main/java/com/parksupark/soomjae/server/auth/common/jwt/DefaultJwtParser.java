@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class DefaultJwtParser extends AbstractJwtKeyHolder implements JwtParser {
 
-    public DefaultJwtParser(@Value("{jwt.secret}") String secret) {
+    public DefaultJwtParser(@Value("${jwt.secret}") String secret) {
         super(secret);
     }
 
