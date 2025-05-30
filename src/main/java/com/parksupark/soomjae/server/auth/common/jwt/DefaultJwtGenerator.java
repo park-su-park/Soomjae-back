@@ -1,8 +1,8 @@
 package com.parksupark.soomjae.server.auth.common.jwt;
 
-import com.parksupark.soomjae.server.member.Role;
 import io.jsonwebtoken.Jwts;
 import java.util.Date;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -14,14 +14,14 @@ public class DefaultJwtGenerator extends AbstractJwtKeyHolder implements JwtGene
     }
 
     @Override
-    public String generate(String subject, Role role) {
+    public String generate(String subject, Map<String, Object> claims) {
         long nowMillis = System.currentTimeMillis();
         Date now = new Date(nowMillis);
         Date expiry = new Date(nowMillis + 1000 * 60 * 60);
 
         return Jwts.builder()
             .subject(subject)
-            .claim("role", role.getKey())
+            .claims(claims)
             .issuedAt(now)
             .expiration(expiry)
             .signWith(key)
