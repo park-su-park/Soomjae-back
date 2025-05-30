@@ -12,6 +12,8 @@ import com.parksupark.soomjae.server.member.entity.Member;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.HashMap;
+import java.util.Map;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -36,6 +38,12 @@ class JwtAuthenticationFilterTest {
     @Mock
     private FilterChain filterChain;
 
+    private final Map<String, Object> claimsWithRole = new HashMap<>() {
+        {
+            put("role", Role.USER.getKey());
+        }
+    };
+
     @AfterEach
     void clearContext() {
         SecurityContextHolder.clearContext();
@@ -51,7 +59,7 @@ class JwtAuthenticationFilterTest {
         JwtProvider jwtProvider = JwtTestHelper.getDefaultFwtProvider(userDetailsService);
         JwtAuthenticationFilter filter = new JwtAuthenticationFilter(jwtProvider);
 
-        String token = jwtProvider.generateToken(username, Role.USER);
+        String token = jwtProvider.generateToken(username, claimsWithRole);
 
         when(request.getHeader("Authorization")).thenReturn("Bearer " + token);
         when(userDetailsService.loadUserByUsername(username)).thenReturn(userDetails);
