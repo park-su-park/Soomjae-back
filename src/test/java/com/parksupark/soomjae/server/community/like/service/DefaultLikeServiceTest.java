@@ -33,7 +33,7 @@ class DefaultLikeServiceTest {
 
     @BeforeEach
     void setUp() {
-        ((InMemoryLikeRepository)likeRepository).clear();
+        ((InMemoryLikeRepository) likeRepository).clear();
         ((InMemoryMemberRepository) memberRepository).clear();
 
         Member member = memberRepository.save(Member.create("test@gmail.com", "test"));
@@ -51,7 +51,8 @@ class DefaultLikeServiceTest {
         final Map<String, PostValidator> validatorMap = new HashMap<>();
         validatorMap.put("community", new AlwaysInvalidCommunityPostValidatorStub());
 
-        final PostValidatorFactory postValidatorFactory = new StubPostValidatorFactory(validatorMap);
+        final PostValidatorFactory postValidatorFactory = new StubPostValidatorFactory(
+            validatorMap);
         likeService = new DefaultLikeService(likeRepository, postValidatorFactory);
 
         // when + then
