@@ -56,7 +56,7 @@ public class UsernamePasswordSecurityConfig {
 
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/auth/login", "/v1/create-member").permitAll()
-                .anyRequest().authenticated()
+                .anyRequest().permitAll()
             )
 
             .authenticationProvider(authenticationProvider)
