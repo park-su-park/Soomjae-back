@@ -6,5 +6,5 @@ import lombok.Getter;
 public class CategoryRequestDto {
 
     private String name;
-    private String parentCategoryName;
+    private String parentCategoryId;
 }

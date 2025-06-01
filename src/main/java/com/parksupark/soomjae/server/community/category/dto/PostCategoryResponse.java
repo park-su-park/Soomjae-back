@@ -6,13 +6,15 @@ import lombok.Getter;
 @Getter
 public class PostCategoryResponse {
 
+    Long id;
     String name;
 
-    public PostCategoryResponse(String name) {
+    public PostCategoryResponse(Long id, String name) {
+        this.id = id;
         this.name = name;
     }
 
     public static PostCategoryResponse of(Category category) {
-        return new PostCategoryResponse(category.getName());
+        return new PostCategoryResponse(category.getId(), category.getName());
     }
 }

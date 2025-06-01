@@ -24,8 +24,8 @@ public class CategoryController {
 
     @GetMapping("/v1/categories")
     public ResponseEntity<CategoryResponseDto> readCategory(
-            @RequestParam(name = "name") String name) {
-        return ResponseEntity.ok(categoryService.readCategory(name));
+            @RequestParam(name = "id", defaultValue = "0") Long id) {
+        return ResponseEntity.ok(categoryService.readCategory(id));
     }
 
     @GetMapping("/v1/categories/all") //트리 구조에서 루트 노드를 조회 함으로써 전체 카테고리를 조회한다.

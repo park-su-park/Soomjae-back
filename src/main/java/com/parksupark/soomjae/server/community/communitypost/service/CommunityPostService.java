@@ -31,7 +31,8 @@ public class CommunityPostService {
     public Long create(
             CommunityPostRequest communityPostRequest, UsernamePasswordUserDetails userDetails) {
         Member member = userDetails.getMember();
-        Category category = categoryRepository.findByName(communityPostRequest.getCategory())
+        Category category = categoryRepository.findById(
+                        Long.parseLong(communityPostRequest.getCategory()))
                 .orElseThrow(() -> new IllegalStateException(CATEGORY_NOT_FOUND));
         CommunityPost entity = communityPostRequest.toEntity(member, category);
         return communityPostRepository.save(entity).getId();
@@ -69,7 +70,8 @@ public class CommunityPostService {
 
     private void updateCommunityPost(CommunityPostRequest communityPostRequest,
             CommunityPost communityPost) {
-        Category category = categoryRepository.findByName(communityPostRequest.getCategory())
+        Category category = categoryRepository.findById(
+                        Long.parseLong(communityPostRequest.getCategory()))
                 .orElseThrow(() -> new IllegalStateException(CATEGORY_NOT_FOUND));
         communityPost.setTitle(communityPostRequest.getTitle());
         communityPost.setContent(communityPostRequest.getContent());
