@@ -10,12 +10,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Table(name = "member")
 @Getter
-@Setter
 @NoArgsConstructor
 public class Member {
 
@@ -40,5 +38,5 @@ public class Member {
     public static Member create(String email, String password) {
         return new Member(email, password, Role.USER);
     }
-    
+
 }
