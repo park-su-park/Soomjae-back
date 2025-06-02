@@ -2,6 +2,7 @@ package com.parksupark.soomjae.server.community.communitypost.entity;
 
 import com.parksupark.soomjae.server.common.entity.BaseEntity;
 import com.parksupark.soomjae.server.community.category.entity.Category;
+import com.parksupark.soomjae.server.community.location.entity.Location;
 import com.parksupark.soomjae.server.member.entity.Member;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -37,6 +38,10 @@ public class CommunityPost extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "location_id")
+    private Location location;
 
 
     private String title;
