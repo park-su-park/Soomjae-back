@@ -26,7 +26,7 @@ public class CategoryService {
         if (categoryRepository.findByName(categoryRequestDto.getName()).isPresent()) {
             throw new IllegalStateException(CATEGORY_NAME_DUPLICATE_ERROR);
         }
-        if (categoryRequestDto.getParentCategoryName() == null) {
+        if (categoryRequestDto.getParentCategoryId() == null) {
             Category rootCategory = categoryRepository.findByName(ROOT_CATEGORY)
                     .orElseThrow(() -> new IllegalStateException(ROOT_CATEGORY_NOT_FOUND));
             Category category = Category.builder()
@@ -36,8 +36,8 @@ public class CategoryService {
                     .build();
             return categoryRepository.save(category).getId();
         } else {
-            Category parent = categoryRepository.findByName(
-                            categoryRequestDto.getParentCategoryName())
+            Category parent = categoryRepository.findById(
+                            Long.parseLong(categoryRequestDto.getParentCategoryId()))
                     .orElseThrow(() -> new IllegalStateException(PARENT_CATEGORY_NOT_FOUND));
 
             Category category = Category.builder()
@@ -49,8 +49,8 @@ public class CategoryService {
         }
     }
 
-    public CategoryResponseDto readCategory(String name) {
-        Category category = categoryRepository.findByName(name)
+    public CategoryResponseDto readCategory(Long id) {
+        Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new IllegalStateException(CATEGORY_NOT_FOUND));
         return CategoryResponseDto.of(category);
     }
