@@ -18,8 +18,7 @@ public class TestSecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .formLogin(form -> form.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .anyRequest().permitAll() // 모든 요청 허용
-                );
+                        .anyRequest().permitAll());
         return http.build();
     }
 }
