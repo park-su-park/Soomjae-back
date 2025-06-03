@@ -28,7 +28,7 @@ import org.springframework.test.web.servlet.MockMvc;
 @WebMvcTest(CategoryController.class)
 @Import({TestSecurityConfig.class})
 @ActiveProfiles("test")
-class CategoryControllerTestWithoutSecurityTest {
+class CategoryControllerWithoutSecurityTest {
 
     @Autowired
     private MockMvc mockMvc;

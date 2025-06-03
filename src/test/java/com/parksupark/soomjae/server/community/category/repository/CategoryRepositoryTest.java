@@ -24,7 +24,7 @@ class CategoryRepositoryTest {
     }
 
     @Test
-    void 저장과_Id조회가_잘되어야_한다() {
+    void shouldSaveAndFindByIdSuccessfully() {
         Category category1 = Category.builder()
                 .name("카테고리1")
                 .build();
@@ -34,7 +34,7 @@ class CategoryRepositoryTest {
     }
 
     @Test
-    void 이름으로_조회시_잘_조회되어야한다() {
+    void shouldFindByNameSuccessfully() {
         Category category = categoryRepository.findByName("전체 카테고리").get();
         Assertions.assertEquals("전체 카테고리", category.getName());
     }
