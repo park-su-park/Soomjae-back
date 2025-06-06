@@ -53,7 +53,7 @@ class CategoryIntergrationTest {
             @Autowired CategoryRepository categoryRepository) throws Exception {
 
         Category category = new Category(null, "전체 카테고리", null, null, 0);
-        categoryRepository.saveAndFlush(category);
+        categoryRepository.save(category);
 
         String username = "testuser";
         String password = "testpssword";
