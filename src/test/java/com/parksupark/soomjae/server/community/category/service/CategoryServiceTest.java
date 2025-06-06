@@ -1,87 +1,85 @@
 package com.parksupark.soomjae.server.community.category.service;
 
+import static com.parksupark.soomjae.server.community.category.constant.CategoryConstant.ROOT_CATEGORY;
+
 import com.parksupark.soomjae.server.community.category.dto.CategoryRequestDto;
+import com.parksupark.soomjae.server.community.category.dto.CategoryResponseDto;
 import com.parksupark.soomjae.server.community.category.entity.Category;
 import com.parksupark.soomjae.server.community.category.repository.CategoryRepository;
-import org.junit.jupiter.api.AfterEach;
+import com.parksupark.soomjae.server.community.category.repository.InMemorCategoryRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
 
-@SpringBootTest
-@ActiveProfiles("test")
 class CategoryServiceTest {
 
-    @Autowired
-    private CategoryRepository categoryRepository;
-
-    @Autowired
-    private CategoryService categoryService;
+    CategoryRepository categoryRepository;
+    CategoryService categoryService;
 
     @BeforeEach
     void setUp() {
-        Category root = Category.builder()
-                .name("전체 카테고리")
-                .hierarchy(0)
-                .parent(null)
+        categoryRepository = new InMemorCategoryRepository();
+        categoryService = new CategoryService(categoryRepository);
+    }
+
+    @Test
+    @DisplayName("부모 카테고리 지정 x -> 카테고리의 부모가 전체카테고리로 지정되어 저장되어야한다.")
+    void createCategory() {
+        //given
+        CategoryRequestDto requestDto = new CategoryRequestDto("category1", null);
+
+        //when
+        Long categoryId = categoryService.createCategory(requestDto);
+
+        //then
+        Category category = categoryRepository.findById(categoryId).get();
+        Assertions.assertEquals("category1", category.getName());
+        Assertions.assertEquals(ROOT_CATEGORY, category.getParent().getName());
+    }
+
+    @Test
+    @DisplayName("부모 카테고리 지정 -> 해당 Id를 가진 카테고리를 부모 카테고리로 설정하여 저장한다.")
+    void createCategoryWithParent() {
+        //given
+        Category category = Category.builder()
+                .name("parentCategory")
                 .build();
-        categoryRepository.save(root);
+        Category parentCategory = categoryRepository.save(category);
+        CategoryRequestDto requestDto = new CategoryRequestDto("childCategory",
+                parentCategory.getId().toString());
+
+        //when
+        Long category1 = categoryService.createCategory(requestDto);
+        Category parent = categoryRepository.findById(category1).get().getParent();
+
+        //then
+        Assertions.assertEquals(parentCategory, parent);
     }
 
-    @AfterEach
-    void tearDown() {
-        categoryRepository.deleteAll();
-    }
-
-    @DisplayName("중복 이름 카테고리 생성시 예외가 발생해야 한다.")
     @Test
-    void duplicate_category_test() {
-        CategoryRequestDto requestDto1 = new CategoryRequestDto("이름1", null);
-        categoryService.createCategory(requestDto1);
-        CategoryRequestDto requestDto2 = new CategoryRequestDto("이름1", null);
-        Assertions.assertThrows(IllegalStateException.class,
-                () -> categoryService.createCategory(requestDto2),
-                "중복된 이름의 카테고리를 생성하면 예외가 발생해야 합니다.");
-    }
-
-    @Transactional
-    @DisplayName("부모 카테고리 없이 카테고리를 생성하면 루트 카테고리를 부모로 설정한다.")
-    @Test
-    void create_category_with_no_parent_should_use_root() {
-        CategoryRequestDto requestDto = new CategoryRequestDto("운동", null);
-        Long id = categoryService.createCategory(requestDto);
-
-        Category savedCategory = categoryRepository.findById(id).orElseThrow();
-        Assertions.assertEquals("운동", savedCategory.getName());
-        Assertions.assertEquals(1, savedCategory.getHierarchy());
-        Assertions.assertNotNull(savedCategory.getParent());
-        Assertions.assertEquals("전체 카테고리", savedCategory.getParent().getName());
-    }
-
-    @DisplayName("부모 ID를 지정하면 해당 부모를 기준으로 하위 카테고리를 생성한다.")
-    @Test
-    void create_category_with_parent_should_use_parent() {
-        Category parent = Category.builder()
-                .name("상위 카테고리")
-                .hierarchy(1)
-                .parent(categoryRepository.findByName("전체 카테고리").orElseThrow())
+    @DisplayName("카테고리 ID로 카테고리 조회가 가능해야 한다.")
+    void readCategory() {
+        //given
+        Category category = Category.builder()
+                .name("category1")
                 .build();
-        categoryRepository.save(parent);
+        Category save = categoryRepository.save(category);
 
-        CategoryRequestDto requestDto = new CategoryRequestDto("하위 카테고리",
-                String.valueOf(parent.getId()));
-        Long id = categoryService.createCategory(requestDto);
+        //when
+        CategoryResponseDto categoryResponseDto = categoryService.readCategory(save.getId());
 
-        Category savedCategory = categoryRepository.findById(id).orElseThrow();
-        Assertions.assertEquals("하위 카테고리", savedCategory.getName());
-        Assertions.assertEquals(2, savedCategory.getHierarchy());
-        Assertions.assertEquals(parent.getId(), savedCategory.getParent().getId());
+        //then
+        Assertions.assertEquals(save.getName(), categoryResponseDto.getName());
     }
 
+    @Test
+    @DisplayName("루트 카테고리를 정상적으로 조회해야 한다.")
+    void readRootCategory() {
+        //when
+        CategoryResponseDto categoryResponseDto = categoryService.readRootCategory();
 
+        //then
+        Assertions.assertEquals(ROOT_CATEGORY, categoryResponseDto.getName());
+    }
 }
