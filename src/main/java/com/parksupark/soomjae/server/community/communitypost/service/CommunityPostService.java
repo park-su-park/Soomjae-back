@@ -35,12 +35,12 @@ public class CommunityPostService {
     public Long create(
             CommunityPostRequest communityPostRequest, UsernamePasswordUserDetails userDetails) {
         Member member = userDetails.getMember();
-      
+
         Category category = null;
         if (communityPostRequest.getCategory() != null) {
-         category = categoryRepository.findById(
-                        Long.parseLong(communityPostRequest.getCategory()))
-                .orElseThrow(() -> new IllegalStateException(CATEGORY_NOT_FOUND));
+            category = categoryRepository.findById(
+                            Long.parseLong(communityPostRequest.getCategory()))
+                    .orElseThrow(() -> new IllegalStateException(CATEGORY_NOT_FOUND));
         }
         Location location = null;
         if (communityPostRequest.getLocation() != null) {
@@ -90,8 +90,8 @@ public class CommunityPostService {
         Category category = null;
         if (communityPostRequest.getCategory() != null) {
             category = categoryRepository.findById(
-                        Long.parseLong(communityPostRequest.getCategory()))
-                .orElseThrow(() -> new IllegalStateException(CATEGORY_NOT_FOUND));
+                            Long.parseLong(communityPostRequest.getCategory()))
+                    .orElseThrow(() -> new IllegalStateException(CATEGORY_NOT_FOUND));
         }
         Location location = null;
         if (communityPostRequest.getLocation() != null) {
