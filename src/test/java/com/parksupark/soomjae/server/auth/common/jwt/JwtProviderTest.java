@@ -47,14 +47,15 @@ class JwtProviderTest {
 
     @Test
     void getAuthentication_withValidToken_shouldReturnAuthentication() throws Exception {
-        final String username = "test username";
+        final String username = "testusername";
+        final String nickname = "testnickname";
 
         JwtProvider jwtProvider = JwtTestHelper.getDefaultFwtProvider(userDetailsService);
 
         String token = jwtProvider.generateToken(username, claimsWithRole);
 
         UsernamePasswordUserDetails userDetails = new UsernamePasswordUserDetails(
-            Member.create(username, "password"));
+            Member.create(username, "password", nickname));
         when(userDetailsService.loadUserByUsername(username)).thenReturn(userDetails);
 
         Authentication authentication = jwtProvider.getAuthentication(token);

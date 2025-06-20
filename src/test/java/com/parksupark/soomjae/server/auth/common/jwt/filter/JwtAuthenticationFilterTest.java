@@ -51,8 +51,9 @@ class JwtAuthenticationFilterTest {
 
     @Test
     void validateTokenRequest_shouldSetSecurityContext() throws Exception {
+        final String nickname = "nickname";
         final String username = "username";
-        final Member member = Member.create(username, "password");
+        final Member member = Member.create(username, "password", nickname);
         final UsernamePasswordUserDetails userDetails = new UsernamePasswordUserDetails(
             member);
 
