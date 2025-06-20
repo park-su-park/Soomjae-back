@@ -57,8 +57,9 @@ class CategoryIntergrationTest {
 
         String username = "testuser";
         String password = "testpssword";
+        String nickname = "testnickname";
 
-        memberRepository.save(Member.create(username, passwordEncoder.encode(password)));
+        memberRepository.save(Member.create(username, passwordEncoder.encode(password),nickname));
 
         UsernamePasswordLoginRequest loginRequest = new UsernamePasswordLoginRequest(username,
                 password);
