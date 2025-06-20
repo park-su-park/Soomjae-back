@@ -41,10 +41,10 @@ public class CommunityPostResponse {
         Member author = communityPost.getMember();
 
         CommunityPostResponse communityPostResponse = new CommunityPostResponse(
-                communityPost.getId(), communityPost.getTitle(),
-                communityPost.getContent(), 
-                new MemberResponse(author.getId(), author.getEmail(),author.getNickname()),
-                communityPost.getCreatedTime());
+            communityPost.getId(), communityPost.getTitle(),
+            communityPost.getContent(),
+            new MemberResponse(author.getId(), author.getEmail(), author.getNickname()),
+            communityPost.getCreatedTime());
 
 
         Category category = communityPost.getCategory();

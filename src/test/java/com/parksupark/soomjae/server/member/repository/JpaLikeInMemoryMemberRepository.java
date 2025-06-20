@@ -160,8 +160,8 @@ public class JpaLikeInMemoryMemberRepository implements MemberRepository {
     public boolean existsByNickname(String nickname) {
         // 영속성 컨텍스트와 저장소 모두 확인
         return persistenceContext.values().stream()
-            .anyMatch(member -> nickname.equals(member.getNickname())) ||
-            persistentStore.values().stream()
+            .anyMatch(member -> nickname.equals(member.getNickname()))
+            || persistentStore.values().stream()
                 .anyMatch(member -> nickname.equals(member.getNickname()));
     }
 
@@ -207,7 +207,7 @@ public class JpaLikeInMemoryMemberRepository implements MemberRepository {
         String[] fieldsToCheck = {"email", "nickname", "password"};
 
         // 리플렉션을 통한 더티 체킹
-        try{
+        try {
             for (String fieldName : fieldsToCheck) {
                 Field field = Member.class.getDeclaredField(fieldName);
                 field.setAccessible(true);
@@ -221,17 +221,17 @@ public class JpaLikeInMemoryMemberRepository implements MemberRepository {
             }
             return false;
         } catch (Exception e) {
-            throw new RuntimeException("dirty checking failed",e);
+            throw new RuntimeException("dirty checking failed", e);
         }
     }
 
     private void setIdByReflection(Member member, long newId) {
-        try{
+        try {
             Field idField = Member.class.getDeclaredField("id");
             idField.setAccessible(true);
             idField.set(member, newId);
         } catch (NoSuchFieldException | IllegalAccessException e) {
-            throw new RuntimeException("failed to set member id",e);
+            throw new RuntimeException("failed to set member id", e);
         }
     }
 

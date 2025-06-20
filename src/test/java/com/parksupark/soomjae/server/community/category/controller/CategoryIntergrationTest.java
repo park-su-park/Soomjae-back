@@ -59,7 +59,7 @@ class CategoryIntergrationTest {
         String password = "testpssword";
         String nickname = "testnickname";
 
-        memberRepository.save(Member.create(username, passwordEncoder.encode(password),nickname));
+        memberRepository.save(Member.create(username, passwordEncoder.encode(password), nickname));
 
         UsernamePasswordLoginRequest loginRequest = new UsernamePasswordLoginRequest(username,
                 password);
