@@ -36,4 +36,11 @@ public class Category {
     private Category parent;
 
     private int hierarchy;
+
+    public Category(Long id, String name, Category parent, int hierarchy) {
+        this.id = id;
+        this.name = name;
+        this.parent = parent;
+        this.hierarchy = hierarchy;
+    }
 }
