@@ -15,7 +15,7 @@ import com.parksupark.soomjae.server.community.like.service.validator.PostValida
 import com.parksupark.soomjae.server.community.like.service.validator.PostValidatorFactory;
 import com.parksupark.soomjae.server.community.like.service.validator.StubPostValidatorFactory;
 import com.parksupark.soomjae.server.member.entity.Member;
-import com.parksupark.soomjae.server.member.repository.InMemoryMemberRepository;
+import com.parksupark.soomjae.server.member.repository.JpaLikeInMemoryMemberRepository;
 import com.parksupark.soomjae.server.member.repository.MemberRepository;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,7 +26,7 @@ class DefaultLikeServiceTest {
 
     private LikeService likeService;
     private final LikeRepository likeRepository = new InMemoryLikeRepository();
-    private final MemberRepository memberRepository = new InMemoryMemberRepository();
+    private final MemberRepository memberRepository = new JpaLikeInMemoryMemberRepository();
     private final String postType = "community";
     private final Long postId = 1L;
     private UsernamePasswordUserDetails userDetails;
@@ -34,9 +34,9 @@ class DefaultLikeServiceTest {
     @BeforeEach
     void setUp() {
         ((InMemoryLikeRepository) likeRepository).clear();
-        ((InMemoryMemberRepository) memberRepository).clear();
+        ((JpaLikeInMemoryMemberRepository) memberRepository).clear();
 
-        Member member = memberRepository.save(Member.create("test@gmail.com", "test"));
+        Member member = memberRepository.save(Member.create("test@gmail.com", "test", "test"));
         this.userDetails = new UsernamePasswordUserDetails(member);
 
         Map<String, PostValidator> validatorMap = new HashMap<>();
