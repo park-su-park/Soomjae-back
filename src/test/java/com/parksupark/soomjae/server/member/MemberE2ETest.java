@@ -111,14 +111,14 @@ class MemberE2ETest {
 
     /**
      * [주의] 멀티스레드 동시성 테스트 - Transaction 격리 문제
-     * <p>
-     * 작업스레드에서 생성된 Member 데이터가 실제 DB에 커밋되어
+     *
+     * <p>작업스레드에서 생성된 Member 데이터가 실제 DB에 커밋되어
      * 다른 테스트에 영향을 미칠 수 있음
-     * <p>
-     * <b>원인:</b> Spring의 ThreadLocal 기반 Transaction 격리<br>
+     *
+     * <p><b>원인:</b> Spring의 ThreadLocal 기반 Transaction 격리<br>
      * - 작업스레드 → 메인 Transaction 접근 불가 → 새로운 Transaction 생성 → 즉시 커밋
-     * <p>
-     * <b>TODO:</b> 고유한 테스트 데이터 사용하거나 별도 클래스로 분리 필요
+     *
+     * <p><b>TODO:</b> 고유한 테스트 데이터 사용하거나 별도 클래스로 분리 필요
      */
     @Test
     @DisplayName("중복된 email로 Member 생성 요청이 동시에 들어왔을때 둘중 하나는 DataIntegrityViolationException 던짐")
