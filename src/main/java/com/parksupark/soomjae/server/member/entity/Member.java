@@ -1,5 +1,6 @@
 package com.parksupark.soomjae.server.member.entity;
 
+import com.parksupark.soomjae.server.common.entity.BaseEntity;
 import com.parksupark.soomjae.server.member.Role;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -15,7 +16,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "member")
 @Getter
 @NoArgsConstructor
-public class Member {
+public class Member extends BaseEntity {
 
     @Id
     @Column(name = "member_id")
