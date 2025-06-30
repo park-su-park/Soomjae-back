@@ -11,6 +11,9 @@ public class ErrorMessages {
     public static final String DATA_INTEGRITY_VIOLATION_EXCEPTION_MESSAGE = "엔티티 레벨 unique 검증 실패";
 
 
+    public static final String VALIDATION_FAILED_MESSAGE = "요청 바디 값 검증에 실패했습니다.";
+
+
     private ErrorMessages() {
     }
 }
