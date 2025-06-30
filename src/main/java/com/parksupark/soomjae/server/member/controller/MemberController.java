@@ -6,6 +6,7 @@ import com.parksupark.soomjae.server.member.dto.MemberResponse;
 import com.parksupark.soomjae.server.member.dto.PatchEmailRequest;
 import com.parksupark.soomjae.server.member.dto.PatchNicknameRequest;
 import com.parksupark.soomjae.server.member.service.MemberService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -27,7 +28,7 @@ public class MemberController {
 
     @PostMapping("/create-member")
     public ResponseEntity<MemberResponse> postMember(
-        @RequestBody CreateMemberRequest request) {
+        @RequestBody @Valid CreateMemberRequest request) {
         MemberResponse response = memberService.createMember(request);
         return ResponseEntity.ok(response);
     }
@@ -54,7 +55,7 @@ public class MemberController {
     @PreAuthorize(value = "isAuthenticated()")
     public ResponseEntity<MemberResponse> patchMemberEmail(
         @AuthenticationPrincipal UsernamePasswordUserDetails userDetails,
-        @RequestBody PatchEmailRequest request
+        @RequestBody @Valid PatchEmailRequest request
     ) {
         String email = request.getEmail();
         Long memberId = userDetails.getMember().getId();
@@ -70,7 +71,7 @@ public class MemberController {
     @PreAuthorize(value = "isAuthenticated()")
     public ResponseEntity<MemberResponse> patchMemberNickname(
         @AuthenticationPrincipal UsernamePasswordUserDetails userDetails,
-        @RequestBody PatchNicknameRequest request
+        @RequestBody @Valid PatchNicknameRequest request
     ) {
         Long memberId = userDetails.getMember().getId();
         String nickname = request.getNickname();

@@ -26,10 +26,11 @@ public class DefaultMemberService implements MemberService {
     @Override
     public MemberResponse createMember(CreateMemberRequest request) {
         final String email = request.getEmail();
-        final String encodedPassword = passwordEncoder.encode(request.getPassword());
-        final String nickname = request.getNickname();
 
         checkDuplicateEmail(email);
+
+        final String encodedPassword = passwordEncoder.encode(request.getPassword());
+        final String nickname = request.getNickname();
 
         Member member = Member.create(email, encodedPassword, nickname);
         memberRepository.save(member);

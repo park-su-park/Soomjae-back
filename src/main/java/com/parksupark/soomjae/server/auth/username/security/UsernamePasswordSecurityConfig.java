@@ -58,7 +58,7 @@ public class UsernamePasswordSecurityConfig {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/login", "/v1/create-member").permitAll()
+                        .requestMatchers("/auth/login", "/v1/members/create-member").permitAll()
                         .anyRequest().permitAll()
                 )
 
