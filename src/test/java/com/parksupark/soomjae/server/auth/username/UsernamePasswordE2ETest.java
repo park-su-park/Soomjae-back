@@ -16,7 +16,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.annotation.Rollback;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,7 +38,6 @@ import org.springframework.transaction.annotation.Transactional;
  *
  * @BeforeEach 단계에서 사용자 정보를 사전 등록한 뒤 인증을 수행한다.</p>
  */
-@ActiveProfiles("test")
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
@@ -59,11 +57,12 @@ class UsernamePasswordE2ETest {
     private PasswordEncoder passwordEncoder;
 
     private final String username = "testuser";
-    private final String password = "testpssword";
+    private final String password = "testpassword";
+    private final String nickname = "testnickname";
 
     @BeforeEach
     void setUp() {
-        memberRepository.save(Member.create(username, passwordEncoder.encode(password)));
+        memberRepository.save(Member.create(username, passwordEncoder.encode(password), nickname));
     }
 
 

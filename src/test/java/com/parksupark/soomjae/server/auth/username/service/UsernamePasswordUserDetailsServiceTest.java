@@ -28,10 +28,11 @@ class UsernamePasswordUserDetailsServiceTest {
 
     @Test
     void loadUserByUsername_withValidEmail_returnsCorrectUserDetails() {
-        final String password = "testPassword";
+        final String password = "testpassword";
+        final String nickname = "testnickname";
 
         // given
-        Member member = Member.create(email, password);
+        Member member = Member.create(email, password, nickname);
         when(memberRepository.findByEmail(email))
             .thenReturn(Optional.of(member));
 

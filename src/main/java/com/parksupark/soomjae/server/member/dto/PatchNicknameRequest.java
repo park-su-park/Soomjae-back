@@ -5,20 +5,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 
 @Getter
-public class CreateMemberRequest {
+public class PatchNicknameRequest {
 
-    private final String email;
-    private final String password;
     private final String nickname;
 
     @JsonCreator
-    public CreateMemberRequest(
-        @JsonProperty("email") String email,
-        @JsonProperty("password") String password,
+    public PatchNicknameRequest(
         @JsonProperty("nickname") String nickname
     ) {
-        this.email = email;
-        this.password = password;
         this.nickname = nickname;
     }
 }

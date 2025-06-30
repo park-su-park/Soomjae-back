@@ -6,6 +6,10 @@ public class ErrorMessages {
     public static final String INVALID_POST_ID_EXCEPTION_MESSAGE = "잘못된 postId 입니다: ";
     public static final String LIKE_NOT_FOUND_EXCEPTION_MESSAGE = "좋아요를 찾을 수 없습니다.";
     public static final String ALREADY_LIKED_EXCEPTION_MESSAGE = "이미 좋아요를 누른 게시글입니다.";
+    public static final String MEMBER_NOT_FOUND_EXCEPTION_MESSAGE = "사용자를 찾을 수 없습니다.";
+    public static final String DUPLICATE_EMAIL_EXCEPTION_MESSAGE = "이미 사용중인 email 입니다.";
+    public static final String DATA_INTEGRITY_VIOLATION_EXCEPTION_MESSAGE = "엔티티 레벨 unique 검증 실패";
+
 
     private ErrorMessages() {
     }

@@ -4,6 +4,7 @@ import com.parksupark.soomjae.server.community.category.entity.Category;
 import com.parksupark.soomjae.server.community.communitypost.entity.CommunityPost;
 import com.parksupark.soomjae.server.community.location.entity.Location;
 import com.parksupark.soomjae.server.member.dto.MemberResponse;
+import com.parksupark.soomjae.server.member.entity.Member;
 import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.Setter;
@@ -37,10 +38,14 @@ public class CommunityPostResponse {
     }
 
     public static CommunityPostResponse of(CommunityPost communityPost) {
+        Member author = communityPost.getMember();
+
         CommunityPostResponse communityPostResponse = new CommunityPostResponse(
-                communityPost.getId(), communityPost.getTitle(),
-                communityPost.getContent(), MemberResponse.of(communityPost.getMember()),
-                communityPost.getCreatedTime());
+            communityPost.getId(), communityPost.getTitle(),
+            communityPost.getContent(),
+            new MemberResponse(author.getId(), author.getEmail(), author.getNickname()),
+            communityPost.getCreatedTime());
+
 
         Category category = communityPost.getCategory();
         if (category != null) {
