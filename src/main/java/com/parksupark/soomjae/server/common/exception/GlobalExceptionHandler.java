@@ -1,13 +1,18 @@
 package com.parksupark.soomjae.server.common.exception;
 
+import com.parksupark.soomjae.server.common.dto.ValidationErrorDetail;
+import com.parksupark.soomjae.server.common.dto.ValidationErrorResponse;
 import com.parksupark.soomjae.server.community.common.exception.AlreadyLikedException;
 import com.parksupark.soomjae.server.community.common.exception.InvalidPostIdException;
 import com.parksupark.soomjae.server.community.common.exception.InvalidPostTypeException;
 import com.parksupark.soomjae.server.community.common.exception.LikeNotFoundException;
 import com.parksupark.soomjae.server.member.exception.DuplicateEmailException;
 import com.parksupark.soomjae.server.member.exception.MemberNotFoundException;
+import java.util.List;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -36,5 +41,24 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(400)
             .body(ErrorMessages.DATA_INTEGRITY_VIOLATION_EXCEPTION_MESSAGE);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ValidationErrorResponse> handleValidationException(
+        MethodArgumentNotValidException e) {
+
+        List<FieldError> fieldErrors = e.getBindingResult().getFieldErrors();
+        List<ValidationErrorDetail> errors = fieldErrors.stream()
+            .map(error -> new ValidationErrorDetail(
+                error.getField(),
+                error.getRejectedValue(),
+                error.getDefaultMessage()
+            ))
+            .toList();
+
+        ValidationErrorResponse errorResponse = new ValidationErrorResponse(
+            ErrorMessages.VALIDATION_FAILED_MESSAGE, errors);
+
+        return ResponseEntity.status(400).body(errorResponse);
     }
 }
