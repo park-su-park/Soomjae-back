@@ -11,7 +11,9 @@ public class MemberResponse {
     private final Instant createdTime;
     private final Instant modifiedTime;
 
-    public MemberResponse(Long memberId, String email, String nickname, Instant createdTime, Instant modifiedTime) {
+    public MemberResponse(Long memberId, String email, String nickname,
+                          Instant createdTime, Instant modifiedTime) {
+        
         this.memberId = memberId;
         this.email = email;
         this.nickname = nickname;
