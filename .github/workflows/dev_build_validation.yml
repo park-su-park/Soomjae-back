@@ -40,7 +40,9 @@ jobs:
 
       # 4. Gradle 빌드 실행
       - name: Build with Gradle
-        run: ./gradlew build -x test
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: ./gradlew build -x test sonar --info
 
       # CI 실패 시 디스코드 알림
       - name: Notify Failure on Discord
