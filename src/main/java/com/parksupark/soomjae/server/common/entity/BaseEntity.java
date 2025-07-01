@@ -3,7 +3,7 @@ package com.parksupark.soomjae.server.common.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -16,15 +16,15 @@ public abstract class BaseEntity {
 
     @CreatedDate
     @Column(updatable = false)
-    private LocalDateTime createdTime;
+    private Instant createdTime;
 
     @LastModifiedDate
-    private LocalDateTime modifiedTime;
+    private Instant modifiedTime;
 
-    private LocalDateTime deletedTime;
+    private Instant deletedTime;
 
     public void markDeleted() {
-        this.deletedTime = LocalDateTime.now();
+        this.deletedTime = Instant.now();
     }
     // getter 생략 가능 (필요시 추가)
 }
