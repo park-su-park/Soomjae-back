@@ -11,10 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.parksupark.soomjae.server.auth.common.jwt.JwtGenerator;
-import com.parksupark.soomjae.server.member.dto.CreateMemberRequest;
-import com.parksupark.soomjae.server.member.dto.MemberResponse;
-import com.parksupark.soomjae.server.member.dto.PatchEmailRequest;
-import com.parksupark.soomjae.server.member.dto.PatchNicknameRequest;
+import com.parksupark.soomjae.server.member.dto.*;
 import com.parksupark.soomjae.server.member.entity.Member;
 import com.parksupark.soomjae.server.member.exception.DuplicateEmailException;
 import com.parksupark.soomjae.server.member.exception.MemberNotFoundException;
@@ -65,6 +62,7 @@ class MemberE2ETest {
     private static final String GET_MEMBER_INFO_URI = "/v1/members/{memberId}";
     private static final String PATCH_MEMBER_EMAIL_URI = "/v1/members/me/update-email";
     private static final String PATCH_MEMBER_NICKNAME_URI = "/v1/members/me/update-nickname";
+    private static final String CHECK_DUPLICATE_EMAIL_URI = "/v1/members/check-duplicate-email";
 
     // === HTTP 헤더 상수
     private static final String HEADER_AUTHORIZATION = "Authorization";
@@ -281,7 +279,7 @@ class MemberE2ETest {
         // 요청 바디 생성
         final String newNickname = "newnickname";
         PatchNicknameRequest patchNicknameRequest = new PatchNicknameRequest(newNickname);
-        
+
         // when + then
         mockMvc.perform(patch(PATCH_MEMBER_NICKNAME_URI)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -291,6 +289,42 @@ class MemberE2ETest {
             .andDo(print())
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.nickname").value(newNickname));
+    }
+
+    @Test
+    @DisplayName("중복된 이메일로 isDuplicateEmail 호출시 true 반환")
+    void isDuplicateEmailWithExistsEmail_shouldReturnTrue() throws Exception {
+        // given
+        saveMember();
+
+        // 요청 바디 생성
+        CheckDuplicateEmailRequest request = new CheckDuplicateEmailRequest(email);
+
+        // when + then
+        mockMvc.perform(post(CHECK_DUPLICATE_EMAIL_URI)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.duplicate").value(true));
+    }
+
+    @Test
+    @DisplayName("중복되지 않은 이메일로 isDuplicateEmail 호출시 false 반환")
+    void isDuplicateEmailWithNonExistsEmail_shouldReturnFalse() throws Exception {
+        // given
+        saveMember();
+
+        // 요청 바디 생성
+        CheckDuplicateEmailRequest request = new CheckDuplicateEmailRequest("newEmail@example.com");
+
+        // when + then
+        mockMvc.perform(post(CHECK_DUPLICATE_EMAIL_URI)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.duplicate").value(false));
     }
 
     private String createJwt(Member member) {
