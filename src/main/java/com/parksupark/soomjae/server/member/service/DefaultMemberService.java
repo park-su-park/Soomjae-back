@@ -1,6 +1,7 @@
 package com.parksupark.soomjae.server.member.service;
 
 import com.parksupark.soomjae.server.common.exception.ErrorMessages;
+import com.parksupark.soomjae.server.member.dto.CheckDuplicateEmailResponse;
 import com.parksupark.soomjae.server.member.dto.CreateMemberRequest;
 import com.parksupark.soomjae.server.member.dto.MemberResponse;
 import com.parksupark.soomjae.server.member.entity.Member;
@@ -81,10 +82,16 @@ public class DefaultMemberService implements MemberService {
         return createMemberResponse(member);
     }
 
+    @Transactional(readOnly = true)
+    @Override
+    public CheckDuplicateEmailResponse isDuplicateEmail(String email) {
+        return new CheckDuplicateEmailResponse(memberRepository.existsByEmail(email));
+    }
+
     private Member findMemberById(Long id) {
         return memberRepository.findById(id)
-            .orElseThrow(() -> new MemberNotFoundException(
-                ErrorMessages.MEMBER_NOT_FOUND_EXCEPTION_MESSAGE));
+                .orElseThrow(() -> new MemberNotFoundException(
+                        ErrorMessages.MEMBER_NOT_FOUND_EXCEPTION_MESSAGE));
     }
 
     private MemberResponse createMemberResponse(Member member) {
