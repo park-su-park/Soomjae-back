@@ -1,12 +1,13 @@
 package com.parksupark.soomjae.server.community.category.service;
 
 import static com.parksupark.soomjae.server.community.category.constant.CategoryConstant.ROOT_CATEGORY;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.parksupark.soomjae.server.community.category.dto.CategoryRequestDto;
 import com.parksupark.soomjae.server.community.category.dto.CategoryResponseDto;
 import com.parksupark.soomjae.server.community.category.entity.Category;
 import com.parksupark.soomjae.server.community.category.repository.CategoryRepository;
-import com.parksupark.soomjae.server.community.category.repository.InMemorCategoryRepository;
+import com.parksupark.soomjae.server.community.category.repository.InMemoryCategoryRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -19,8 +20,10 @@ class CategoryServiceTest {
 
     @BeforeEach
     void setUp() {
-        categoryRepository = new InMemorCategoryRepository();
+        categoryRepository = new InMemoryCategoryRepository();
         categoryService = new CategoryService(categoryRepository);
+
+        categoryService.createCategory(new CategoryRequestDto("중복이름", null));
     }
 
     @Test
@@ -81,5 +84,17 @@ class CategoryServiceTest {
 
         //then
         Assertions.assertEquals(ROOT_CATEGORY, categoryResponseDto.getName());
+    }
+
+    @Test
+    @DisplayName("중복이름 카테고리 저장시 에러가 발생해야 한다.")
+    void validDuplicateName() {
+        // given
+        CategoryRequestDto duplicateRequest = new CategoryRequestDto("중복이름", null);
+
+        // when & then
+        assertThrows(IllegalStateException.class, () -> {
+            categoryService.createCategory(duplicateRequest);
+        });
     }
 }
