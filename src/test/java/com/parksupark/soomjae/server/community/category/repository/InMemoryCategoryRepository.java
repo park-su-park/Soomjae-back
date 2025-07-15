@@ -7,12 +7,12 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
-public class InMemorCategoryRepository implements CategoryRepository {
+public class InMemoryCategoryRepository implements CategoryRepository {
 
     private final Map<Long, Category> store = new ConcurrentHashMap<>();
     private final AtomicLong sequence = new AtomicLong(1);
 
-    public InMemorCategoryRepository() {
+    public InMemoryCategoryRepository() {
         Category root = Category.builder()
                 .name("전체 카테고리")
                 .parent(null)
@@ -22,7 +22,7 @@ public class InMemorCategoryRepository implements CategoryRepository {
         sequence.set(2); // ID 1L already used
         store.put(root.getId(), root);
     }
-    
+
 
     @Override
     public Optional<Category> findById(Long id) {
