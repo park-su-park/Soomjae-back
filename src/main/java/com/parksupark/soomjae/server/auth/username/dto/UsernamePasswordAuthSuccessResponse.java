@@ -6,7 +6,7 @@ import lombok.Getter;
 public class UsernamePasswordAuthSuccessResponse {
 
     private final String accessToken;
-    private final String tokenType = "Bearer";
+    private static final String TOKEN_TYPE = "Bearer";
     private final Long memberId;
 
     public UsernamePasswordAuthSuccessResponse(String accessToken, Long memberId) {
