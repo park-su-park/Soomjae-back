@@ -28,7 +28,7 @@ public class DefaultMemberService implements MemberService {
     public MemberResponse createMember(CreateMemberRequest request) {
         final String email = request.getEmail();
 
-        checkDuplicateEmail(email);
+        validateEmailUniqueness(email);
 
         final String encodedPassword = passwordEncoder.encode(request.getPassword());
         final String nickname = request.getNickname();
@@ -54,7 +54,7 @@ public class DefaultMemberService implements MemberService {
 
         Member member = findMemberById(id);
 
-        checkDuplicateEmail(email);
+        validateEmailUniqueness(email);
 
         member.updateEmail(email);
         return createMemberResponse(member);
@@ -84,7 +84,7 @@ public class DefaultMemberService implements MemberService {
 
     @Transactional(readOnly = true)
     @Override
-    public CheckDuplicateEmailResponse isDuplicateEmail(String email) {
+    public CheckDuplicateEmailResponse checkDuplicateEmail(String email) {
         return new CheckDuplicateEmailResponse(memberRepository.existsByEmail(email));
     }
 
@@ -101,7 +101,7 @@ public class DefaultMemberService implements MemberService {
 
 
     // 추후 중복 검사가 필요한 필드가 늘어날 경우 확장해야함
-    private void checkDuplicateEmail(String email) {
+    private void validateEmailUniqueness(String email) {
         if (memberRepository.existsByEmail(email)) {
             throw new DuplicateEmailException(ErrorMessages.DUPLICATE_EMAIL_EXCEPTION_MESSAGE);
         }

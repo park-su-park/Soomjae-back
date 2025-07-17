@@ -32,7 +32,7 @@ public class NoOpMemberService implements MemberService {
     }
 
     @Override
-    public CheckDuplicateEmailResponse isDuplicateEmail(String email) {
+    public CheckDuplicateEmailResponse checkDuplicateEmail(String email) {
         return null;
     }
 }

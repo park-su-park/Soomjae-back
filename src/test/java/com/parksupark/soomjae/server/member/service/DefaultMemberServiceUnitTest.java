@@ -145,12 +145,12 @@ class DefaultMemberServiceUnitTest {
 
     @Test
     @DisplayName("이미 가입된 이메일을 중복 검사하면 true를 반환한다")
-    void isDuplicateEmailWithExistsEmail_shouldReturnTrue() {
+    void checkDuplicateEmailWithExistsEmail_shouldReturnTrue() {
         // given
         saveMember();
 
         // when
-        CheckDuplicateEmailResponse response = memberService.isDuplicateEmail(email);
+        CheckDuplicateEmailResponse response = memberService.checkDuplicateEmail(email);
 
         // then
         assertThat(response.isDuplicate()).isTrue();
@@ -158,9 +158,9 @@ class DefaultMemberServiceUnitTest {
 
     @Test
     @DisplayName("이메일 중복 검사시 중복되지 않았다면 false를 반환한다")
-    void isDuplicateEmailWithNonExistsEmail_shouldReturnFalse() {
+    void checkDuplicateEmailWithNonExistsEmail_shouldReturnFalse() {
         // when
-        CheckDuplicateEmailResponse response = memberService.isDuplicateEmail(email);
+        CheckDuplicateEmailResponse response = memberService.checkDuplicateEmail(email);
 
         // then
         assertThat(response.isDuplicate()).isFalse();
