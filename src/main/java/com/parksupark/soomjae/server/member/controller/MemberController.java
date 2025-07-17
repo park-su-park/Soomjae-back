@@ -76,7 +76,7 @@ public class MemberController {
             @RequestBody @Valid CheckDuplicateEmailRequest request
     ) {
         String email = request.getEmail();
-        CheckDuplicateEmailResponse response = memberService.isDuplicateEmail(email);
+        CheckDuplicateEmailResponse response = memberService.checkDuplicateEmail(email);
 
         return ResponseEntity.ok(response);
     }
