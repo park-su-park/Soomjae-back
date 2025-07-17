@@ -1,7 +1,9 @@
 package com.parksupark.soomjae.server.member.service;
 
+import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.parksupark.soomjae.server.member.dto.CheckDuplicateEmailResponse;
 import com.parksupark.soomjae.server.member.dto.CreateMemberRequest;
 import com.parksupark.soomjae.server.member.dto.MemberResponse;
 import com.parksupark.soomjae.server.member.entity.Member;
@@ -10,6 +12,7 @@ import com.parksupark.soomjae.server.member.exception.MemberNotFoundException;
 import com.parksupark.soomjae.server.member.repository.JpaLikeInMemoryMemberRepository;
 import com.parksupark.soomjae.server.member.repository.MemberRepository;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -140,9 +143,32 @@ class DefaultMemberServiceUnitTest {
             () -> memberService.updatePassword(-1L, "dummy"));
     }
 
+    @Test
+    @DisplayName("이미 가입된 이메일을 중복 검사하면 true를 반환한다")
+    void checkDuplicateEmailWithExistsEmail_shouldReturnTrue() {
+        // given
+        saveMember();
+
+        // when
+        CheckDuplicateEmailResponse response = memberService.checkDuplicateEmail(email);
+
+        // then
+        assertThat(response.isDuplicate()).isTrue();
+    }
+
+    @Test
+    @DisplayName("이메일 중복 검사시 중복되지 않았다면 false를 반환한다")
+    void checkDuplicateEmailWithNonExistsEmail_shouldReturnFalse() {
+        // when
+        CheckDuplicateEmailResponse response = memberService.checkDuplicateEmail(email);
+
+        // then
+        assertThat(response.isDuplicate()).isFalse();
+    }
+
     private Member saveMember() {
         return memberRepository.save(
-            Member.create(email, passwordEncoder.encode(password), nickname));
+                Member.create(email, passwordEncoder.encode(password), nickname));
     }
 
 }

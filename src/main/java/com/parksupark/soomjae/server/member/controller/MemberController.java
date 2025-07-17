@@ -1,23 +1,14 @@
 package com.parksupark.soomjae.server.member.controller;
 
 import com.parksupark.soomjae.server.auth.username.dto.UsernamePasswordUserDetails;
-import com.parksupark.soomjae.server.member.dto.CreateMemberRequest;
-import com.parksupark.soomjae.server.member.dto.MemberResponse;
-import com.parksupark.soomjae.server.member.dto.PatchEmailRequest;
-import com.parksupark.soomjae.server.member.dto.PatchNicknameRequest;
+import com.parksupark.soomjae.server.member.dto.*;
 import com.parksupark.soomjae.server.member.service.MemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -29,6 +20,7 @@ public class MemberController {
     @PostMapping("/create-member")
     public ResponseEntity<MemberResponse> postMember(
         @RequestBody @Valid CreateMemberRequest request) {
+
         MemberResponse response = memberService.createMember(request);
         return ResponseEntity.ok(response);
     }
@@ -60,13 +52,12 @@ public class MemberController {
         String email = request.getEmail();
         Long memberId = userDetails.getMember().getId();
         MemberResponse memberResponse = memberService.updateEmail(memberId, email);
-
+        
         return ResponseEntity.ok(memberResponse);
     }
 
     // 비밀번호 변경은 현재 비밀번호 검증이 필요하므로 추후에 구현
     // nickname 중복 검증 필요?
-
     @PatchMapping("/me/update-nickname")
     @PreAuthorize(value = "isAuthenticated()")
     public ResponseEntity<MemberResponse> patchMemberNickname(
@@ -78,5 +69,15 @@ public class MemberController {
         MemberResponse memberResponse = memberService.updateNickname(memberId, nickname);
 
         return ResponseEntity.ok(memberResponse);
+    }
+
+    @PostMapping("/check-duplicate-email")
+    public ResponseEntity<CheckDuplicateEmailResponse> checkEmailAvailability(
+            @RequestBody @Valid CheckDuplicateEmailRequest request
+    ) {
+        String email = request.getEmail();
+        CheckDuplicateEmailResponse response = memberService.checkDuplicateEmail(email);
+
+        return ResponseEntity.ok(response);
     }
 }

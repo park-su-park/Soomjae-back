@@ -1,5 +1,6 @@
 package com.parksupark.soomjae.server.member.service;
 
+import com.parksupark.soomjae.server.member.dto.CheckDuplicateEmailResponse;
 import com.parksupark.soomjae.server.member.dto.CreateMemberRequest;
 import com.parksupark.soomjae.server.member.dto.MemberResponse;
 
@@ -27,6 +28,11 @@ public class NoOpMemberService implements MemberService {
 
     @Override
     public MemberResponse createMember(CreateMemberRequest request) {
+        return null;
+    }
+
+    @Override
+    public CheckDuplicateEmailResponse checkDuplicateEmail(String email) {
         return null;
     }
 }
