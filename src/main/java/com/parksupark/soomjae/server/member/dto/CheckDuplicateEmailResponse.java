@@ -7,7 +7,7 @@ public class CheckDuplicateEmailResponse {
 
     private final boolean duplicate;
 
-    public CheckDuplicateEmailResponse(boolean availability) {
-        this.duplicate = availability;
+    public CheckDuplicateEmailResponse(boolean duplicate) {
+        this.duplicate = duplicate;
     }
 }
