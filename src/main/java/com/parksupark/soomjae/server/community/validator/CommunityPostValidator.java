@@ -1,4 +1,4 @@
-package com.parksupark.soomjae.server.community.like.service.validator;
+package com.parksupark.soomjae.server.community.validator;
 
 import com.parksupark.soomjae.server.community.common.constant.PostConstant;
 import com.parksupark.soomjae.server.community.communitypost.repository.CommunityPostRepository;
