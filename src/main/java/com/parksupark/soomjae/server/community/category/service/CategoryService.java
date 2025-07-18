@@ -6,8 +6,8 @@ import static com.parksupark.soomjae.server.community.category.constant.Category
 import static com.parksupark.soomjae.server.community.category.constant.CategoryConstant.ROOT_CATEGORY;
 import static com.parksupark.soomjae.server.community.category.constant.CategoryConstant.ROOT_CATEGORY_NOT_FOUND;
 
-import com.parksupark.soomjae.server.community.category.dto.CategoryRequestDto;
-import com.parksupark.soomjae.server.community.category.dto.CategoryResponseDto;
+import com.parksupark.soomjae.server.community.category.dto.CategoryRequest;
+import com.parksupark.soomjae.server.community.category.dto.CategoryResponse;
 import com.parksupark.soomjae.server.community.category.entity.Category;
 import com.parksupark.soomjae.server.community.category.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,43 +22,43 @@ public class CategoryService {
     private final CategoryRepository categoryRepository;
 
     @Transactional
-    public Long createCategory(CategoryRequestDto categoryRequestDto) {
-        if (categoryRepository.findByName(categoryRequestDto.getName()).isPresent()) {
+    public Long createCategory(CategoryRequest categoryRequest) {
+        if (categoryRepository.findByName(categoryRequest.getName()).isPresent()) {
             throw new IllegalStateException(CATEGORY_NAME_DUPLICATE_ERROR);
         }
-        if (categoryRequestDto.getParentCategoryId() == null) {
+        if (categoryRequest.getParentCategoryId() == null) {
             Category rootCategory = categoryRepository.findByName(ROOT_CATEGORY)
                     .orElseThrow(() -> new IllegalStateException(ROOT_CATEGORY_NOT_FOUND));
             Category category = Category.builder()
-                    .name(categoryRequestDto.getName())
+                    .name(categoryRequest.getName())
                     .parent(rootCategory)
                     .hierarchy(1)
                     .build();
             return categoryRepository.save(category).getId();
         } else {
             Category parent = categoryRepository.findById(
-                            Long.parseLong(categoryRequestDto.getParentCategoryId()))
+                            Long.parseLong(categoryRequest.getParentCategoryId()))
                     .orElseThrow(() -> new IllegalStateException(PARENT_CATEGORY_NOT_FOUND));
 
             Category category = Category.builder()
                     .parent(parent)
-                    .name(categoryRequestDto.getName())
+                    .name(categoryRequest.getName())
                     .hierarchy(parent.getHierarchy() + 1)
                     .build();
             return categoryRepository.save(category).getId();
         }
     }
 
-    public CategoryResponseDto readCategory(Long id) {
+    public CategoryResponse readCategory(Long id) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new IllegalStateException(CATEGORY_NOT_FOUND));
-        return CategoryResponseDto.of(category);
+        return CategoryResponse.of(category);
     }
 
-    public CategoryResponseDto readRootCategory() {
+    public CategoryResponse readRootCategory() {
         Category category = categoryRepository.findByName(ROOT_CATEGORY)
                 .orElseThrow(() -> new IllegalStateException(ROOT_CATEGORY_NOT_FOUND));
-        return CategoryResponseDto.of(category);
+        return CategoryResponse.of(category);
     }
 
 }
