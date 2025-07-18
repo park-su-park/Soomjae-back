@@ -1,0 +1,14 @@
+package com.parksupark.soomjae.server.community.comment.dto;
+
+import java.util.List;
+import lombok.Getter;
+
+@Getter
+public class CommentListResponse {
+
+    private List<CommentResponse> comments;
+
+    public CommentListResponse(List<CommentResponse> comments) {
+        this.comments = comments;
+    }
+}
