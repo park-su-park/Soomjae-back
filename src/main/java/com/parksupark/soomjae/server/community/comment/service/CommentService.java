@@ -11,12 +11,14 @@ import com.parksupark.soomjae.server.community.common.exception.InvalidPostIdExc
 import com.parksupark.soomjae.server.community.validator.PostValidator;
 import com.parksupark.soomjae.server.community.validator.PostValidatorFactory;
 import com.parksupark.soomjae.server.member.entity.Member;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
 
 @Service
 @RequiredArgsConstructor
@@ -28,7 +30,7 @@ public class CommentService {
 
     @Transactional
     public CommentResponse create(CommentRequest request, String postType, Long postId,
-            UsernamePasswordUserDetails userDetails) {
+                                  UsernamePasswordUserDetails userDetails) {
         Member member = userDetails.getMember();
 
         validatePost(postType, postId);
@@ -46,13 +48,12 @@ public class CommentService {
     }
 
     public CommentListResponse readByPostTypeAndPostId(String postType, Long postId,
-            Pageable pageable) {
+                                                       Pageable pageable) {
         validatePost(postType, postId);
 
-        Page<Comment> byPostTypeAndPostId = commentRepository.findByPostTypeAndPostIdAndDeletedTimeIsNull(
-                postType,
-                postId, pageable);
-        
+        Page<Comment> byPostTypeAndPostId = commentRepository
+                .findByPostTypeAndPostIdAndDeletedTimeIsNull(postType, postId, pageable);
+
         List<CommentResponse> commentResponseList = byPostTypeAndPostId.get()
                 .map(CommentResponse::of)
                 .toList();

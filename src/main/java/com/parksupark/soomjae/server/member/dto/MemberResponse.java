@@ -5,6 +5,7 @@ import lombok.Getter;
 
 import java.time.Instant;
 
+
 @Getter
 public class MemberResponse {
     private final Long memberId;
