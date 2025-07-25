@@ -1,13 +1,9 @@
 package com.parksupark.soomjae.server.community.category.service;
 
-import com.parksupark.soomjae.server.community.category.dto.CategoryRequestDto;
+import com.parksupark.soomjae.server.community.category.dto.CategoryRequest;
 import com.parksupark.soomjae.server.community.category.entity.Category;
 import com.parksupark.soomjae.server.community.category.repository.CategoryRepository;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -41,9 +37,9 @@ class CategoryServiceTest {
     @DisplayName("중복 이름 카테고리 생성시 예외가 발생해야 한다.")
     @Test
     void duplicate_category_test() {
-        CategoryRequestDto requestDto1 = new CategoryRequestDto("이름1", null);
+        CategoryRequest requestDto1 = new CategoryRequest("이름1", null);
         categoryService.createCategory(requestDto1);
-        CategoryRequestDto requestDto2 = new CategoryRequestDto("이름1", null);
+        CategoryRequest requestDto2 = new CategoryRequest("이름1", null);
         Assertions.assertThrows(IllegalStateException.class,
                 () -> categoryService.createCategory(requestDto2),
                 "중복된 이름의 카테고리를 생성하면 예외가 발생해야 합니다.");
@@ -53,7 +49,7 @@ class CategoryServiceTest {
     @DisplayName("부모 카테고리 없이 카테고리를 생성하면 루트 카테고리를 부모로 설정한다.")
     @Test
     void create_category_with_no_parent_should_use_root() {
-        CategoryRequestDto requestDto = new CategoryRequestDto("운동", null);
+        CategoryRequest requestDto = new CategoryRequest("운동", null);
         Long id = categoryService.createCategory(requestDto);
 
         Category savedCategory = categoryRepository.findById(id).orElseThrow();
@@ -73,7 +69,7 @@ class CategoryServiceTest {
                 .build();
         categoryRepository.save(parent);
 
-        CategoryRequestDto requestDto = new CategoryRequestDto("하위 카테고리",
+        CategoryRequest requestDto = new CategoryRequest("하위 카테고리",
                 String.valueOf(parent.getId()));
         Long id = categoryService.createCategory(requestDto);
 
