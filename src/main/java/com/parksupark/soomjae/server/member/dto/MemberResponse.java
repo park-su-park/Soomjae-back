@@ -1,7 +1,9 @@
 package com.parksupark.soomjae.server.member.dto;
 
-import java.time.Instant;
+import com.parksupark.soomjae.server.member.entity.Member;
 import lombok.Getter;
+
+import java.time.Instant;
 
 @Getter
 public class MemberResponse {
@@ -22,7 +24,8 @@ public class MemberResponse {
     }
 
     public static MemberResponse of(Member member) {
-        return new MemberResponse(member.getId(), member.getEmail());
+        return new MemberResponse(member.getId(), member.getEmail(), member.getNickname(),
+                member.getCreatedTime(), member.getModifiedTime());
     }
 
 }
