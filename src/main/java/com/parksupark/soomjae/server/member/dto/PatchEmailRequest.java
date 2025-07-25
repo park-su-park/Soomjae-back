@@ -10,28 +10,16 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 
 @Getter
-public class CreateMemberRequest {
+public class PatchEmailRequest {
 
     @NotBlank(message = NOT_BLANK)
     @Email(message = EMAIL_INVALID_FORMAT)
     private final String email;
 
-    // 비밀번호 패턴 정책 확립후 Validation 적용
-    @NotBlank(message = NOT_BLANK)
-    private final String password;
-
-    // 닉네임 패턴 정책 확립후 Validation 적용
-    @NotBlank(message = NOT_BLANK)
-    private final String nickname;
-
     @JsonCreator
-    public CreateMemberRequest(
-        @JsonProperty("email") String email,
-        @JsonProperty("password") String password,
-        @JsonProperty("nickname") String nickname
+    public PatchEmailRequest(
+        @JsonProperty("email") String email
     ) {
         this.email = email;
-        this.password = password;
-        this.nickname = nickname;
     }
 }

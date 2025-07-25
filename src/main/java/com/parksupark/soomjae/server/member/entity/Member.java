@@ -1,5 +1,6 @@
 package com.parksupark.soomjae.server.member.entity;
 
+import com.parksupark.soomjae.server.common.entity.BaseEntity;
 import com.parksupark.soomjae.server.member.Role;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -15,28 +16,45 @@ import lombok.NoArgsConstructor;
 @Table(name = "member")
 @Getter
 @NoArgsConstructor
-public class Member {
+public class Member extends BaseEntity {
 
     @Id
     @Column(name = "member_id")
     @GeneratedValue
     private Long id;
 
+    @Column(unique = true)
     private String email;
 
     private String password;
 
+    @Column(nullable = true)
+    private String nickname;
+
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private Role role;
 
-    private Member(String email, String password, Role role) {
+    private Member(String email, String password, Role role, String nickname) {
         this.email = email;
         this.password = password;
         this.role = role;
+        this.nickname = nickname;
     }
 
-    public static Member create(String email, String password) {
-        return new Member(email, password, Role.USER);
+    public static Member create(String email, String password, String nickname) {
+        return new Member(email, password, Role.USER, nickname);
     }
 
+    public void updateNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public void updateEmail(String email) {
+        this.email = email;
+    }
+
+    public void updatePassword(String password) {
+        this.password = password;
+    }
 }

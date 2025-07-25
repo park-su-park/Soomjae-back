@@ -6,11 +6,19 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
+import org.springframework.dao.DataIntegrityViolationException;
 
 public class InMemoryMemberRepository implements MemberRepository {
 
     private final Map<Long, Member> store = new HashMap<>();
     private final AtomicLong idSequence = new AtomicLong(1L);
+
+    @Override
+    public Optional<Member> findById(Long memberId) {
+        return store.values().stream()
+            .filter(member -> member.getId().equals(memberId))
+            .findFirst();
+    }
 
     @Override
     public Optional<Member> findByEmail(String email) {
@@ -21,6 +29,8 @@ public class InMemoryMemberRepository implements MemberRepository {
 
     @Override
     public Member save(Member member) {
+        validateEmailUniqueness(member);
+
         Long id = member.getId();
 
         if (id == null) {
@@ -33,8 +43,25 @@ public class InMemoryMemberRepository implements MemberRepository {
     }
 
     @Override
+    public boolean existsByNickname(String nickname) {
+        return store.values().stream()
+            .anyMatch(member -> member.getNickname().equals(nickname));
+    }
+
+    @Override
+    public boolean existsByEmail(String email) {
+        return store.values().stream()
+            .anyMatch(member -> member.getEmail().equals(email));
+    }
+
+    @Override
     public void delete(Member member) {
         store.entrySet().removeIf(entry -> entry.getValue().equals(member));
+    }
+
+    @Override
+    public void flush() {
+        // nothing to do
     }
 
     public void clear() {
@@ -48,6 +75,18 @@ public class InMemoryMemberRepository implements MemberRepository {
             idField.set(member, id);
         } catch (NoSuchFieldException | IllegalAccessException e) {
             throw new RuntimeException("Like id 설정 실패", e);
+        }
+    }
+
+    private void validateEmailUniqueness(Member member) {
+        boolean isDuplicate = store.values().stream()
+            .anyMatch(existing ->
+                existing.getEmail().equals(member.getEmail())
+            );
+
+        if (isDuplicate) {
+            throw new DataIntegrityViolationException(
+                "Duplicate entry '" + member.getEmail() + "' for key 'email'");
         }
     }
 }

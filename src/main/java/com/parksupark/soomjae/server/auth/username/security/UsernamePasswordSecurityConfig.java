@@ -7,6 +7,7 @@ import com.parksupark.soomjae.server.auth.username.filter.UsernamePasswordLoginF
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -23,6 +24,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
+@Profile("!test") // test 프로필이 아닐 때만 활성화
 @EnableMethodSecurity(prePostEnabled = true)
 public class UsernamePasswordSecurityConfig {
 
@@ -40,39 +42,41 @@ public class UsernamePasswordSecurityConfig {
      */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http,
-        AuthenticationManager authenticationManager, AuthenticationProvider authenticationProvider)
-        throws Exception {
+            AuthenticationManager authenticationManager,
+            AuthenticationProvider authenticationProvider)
+            throws Exception {
 
         UsernamePasswordLoginFilter usernamePasswordLoginFilter = new UsernamePasswordLoginFilter(
-            authenticationManager, objectMapper, jwtProvider);
+                authenticationManager, objectMapper, jwtProvider);
 
         http
-            .csrf(csrf -> csrf.disable())
+                .csrf(csrf -> csrf.disable())
 
-            .formLogin(form -> form.disable())
+                .formLogin(form -> form.disable())
 
-            .sessionManagement(session ->
-                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/auth/login", "/v1/create-member").permitAll()
-                .anyRequest().permitAll()
-            )
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/auth/login", "/v1/members/create-member").permitAll()
+                        .anyRequest().permitAll()
+                )
 
-            .authenticationProvider(authenticationProvider)
+                .authenticationProvider(authenticationProvider)
 
-            .authenticationManager(authenticationManager)
+                .authenticationManager(authenticationManager)
 
-            .addFilterBefore(jwtAuthenticationFilter(),
-                UsernamePasswordAuthenticationFilter.class)
-            .addFilterAt(usernamePasswordLoginFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthenticationFilter(),
+                        UsernamePasswordAuthenticationFilter.class)
+                .addFilterAt(usernamePasswordLoginFilter,
+                        UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration)
-        throws Exception {
+            throws Exception {
 
         return configuration.getAuthenticationManager();
     }
