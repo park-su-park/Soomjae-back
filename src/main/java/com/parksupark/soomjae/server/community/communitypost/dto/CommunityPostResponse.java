@@ -45,7 +45,7 @@ public class CommunityPostResponse {
             communityPost.getId(), communityPost.getTitle(),
             communityPost.getContent(),
             new MemberResponse(author.getId(), author.getEmail(), author.getNickname(),
-                author.getCreatedTime(), author.getModifiedTime()),
+                author.getCreatedTime(), author.getModifiedTime(), author.getRole()),
             communityPost.getCreatedTime());
 
 
