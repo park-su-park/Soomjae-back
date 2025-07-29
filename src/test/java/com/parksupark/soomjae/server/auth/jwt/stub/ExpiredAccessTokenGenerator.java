@@ -1,14 +1,14 @@
-package com.parksupark.soomjae.server.auth.common.jwt.stub;
+package com.parksupark.soomjae.server.auth.jwt.stub;
 
-import com.parksupark.soomjae.server.auth.common.jwt.AbstractJwtKeyHolder;
-import com.parksupark.soomjae.server.auth.common.jwt.JwtGenerator;
+import com.parksupark.soomjae.server.auth.jwt.AbstractJwtKeyHolder;
+import com.parksupark.soomjae.server.auth.jwt.access.AccessTokenGenerator;
 import io.jsonwebtoken.Jwts;
 import java.util.Date;
 import java.util.Map;
 
-public class ExpiredJwtGenerator extends AbstractJwtKeyHolder implements JwtGenerator {
+public class ExpiredAccessTokenGenerator extends AbstractJwtKeyHolder implements AccessTokenGenerator {
 
-    public ExpiredJwtGenerator(String secret) {
+    public ExpiredAccessTokenGenerator(String secret) {
         super(secret);
     }
 
