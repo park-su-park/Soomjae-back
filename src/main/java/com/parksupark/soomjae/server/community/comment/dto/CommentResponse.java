@@ -17,7 +17,8 @@ public class CommentResponse {
     private Instant createdTime;
 
 
-    private CommentResponse(Long commentId, String content, MemberResponse author, Instant createdTime) {
+    private CommentResponse(Long commentId, String content, MemberResponse author,
+                            Instant createdTime) {
         this.commentId = commentId;
         this.content = content;
         this.author = author;

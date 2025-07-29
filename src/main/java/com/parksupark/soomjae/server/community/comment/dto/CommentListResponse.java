@@ -1,7 +1,6 @@
 package com.parksupark.soomjae.server.community.comment.dto;
 
 import java.util.List;
-
 import lombok.Getter;
 
 @Getter

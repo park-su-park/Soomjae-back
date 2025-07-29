@@ -27,7 +27,8 @@ public class CommentController {
 
     @PostMapping("/{boardType}/posts/{postId}/comments")
     public ResponseEntity<CommentResponse> postComment(@RequestBody CommentRequest request,
-                                                       @PathVariable("boardType") String postType, @PathVariable Long postId,
+                                                       @PathVariable("boardType") String postType,
+                                                       @PathVariable Long postId,
                                                        @AuthenticationPrincipal
                                                        UsernamePasswordUserDetails userDetails) {
 
@@ -43,7 +44,8 @@ public class CommentController {
 
     @DeleteMapping("/{boardType}/posts/{postId}/comments/{commentId}")
     public ResponseEntity<Void> deleteComment(@PathVariable("boardType") String postType,
-                                              @PathVariable Long postId, @PathVariable Long commentId) {
+                                              @PathVariable Long postId,
+                                              @PathVariable Long commentId) {
         commentService.delete(postType, postId, commentId);
         return ResponseEntity.ok(null);
     }

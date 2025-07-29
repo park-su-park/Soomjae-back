@@ -11,9 +11,7 @@ import com.parksupark.soomjae.server.community.common.exception.InvalidPostIdExc
 import com.parksupark.soomjae.server.community.validator.PostValidator;
 import com.parksupark.soomjae.server.community.validator.PostValidatorFactory;
 import com.parksupark.soomjae.server.member.entity.Member;
-
 import java.util.List;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
