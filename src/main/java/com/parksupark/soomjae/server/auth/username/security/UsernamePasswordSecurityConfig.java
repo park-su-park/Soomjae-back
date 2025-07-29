@@ -1,8 +1,9 @@
 package com.parksupark.soomjae.server.auth.username.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.parksupark.soomjae.server.auth.common.jwt.JwtProvider;
-import com.parksupark.soomjae.server.auth.common.jwt.filter.JwtAuthenticationFilter;
+import com.parksupark.soomjae.server.auth.jwt.JwtProvider;
+import com.parksupark.soomjae.server.auth.jwt.filter.JwtAuthenticationFilter;
+import com.parksupark.soomjae.server.auth.jwt.service.RefreshTokenService;
 import com.parksupark.soomjae.server.auth.username.filter.UsernamePasswordLoginFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -32,6 +33,7 @@ public class UsernamePasswordSecurityConfig {
     private final ObjectMapper objectMapper;
     private final PasswordEncoder passwordEncoder;
     private final UserDetailsService userDetailsService;
+    private final RefreshTokenService refreshTokenService;
 
     /**
      * <b>Why CSRF is disabled:</b>
@@ -47,7 +49,7 @@ public class UsernamePasswordSecurityConfig {
             throws Exception {
 
         UsernamePasswordLoginFilter usernamePasswordLoginFilter = new UsernamePasswordLoginFilter(
-                authenticationManager, objectMapper, jwtProvider);
+                authenticationManager, objectMapper, jwtProvider, refreshTokenService);
 
         http
                 .csrf(csrf -> csrf.disable())
