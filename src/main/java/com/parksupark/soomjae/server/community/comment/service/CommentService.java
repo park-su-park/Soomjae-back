@@ -28,10 +28,10 @@ public class CommentService {
     @Transactional
     public CommentResponse create(CommentRequest request, String postType, Long postId,
                                   UsernamePasswordUserDetails userDetails) {
-        Member member = userDetails.getMember();
-
         validatePost(postType, postId);
 
+        Member member = userDetails.getMember();
+        
         Comment comment = Comment.builder()
                 .postId(postId)
                 .postType(postType)
