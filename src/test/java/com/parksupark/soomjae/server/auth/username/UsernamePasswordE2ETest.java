@@ -73,7 +73,7 @@ class UsernamePasswordE2ETest {
             password);
 
 
-        mockMvc.perform(post("/auth/login")
+        mockMvc.perform(post("/v1/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(loginRequest)))
             .andExpect(status().isOk())
@@ -87,7 +87,7 @@ class UsernamePasswordE2ETest {
             "wrongusername",
             password);
 
-        mockMvc.perform(post("/auth/login")
+        mockMvc.perform(post("/v1/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(loginRequest)))
             .andExpect(status().isUnauthorized());
@@ -98,7 +98,7 @@ class UsernamePasswordE2ETest {
         UsernamePasswordLoginRequest loginRequest = new UsernamePasswordLoginRequest(username,
             "wrongpassword");
 
-        mockMvc.perform(post("/auth/login")
+        mockMvc.perform(post("/v1/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(loginRequest)))
             .andExpect(status().isUnauthorized());
