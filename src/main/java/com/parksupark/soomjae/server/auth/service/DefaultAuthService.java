@@ -7,16 +7,15 @@ import com.parksupark.soomjae.server.auth.username.dto.UsernamePasswordAuthSucce
 import com.parksupark.soomjae.server.common.exception.ErrorMessages;
 import com.parksupark.soomjae.server.member.dto.MemberResponse;
 import com.parksupark.soomjae.server.member.service.MemberService;
+import java.util.HashMap;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.Map;
-
 @Service
 @RequiredArgsConstructor
-public class DefaultAuthService implements AuthService{
+public class DefaultAuthService implements AuthService {
 
     private final RefreshTokenService refreshTokenService;
     private final MemberService memberService;

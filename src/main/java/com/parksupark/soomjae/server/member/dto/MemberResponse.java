@@ -1,8 +1,7 @@
 package com.parksupark.soomjae.server.member.dto;
 
-import java.time.Instant;
-
 import com.parksupark.soomjae.server.member.Role;
+import java.time.Instant;
 import lombok.Getter;
 
 @Getter

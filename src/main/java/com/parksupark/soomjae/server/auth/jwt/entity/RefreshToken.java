@@ -2,10 +2,9 @@ package com.parksupark.soomjae.server.auth.jwt.entity;
 
 import com.parksupark.soomjae.server.common.entity.BaseEntity;
 import jakarta.persistence.*;
+import java.time.Instant;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.time.Instant;
 
 @Entity
 @Table(name = "refresh_token")

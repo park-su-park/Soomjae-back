@@ -5,11 +5,10 @@ import com.parksupark.soomjae.server.auth.jwt.dto.CreateRefreshTokenRequest;
 import com.parksupark.soomjae.server.auth.jwt.entity.RefreshToken;
 import com.parksupark.soomjae.server.auth.jwt.repository.RefreshTokenRepository;
 import com.parksupark.soomjae.server.common.exception.ResourceNotFoundException;
+import java.time.Instant;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.Instant;
 
 @Service
 @RequiredArgsConstructor
@@ -38,8 +37,8 @@ public class DefaultRefreshTokenService implements RefreshTokenService {
 
     @Transactional(readOnly = true)
     public boolean validateRefreshToken(String token) {
-        return jwtProvider.validateRefreshToken(token) &&
-                refreshTokenRepository.existsByToken(token);
+        return jwtProvider.validateRefreshToken(token)
+                && refreshTokenRepository.existsByToken(token);
     }
 
     @Transactional

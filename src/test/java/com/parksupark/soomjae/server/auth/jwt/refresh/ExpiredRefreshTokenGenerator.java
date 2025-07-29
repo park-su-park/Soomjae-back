@@ -5,7 +5,8 @@ import io.jsonwebtoken.Jwts;
 import java.util.Date;
 import org.springframework.beans.factory.annotation.Value;
 
-public class ExpiredRefreshTokenGenerator extends AbstractJwtKeyHolder implements RefreshTokenGenerator {
+public class ExpiredRefreshTokenGenerator extends AbstractJwtKeyHolder implements
+    RefreshTokenGenerator {
 
     public ExpiredRefreshTokenGenerator(@Value("${jwt.refresh.secret}") String secret) {
         super(secret);

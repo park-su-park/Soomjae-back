@@ -2,13 +2,13 @@ package com.parksupark.soomjae.server.auth.jwt.refresh;
 
 import com.parksupark.soomjae.server.auth.jwt.AbstractJwtKeyHolder;
 import io.jsonwebtoken.Jwts;
+import java.util.Date;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
-
 @Component
-public class DefaultRefreshTokenGenerator extends AbstractJwtKeyHolder implements RefreshTokenGenerator {
+public class DefaultRefreshTokenGenerator extends AbstractJwtKeyHolder implements
+        RefreshTokenGenerator {
 
     public DefaultRefreshTokenGenerator(@Value("${jwt.refresh.secret}") String secret) {
         super(secret);

@@ -50,7 +50,8 @@ class UsernamePasswordLoginFilterTest {
 
     @BeforeEach
     void setUp() {
-        filter = new UsernamePasswordLoginFilter(authenticationManager, objectMapper, jwtProvider, refreshTokenService);
+        filter = new UsernamePasswordLoginFilter(authenticationManager, objectMapper, jwtProvider,
+            refreshTokenService);
     }
 
 
@@ -117,19 +118,20 @@ class UsernamePasswordLoginFilterTest {
         final MockHttpServletResponse response = new MockHttpServletResponse();
         final FilterChain filterChain = mock(FilterChain.class);
         final Member member = mock(Member.class);
+        when(member.getId()).thenReturn(1L);
+        when(member.getEmail()).thenReturn(username);
+        when(member.getRole()).thenReturn(Role.USER);
         final Authentication authResult = mock(Authentication.class);
 
         when(authResult.getPrincipal()).thenReturn(new UsernamePasswordUserDetails(member));
-        when(member.getEmail()).thenReturn(username);
-        when(member.getRole()).thenReturn(Role.USER);
-        when(member.getId()).thenReturn(1L);
 
         when(jwtProvider.generateAccessToken(username, claimsWithRole)).thenReturn(fakeToken);
 
         filter.successfulAuthentication(request, response, filterChain, authResult);
 
-        String expectedResponseJson = objectMapper.writeValueAsString(
-            new UsernamePasswordAuthSuccessResponse(fakeToken, 1L));
+        UsernamePasswordAuthSuccessResponse successResponseForTest =
+            new UsernamePasswordAuthSuccessResponse(fakeToken, 1L);
+        String expectedResponseJson = objectMapper.writeValueAsString(successResponseForTest);
         assertEquals(expectedResponseJson, response.getContentAsString());
         assertEquals("UTF-8", response.getCharacterEncoding());
         assertEquals("application/json;charset=UTF-8", response.getContentType());

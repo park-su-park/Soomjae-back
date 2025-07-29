@@ -6,7 +6,8 @@ import io.jsonwebtoken.Jwts;
 import java.util.Date;
 import java.util.Map;
 
-public class ExpiredAccessTokenGenerator extends AbstractJwtKeyHolder implements AccessTokenGenerator {
+public class ExpiredAccessTokenGenerator extends AbstractJwtKeyHolder implements
+    AccessTokenGenerator {
 
     public ExpiredAccessTokenGenerator(String secret) {
         super(secret);

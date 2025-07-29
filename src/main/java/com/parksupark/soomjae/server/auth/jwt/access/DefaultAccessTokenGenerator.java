@@ -8,7 +8,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
-public class DefaultAccessTokenGenerator extends AbstractJwtKeyHolder implements AccessTokenGenerator {
+public class DefaultAccessTokenGenerator extends AbstractJwtKeyHolder implements
+    AccessTokenGenerator {
 
     public DefaultAccessTokenGenerator(@Value("${jwt.secret}") String secret) {
         super(secret);

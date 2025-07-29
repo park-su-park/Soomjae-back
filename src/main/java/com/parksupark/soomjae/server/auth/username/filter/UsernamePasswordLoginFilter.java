@@ -36,8 +36,12 @@ public class UsernamePasswordLoginFilter extends UsernamePasswordAuthenticationF
     private final JwtProvider jwtProvider;
     private final RefreshTokenService refreshTokenService;
 
-    public UsernamePasswordLoginFilter(AuthenticationManager authenticationManager,
-        ObjectMapper objectMapper, JwtProvider jwtProvider, RefreshTokenService refreshTokenService) {
+    public UsernamePasswordLoginFilter(
+            AuthenticationManager authenticationManager,
+            ObjectMapper objectMapper,
+            JwtProvider jwtProvider,
+            RefreshTokenService refreshTokenService
+    ) {
         this.authenticationManager = authenticationManager;
         this.objectMapper = objectMapper;
         this.jwtProvider = jwtProvider;
@@ -85,8 +89,10 @@ public class UsernamePasswordLoginFilter extends UsernamePasswordAuthenticationF
         String accessToken = jwtProvider.generateAccessToken(username, claims);
 
         // refresh token 생성
-        CreateRefreshTokenRequest createRefreshTokenRequest = new CreateRefreshTokenRequest(username, member.getId());
-        RefreshToken refreshToken = refreshTokenService.createRefreshToken(createRefreshTokenRequest);
+        CreateRefreshTokenRequest createRefreshTokenRequest =
+                new CreateRefreshTokenRequest(username, member.getId());
+        RefreshToken refreshToken =
+                refreshTokenService.createRefreshToken(createRefreshTokenRequest);
 
         // 쿠키 설정
         setCookie(response, refreshToken);

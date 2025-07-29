@@ -22,7 +22,8 @@ public class AuthController {
     @PostMapping("/refresh")
     public ResponseEntity<UsernamePasswordAuthSuccessResponse> refresh(HttpServletRequest request) {
 
-        UsernamePasswordAuthSuccessResponse response = authService.refresh(extractRefreshTokenFromCookie(request));
+        UsernamePasswordAuthSuccessResponse response =
+                authService.refresh(extractRefreshTokenFromCookie(request));
 
         return ResponseEntity.ok(response);
     }
@@ -31,7 +32,8 @@ public class AuthController {
 
     private String extractRefreshTokenFromCookie(HttpServletRequest request) {
         if (request.getCookies() == null) {
-            throw new RefreshFailedException(ErrorMessages.REFRESH_TOKEN_NOT_FOUND_FROM_COOKIE_MESSAGE);
+            throw new RefreshFailedException(
+                    ErrorMessages.REFRESH_TOKEN_NOT_FOUND_FROM_COOKIE_MESSAGE);
         }
 
         for (Cookie cookie : request.getCookies()) {

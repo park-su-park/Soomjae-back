@@ -1,7 +1,6 @@
 package com.parksupark.soomjae.server.auth.jwt.repository;
 
 import com.parksupark.soomjae.server.auth.jwt.entity.RefreshToken;
-
 import java.util.Optional;
 
 public interface RefreshTokenRepository {
