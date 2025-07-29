@@ -1,11 +1,11 @@
-package com.parksupark.soomjae.server.auth.common.jwt.filter;
+package com.parksupark.soomjae.server.auth.jwt.filter;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.parksupark.soomjae.server.auth.common.jwt.JwtProvider;
-import com.parksupark.soomjae.server.auth.common.jwt.helper.JwtTestHelper;
+import com.parksupark.soomjae.server.auth.jwt.JwtProvider;
+import com.parksupark.soomjae.server.auth.jwt.helper.JwtTestHelper;
 import com.parksupark.soomjae.server.auth.username.dto.UsernamePasswordUserDetails;
 import com.parksupark.soomjae.server.member.Role;
 import com.parksupark.soomjae.server.member.entity.Member;
@@ -60,7 +60,7 @@ class JwtAuthenticationFilterTest {
         JwtProvider jwtProvider = JwtTestHelper.getDefaultFwtProvider(userDetailsService);
         JwtAuthenticationFilter filter = new JwtAuthenticationFilter(jwtProvider);
 
-        String token = jwtProvider.generateToken(username, claimsWithRole);
+        String token = jwtProvider.generateAccessToken(username, claimsWithRole);
 
         when(request.getHeader("Authorization")).thenReturn("Bearer " + token);
         when(userDetailsService.loadUserByUsername(username)).thenReturn(userDetails);

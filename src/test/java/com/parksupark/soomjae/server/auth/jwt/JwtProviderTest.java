@@ -1,9 +1,9 @@
-package com.parksupark.soomjae.server.auth.common.jwt;
+package com.parksupark.soomjae.server.auth.jwt;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
-import com.parksupark.soomjae.server.auth.common.jwt.helper.JwtTestHelper;
+import com.parksupark.soomjae.server.auth.jwt.helper.JwtTestHelper;
 import com.parksupark.soomjae.server.auth.username.dto.UsernamePasswordUserDetails;
 import com.parksupark.soomjae.server.auth.username.service.UsernamePasswordUserDetailsService;
 import com.parksupark.soomjae.server.member.Role;
@@ -35,9 +35,9 @@ class JwtProviderTest {
 
         JwtProvider jwtProvider = JwtTestHelper.getDefaultFwtProvider(userDetailsService);
 
-        String token = jwtProvider.generateToken(username, claimsWithRole);
+        String token = jwtProvider.generateAccessToken(username, claimsWithRole);
 
-        Claims claims = jwtProvider.getClaimsFromToken(token);
+        Claims claims = jwtProvider.getClaimsFromAccessToken(token);
 
         System.out.println("token: " + token);
         System.out.println("issued at: " + claims.getIssuedAt());
@@ -52,7 +52,7 @@ class JwtProviderTest {
 
         JwtProvider jwtProvider = JwtTestHelper.getDefaultFwtProvider(userDetailsService);
 
-        String token = jwtProvider.generateToken(username, claimsWithRole);
+        String token = jwtProvider.generateAccessToken(username, claimsWithRole);
 
         UsernamePasswordUserDetails userDetails = new UsernamePasswordUserDetails(
             Member.create(username, "password", nickname));
@@ -66,12 +66,12 @@ class JwtProviderTest {
     }
 
     @Test
-    void validateToken_withExpiredToken_shouldReturnExpiredJwtException() {
+    void validateToken_withExpiredAccessToken_shouldReturnExpiredJwtException() {
         final String username = "expired_user";
 
         JwtProvider jwtProvider = JwtTestHelper.getExpiredJwtProvider(userDetailsService);
-        String token = jwtProvider.generateToken(username, claimsWithRole);
+        String token = jwtProvider.generateAccessToken(username, claimsWithRole);
 
-        assertFalse(jwtProvider.validateToken(token));
+        assertFalse(jwtProvider.validateAccessToken(token));
     }
 }

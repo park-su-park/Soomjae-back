@@ -5,7 +5,9 @@ import static org.mockito.Mockito.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.parksupark.soomjae.server.auth.common.exception.FilterAuthenticationFailedException;
-import com.parksupark.soomjae.server.auth.common.jwt.JwtProvider;
+import com.parksupark.soomjae.server.auth.jwt.JwtProvider;
+import com.parksupark.soomjae.server.auth.jwt.service.NoOpRefreshTokenService;
+import com.parksupark.soomjae.server.auth.jwt.service.RefreshTokenService;
 import com.parksupark.soomjae.server.auth.username.dto.UsernamePasswordAuthSuccessResponse;
 import com.parksupark.soomjae.server.auth.username.dto.UsernamePasswordLoginRequest;
 import com.parksupark.soomjae.server.auth.username.dto.UsernamePasswordUserDetails;
@@ -38,6 +40,8 @@ class UsernamePasswordLoginFilterTest {
 
     private UsernamePasswordLoginFilter filter;
 
+    private final RefreshTokenService refreshTokenService = new NoOpRefreshTokenService();
+
     private final Map<String, Object> claimsWithRole = new HashMap<>() {
         {
             put("role", Role.USER.getKey());
@@ -46,7 +50,7 @@ class UsernamePasswordLoginFilterTest {
 
     @BeforeEach
     void setUp() {
-        filter = new UsernamePasswordLoginFilter(authenticationManager, objectMapper, jwtProvider);
+        filter = new UsernamePasswordLoginFilter(authenticationManager, objectMapper, jwtProvider, refreshTokenService);
     }
 
 
@@ -120,7 +124,7 @@ class UsernamePasswordLoginFilterTest {
         when(member.getRole()).thenReturn(Role.USER);
         when(member.getId()).thenReturn(1L);
 
-        when(jwtProvider.generateToken(username, claimsWithRole)).thenReturn(fakeToken);
+        when(jwtProvider.generateAccessToken(username, claimsWithRole)).thenReturn(fakeToken);
 
         filter.successfulAuthentication(request, response, filterChain, authResult);
 
