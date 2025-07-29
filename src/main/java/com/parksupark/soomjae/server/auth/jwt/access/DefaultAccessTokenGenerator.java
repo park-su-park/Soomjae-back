@@ -1,5 +1,6 @@
-package com.parksupark.soomjae.server.auth.common.jwt;
+package com.parksupark.soomjae.server.auth.jwt.access;
 
+import com.parksupark.soomjae.server.auth.jwt.AbstractJwtKeyHolder;
 import io.jsonwebtoken.Jwts;
 import java.util.Date;
 import java.util.Map;
@@ -7,9 +8,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
-public class DefaultJwtGenerator extends AbstractJwtKeyHolder implements JwtGenerator {
+public class DefaultAccessTokenGenerator extends AbstractJwtKeyHolder implements AccessTokenGenerator {
 
-    public DefaultJwtGenerator(@Value("${jwt.secret}") String secret) {
+    public DefaultAccessTokenGenerator(@Value("${jwt.secret}") String secret) {
         super(secret);
     }
 

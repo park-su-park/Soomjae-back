@@ -1,14 +1,15 @@
-package com.parksupark.soomjae.server.auth.common.jwt;
+package com.parksupark.soomjae.server.auth.jwt.access;
 
+import com.parksupark.soomjae.server.auth.jwt.AbstractJwtKeyHolder;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
-public class DefaultJwtParser extends AbstractJwtKeyHolder implements JwtParser {
+public class DefaultAccessTokenParser extends AbstractJwtKeyHolder implements AccessTokenParser {
 
-    public DefaultJwtParser(@Value("${jwt.secret}") String secret) {
+    public DefaultAccessTokenParser(@Value("${jwt.secret}") String secret) {
         super(secret);
     }
 
