@@ -5,10 +5,9 @@ import com.parksupark.soomjae.server.community.communitypost.entity.CommunityPos
 import com.parksupark.soomjae.server.community.location.entity.Location;
 import com.parksupark.soomjae.server.member.dto.MemberResponse;
 import com.parksupark.soomjae.server.member.entity.Member;
+import java.time.Instant;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.time.Instant;
 
 
 @Getter
@@ -42,9 +41,9 @@ public class CommunityPostResponse {
         Member author = communityPost.getMember();
 
         CommunityPostResponse communityPostResponse = new CommunityPostResponse(
-                communityPost.getId(), communityPost.getTitle(),
-                communityPost.getContent(),
-                MemberResponse.of(author), communityPost.getCreatedTime());
+            communityPost.getId(), communityPost.getTitle(),
+            communityPost.getContent(),
+            MemberResponse.of(author), communityPost.getCreatedTime());
 
 
         Category category = communityPost.getCategory();
