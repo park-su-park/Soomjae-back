@@ -27,24 +27,23 @@ public class CommentController {
 
     @PostMapping("/{boardType}/posts/{postId}/comments")
     public ResponseEntity<CommentResponse> postComment(@RequestBody CommentRequest request,
-            @PathVariable("boardType") String postType, @PathVariable Long postId,
-            @AuthenticationPrincipal
-            UsernamePasswordUserDetails userDetails) {
+                                                       @PathVariable("boardType") String postType, @PathVariable Long postId,
+                                                       @AuthenticationPrincipal
+                                                       UsernamePasswordUserDetails userDetails) {
 
         return ResponseEntity.ok(commentService.create(request, postType, postId, userDetails));
     }
 
     @GetMapping("/{boardType}/posts/{postId}/comments")
     public ResponseEntity<CommentListResponse> getByPostTypeAndPostId(
-            @PathVariable("boardType") String postType, @PathVariable Long postId,
-            @PageableDefault(size = 10) Pageable pageable) {
+            @PathVariable("boardType") String postType, @PathVariable Long postId) {
         return ResponseEntity.ok(
-                commentService.readByPostTypeAndPostId(postType, postId, pageable));
+                commentService.readByPostTypeAndPostId(postType, postId));
     }
 
     @DeleteMapping("/{boardType}/posts/{postId}/comments/{commentId}")
     public ResponseEntity<Void> deleteComment(@PathVariable("boardType") String postType,
-            @PathVariable Long postId, @PathVariable Long commentId) {
+                                              @PathVariable Long postId, @PathVariable Long commentId) {
         commentService.delete(postType, postId, commentId);
         return ResponseEntity.ok(null);
     }

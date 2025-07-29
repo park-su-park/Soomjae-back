@@ -13,8 +13,6 @@ import com.parksupark.soomjae.server.community.validator.PostValidatorFactory;
 import com.parksupark.soomjae.server.member.entity.Member;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,27 +33,26 @@ public class CommentService {
         validatePost(postType, postId);
 
         Comment comment = Comment.builder()
-            .postId(postId)
-            .postType(postType)
-            .content(request.getContent())
-            .member(member)
-            .build();
+                .postId(postId)
+                .postType(postType)
+                .content(request.getContent())
+                .member(member)
+                .build();
 
         Comment savedComment = commentRepository.save(comment);
 
         return CommentResponse.of(savedComment);
     }
 
-    public CommentListResponse readByPostTypeAndPostId(String postType, Long postId,
-                                                       Pageable pageable) {
+    public CommentListResponse readByPostTypeAndPostId(String postType, Long postId) {
         validatePost(postType, postId);
 
-        Page<Comment> byPostTypeAndPostId = commentRepository
-            .findByPostTypeAndPostIdAndDeletedTimeIsNull(postType, postId, pageable);
+        List<Comment> byPostTypeAndPostId = commentRepository
+                .findByPostTypeAndPostIdAndDeletedTimeIsNull(postType, postId);
 
-        List<CommentResponse> commentResponseList = byPostTypeAndPostId.get()
-            .map(CommentResponse::of)
-            .toList();
+        List<CommentResponse> commentResponseList = byPostTypeAndPostId.stream()
+                .map(CommentResponse::of)
+                .toList();
 
         return new CommentListResponse(commentResponseList);
     }
@@ -64,7 +61,7 @@ public class CommentService {
     public void delete(String postType, Long postId, Long commentId) {
         validatePost(postType, postId);
         Comment comment = commentRepository.findByIdAndDeletedTimeIsNull(commentId)
-            .orElseThrow(() -> new IllegalStateException("해당 Id를 가진 comment가 존재하지 않습니다."));
+                .orElseThrow(() -> new IllegalStateException("해당 Id를 가진 comment가 존재하지 않습니다."));
         comment.markDeleted();
     }
 
@@ -72,7 +69,7 @@ public class CommentService {
         PostValidator validator = postValidatorFactory.getValidator(postType);
         if (!validator.isValid(postId)) {
             throw new InvalidPostIdException(
-                ErrorMessages.INVALID_POST_ID_EXCEPTION_MESSAGE + postId);
+                    ErrorMessages.INVALID_POST_ID_EXCEPTION_MESSAGE + postId);
         }
     }
 }
