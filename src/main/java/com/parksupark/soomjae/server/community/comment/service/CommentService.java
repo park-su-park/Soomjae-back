@@ -11,7 +11,9 @@ import com.parksupark.soomjae.server.community.common.exception.InvalidPostIdExc
 import com.parksupark.soomjae.server.community.validator.PostValidator;
 import com.parksupark.soomjae.server.community.validator.PostValidatorFactory;
 import com.parksupark.soomjae.server.member.entity.Member;
+
 import java.util.List;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,7 +33,7 @@ public class CommentService {
         validatePost(postType, postId);
 
         Member member = userDetails.getMember();
-        
+
         Comment comment = Comment.builder()
                 .postId(postId)
                 .postType(postType)
@@ -54,7 +56,7 @@ public class CommentService {
                 .map(CommentResponse::of)
                 .toList();
 
-        return new CommentListResponse(commentResponseList);
+        return CommentListResponse.of(commentResponseList);
     }
 
     @Transactional
