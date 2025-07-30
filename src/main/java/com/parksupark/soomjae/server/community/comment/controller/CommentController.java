@@ -6,8 +6,6 @@ import com.parksupark.soomjae.server.community.comment.dto.CommentRequest;
 import com.parksupark.soomjae.server.community.comment.dto.CommentResponse;
 import com.parksupark.soomjae.server.community.comment.service.CommentService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -45,8 +43,10 @@ public class CommentController {
     @DeleteMapping("/{boardType}/posts/{postId}/comments/{commentId}")
     public ResponseEntity<Void> deleteComment(@PathVariable("boardType") String postType,
                                               @PathVariable Long postId,
-                                              @PathVariable Long commentId) {
-        commentService.delete(postType, postId, commentId);
+                                              @PathVariable Long commentId,
+                                              @AuthenticationPrincipal
+                                              UsernamePasswordUserDetails userDetails) {
+        commentService.delete(postType, postId, commentId, userDetails);
         return ResponseEntity.ok(null);
     }
 }

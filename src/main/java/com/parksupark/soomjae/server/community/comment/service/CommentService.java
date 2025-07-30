@@ -27,7 +27,7 @@ public class CommentService {
 
     @Transactional
     public CommentResponse create(CommentRequest request, String postType, Long postId,
-                                  UsernamePasswordUserDetails userDetails) {
+            UsernamePasswordUserDetails userDetails) {
         validatePost(postType, postId);
 
         Member member = userDetails.getMember();
@@ -58,11 +58,21 @@ public class CommentService {
     }
 
     @Transactional
-    public void delete(String postType, Long postId, Long commentId) {
+    public void delete(String postType, Long postId, Long commentId,
+            UsernamePasswordUserDetails userDetails) {
         validatePost(postType, postId);
         Comment comment = commentRepository.findByIdAndDeletedTimeIsNull(commentId)
                 .orElseThrow(() -> new IllegalStateException("해당 Id를 가진 comment가 존재하지 않습니다."));
+
+        validateCommentOwner(userDetails, comment);
         comment.markDeleted();
+    }
+
+    private static void validateCommentOwner(UsernamePasswordUserDetails userDetails,
+            Comment comment) {
+        if (!comment.getMember().getId().equals(userDetails.getMember().getId())) {
+            throw new IllegalStateException(ErrorMessages.COMMENT_OWNER_MISMATCH_EXCEPTION_MESSAGE);
+        }
     }
 
     private void validatePost(String postType, Long postId) {

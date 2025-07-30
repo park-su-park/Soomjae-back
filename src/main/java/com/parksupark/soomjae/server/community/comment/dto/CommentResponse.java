@@ -8,13 +8,13 @@ import lombok.Getter;
 @Getter
 public class CommentResponse {
 
-    private Long commentId;
+    private final Long commentId;
 
-    private String content;
+    private final String content;
 
-    private MemberResponse author;
+    private final MemberResponse author;
 
-    private Instant createdTime;
+    private final Instant createdTime;
 
 
     private CommentResponse(Long commentId, String content, MemberResponse author,
