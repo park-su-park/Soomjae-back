@@ -119,7 +119,7 @@ public class UsernamePasswordLoginFilter extends UsernamePasswordAuthenticationF
     }
 
     private void setCookie(HttpServletResponse response, RefreshToken refreshToken) {
-        ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken.getToken())
+        ResponseCookie cookie = ResponseCookie.from("refresh_token", refreshToken.getToken())
                 .httpOnly(true)
                 // 개발 환경에선 false
                 .secure(false)
