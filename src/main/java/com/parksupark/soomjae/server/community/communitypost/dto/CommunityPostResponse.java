@@ -7,55 +7,59 @@ import com.parksupark.soomjae.server.member.dto.MemberResponse;
 import com.parksupark.soomjae.server.member.entity.Member;
 import java.time.Instant;
 import lombok.Getter;
-import lombok.Setter;
 
 
 @Getter
-@Setter
 public class CommunityPostResponse {
 
-    private Long postId;
-    private String postType;
+    private final Long postId;
 
-    private String title;
+    private final String postType;
 
-    private String content;
+    private final String title;
 
-    private MemberResponse author;
+    private final String content;
 
-    private String category;
-    private String location;
-    private Instant createdTime;
+    private final MemberResponse author;
+
+    private final String category;
+
+    private final String location;
+
+    private final Instant createdTime;
+
 
     public CommunityPostResponse(Long postId, String title, String content,
-                                 MemberResponse author, Instant createdTime) {
+            MemberResponse author, String category, String location,
+            Instant createdTime) {
         this.postId = postId;
         this.postType = "community";
         this.title = title;
         this.content = content;
         this.author = author;
+        this.category = category;
+        this.location = location;
         this.createdTime = createdTime;
     }
 
     public static CommunityPostResponse of(CommunityPost communityPost) {
         Member author = communityPost.getMember();
 
-        CommunityPostResponse communityPostResponse = new CommunityPostResponse(
-            communityPost.getId(), communityPost.getTitle(),
-            communityPost.getContent(),
-            MemberResponse.of(author), communityPost.getCreatedTime());
-
-
         Category category = communityPost.getCategory();
+        String categoryName = null;
         if (category != null) {
-            communityPostResponse.setCategory(category.getName());
+            categoryName = category.getName();
         }
 
         Location location = communityPost.getLocation();
+        String locationName = null;
         if (location != null) {
-            communityPostResponse.setLocation(location.getName());
+            locationName = location.getName();
         }
 
-        return communityPostResponse;
+        return new CommunityPostResponse(communityPost.getId(), communityPost.getTitle(),
+                communityPost.getContent(),
+                MemberResponse.of(author), categoryName, locationName,
+                communityPost.getCreatedTime());
     }
 }
