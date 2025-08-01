@@ -23,6 +23,7 @@ class CategoryRepositoryTest {
         categoryRepository.save(root);
     }
 
+
     @Test
     void shouldSaveAndFindByIdSuccessfully() {
         Category category1 = Category.builder()
@@ -34,9 +35,15 @@ class CategoryRepositoryTest {
     }
 
     @Test
-    void shouldFindByNameSuccessfully() {
-        Category category = categoryRepository.findByName("전체 카테고리").get();
-        Assertions.assertEquals("전체 카테고리", category.getName());
+    void existsByName() {
+        Category category1 = Category.builder()
+                .name("name1")
+                .build();
+        categoryRepository.save(category1);
+
+        Assertions.assertTrue(categoryRepository.existsByName("name1"));
+
     }
+
 
 }
