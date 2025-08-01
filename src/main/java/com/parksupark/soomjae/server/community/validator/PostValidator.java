@@ -1,4 +1,4 @@
-package com.parksupark.soomjae.server.community.like.service.validator;
+package com.parksupark.soomjae.server.community.validator;
 
 public interface PostValidator {
 

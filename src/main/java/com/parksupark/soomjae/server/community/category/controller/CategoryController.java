@@ -1,7 +1,7 @@
 package com.parksupark.soomjae.server.community.category.controller;
 
-import com.parksupark.soomjae.server.community.category.dto.CategoryRequestDto;
-import com.parksupark.soomjae.server.community.category.dto.CategoryResponseDto;
+import com.parksupark.soomjae.server.community.category.dto.CategoryRequest;
+import com.parksupark.soomjae.server.community.category.dto.CategoryResponse;
 import com.parksupark.soomjae.server.community.category.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,18 +18,18 @@ public class CategoryController {
     private final CategoryService categoryService;
 
     @PostMapping("/v1/categories")
-    public ResponseEntity<Long> createCategory(@RequestBody CategoryRequestDto categoryRequestDto) {
-        return ResponseEntity.ok(categoryService.createCategory(categoryRequestDto));
+    public ResponseEntity<Long> createCategory(@RequestBody CategoryRequest categoryRequest) {
+        return ResponseEntity.ok(categoryService.createCategory(categoryRequest));
     }
 
     @GetMapping("/v1/categories")
-    public ResponseEntity<CategoryResponseDto> readCategory(
+    public ResponseEntity<CategoryResponse> readCategory(
             @RequestParam(name = "id", defaultValue = "0") Long id) {
         return ResponseEntity.ok(categoryService.readCategory(id));
     }
 
     @GetMapping("/v1/categories/all") //트리 구조에서 루트 노드를 조회 함으로써 전체 카테고리를 조회한다.
-    public ResponseEntity<CategoryResponseDto> readAllCategories() {
+    public ResponseEntity<CategoryResponse> readAllCategories() {
         return ResponseEntity.ok(categoryService.readRootCategory());
     }
 

@@ -3,8 +3,8 @@ package com.parksupark.soomjae.server.community.category.service;
 import static com.parksupark.soomjae.server.community.category.constant.CategoryConstant.ROOT_CATEGORY;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import com.parksupark.soomjae.server.community.category.dto.CategoryRequestDto;
-import com.parksupark.soomjae.server.community.category.dto.CategoryResponseDto;
+import com.parksupark.soomjae.server.community.category.dto.CategoryRequest;
+import com.parksupark.soomjae.server.community.category.dto.CategoryResponse;
 import com.parksupark.soomjae.server.community.category.entity.Category;
 import com.parksupark.soomjae.server.community.category.repository.CategoryRepository;
 import com.parksupark.soomjae.server.community.category.repository.InMemoryCategoryRepository;
@@ -23,14 +23,14 @@ class CategoryServiceTest {
         categoryRepository = new InMemoryCategoryRepository();
         categoryService = new CategoryService(categoryRepository);
 
-        categoryService.createCategory(new CategoryRequestDto("중복이름", null));
+        categoryService.createCategory(new CategoryRequest("중복이름", null));
     }
 
     @Test
     @DisplayName("부모 카테고리 지정 x -> 카테고리의 부모가 전체카테고리로 지정되어 저장되어야한다.")
     void createCategory() {
         //given
-        CategoryRequestDto requestDto = new CategoryRequestDto("category1", null);
+        CategoryRequest requestDto = new CategoryRequest("category1", null);
 
         //when
         Long categoryId = categoryService.createCategory(requestDto);
@@ -49,7 +49,7 @@ class CategoryServiceTest {
                 .name("parentCategory")
                 .build();
         Category parentCategory = categoryRepository.save(category);
-        CategoryRequestDto requestDto = new CategoryRequestDto("childCategory",
+        CategoryRequest requestDto = new CategoryRequest("childCategory",
                 parentCategory.getId().toString());
 
         //when
@@ -70,7 +70,7 @@ class CategoryServiceTest {
         Category save = categoryRepository.save(category);
 
         //when
-        CategoryResponseDto categoryResponseDto = categoryService.readCategory(save.getId());
+        CategoryResponse categoryResponseDto = categoryService.readCategory(save.getId());
 
         //then
         Assertions.assertEquals(save.getName(), categoryResponseDto.getName());
@@ -80,7 +80,7 @@ class CategoryServiceTest {
     @DisplayName("루트 카테고리를 정상적으로 조회해야 한다.")
     void readRootCategory() {
         //when
-        CategoryResponseDto categoryResponseDto = categoryService.readRootCategory();
+        CategoryResponse categoryResponseDto = categoryService.readRootCategory();
 
         //then
         Assertions.assertEquals(ROOT_CATEGORY, categoryResponseDto.getName());
@@ -90,7 +90,7 @@ class CategoryServiceTest {
     @DisplayName("중복이름 카테고리 저장시 에러가 발생해야 한다.")
     void validDuplicateName() {
         // given
-        CategoryRequestDto duplicateRequest = new CategoryRequestDto("중복이름", null);
+        CategoryRequest duplicateRequest = new CategoryRequest("중복이름", null);
 
         // when & then
         assertThrows(IllegalStateException.class, () -> {

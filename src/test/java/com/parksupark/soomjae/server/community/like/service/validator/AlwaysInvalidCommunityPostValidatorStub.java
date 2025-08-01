@@ -1,6 +1,7 @@
 package com.parksupark.soomjae.server.community.like.service.validator;
 
 import com.parksupark.soomjae.server.community.common.constant.PostConstant;
+import com.parksupark.soomjae.server.community.validator.PostValidator;
 
 public class AlwaysInvalidCommunityPostValidatorStub implements PostValidator {
 

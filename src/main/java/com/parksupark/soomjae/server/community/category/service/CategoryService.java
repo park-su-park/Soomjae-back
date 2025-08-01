@@ -5,8 +5,8 @@ import static com.parksupark.soomjae.server.community.category.constant.Category
 import static com.parksupark.soomjae.server.community.category.constant.CategoryConstant.PARENT_CATEGORY_NOT_FOUND;
 import static com.parksupark.soomjae.server.community.category.constant.CategoryConstant.ROOT_CATEGORY_NOT_FOUND;
 
-import com.parksupark.soomjae.server.community.category.dto.CategoryRequestDto;
-import com.parksupark.soomjae.server.community.category.dto.CategoryResponseDto;
+import com.parksupark.soomjae.server.community.category.dto.CategoryRequest;
+import com.parksupark.soomjae.server.community.category.dto.CategoryResponse;
 import com.parksupark.soomjae.server.community.category.entity.Category;
 import com.parksupark.soomjae.server.community.category.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ public class CategoryService {
     private final CategoryRepository categoryRepository;
 
     @Transactional
-    public Long createCategory(CategoryRequestDto categoryRequestDto) {
+    public Long createCategory(CategoryRequest categoryRequestDto) {
         validateDuplicateName(categoryRequestDto.getName());
         Category parent = resolveParentCategory(categoryRequestDto.getParentCategoryId());
         int hierarchy = calculateHierarchy(parent);
@@ -54,16 +54,17 @@ public class CategoryService {
         return (parent.getId() == 1L) ? 1 : parent.getHierarchy() + 1;
     }
 
-    public CategoryResponseDto readCategory(Long id) {
+    public CategoryResponse readCategory(Long id) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new IllegalStateException(CATEGORY_NOT_FOUND));
-        return CategoryResponseDto.of(category);
+        return CategoryResponse.of(category);
     }
 
-    public CategoryResponseDto readRootCategory() {
+
+    public CategoryResponse readRootCategory() {
         Category category = categoryRepository.findById(1L)
                 .orElseThrow(() -> new IllegalStateException(ROOT_CATEGORY_NOT_FOUND));
-        return CategoryResponseDto.of(category);
+        return CategoryResponse.of(category);
     }
 
 }

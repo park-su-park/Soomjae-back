@@ -1,5 +1,7 @@
 package com.parksupark.soomjae.server.community.like.service.validator;
 
+import com.parksupark.soomjae.server.community.validator.PostValidator;
+import com.parksupark.soomjae.server.community.validator.PostValidatorFactory;
 import java.util.HashMap;
 import java.util.Map;
 
