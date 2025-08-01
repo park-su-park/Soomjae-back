@@ -75,8 +75,10 @@ public class CommunityPostService {
     public CommunityPostDetailResponse readBypostId(Long postId) {
         CommunityPost communityPost = communityPostRepository.findById(postId)
             .orElseThrow(() -> new IllegalStateException(COMMUNITY_POST_NOT_FOUND));
-        List<CommentResponse> comments = commentRepository.findByPostTypeAndPostIdAndDeletedTimeIsNull(
-            COMMUNITY_POST_TYPE, communityPost.getId()).stream().map(CommentResponse::of).toList();
+        List<CommentResponse> comments = commentRepository
+            .findByPostTypeAndPostIdAndDeletedTimeIsNull(
+                COMMUNITY_POST_TYPE, communityPost.getId()).stream().map(CommentResponse::of)
+            .toList();
         return CommunityPostDetailResponse.of(communityPost, comments);
     }
 
