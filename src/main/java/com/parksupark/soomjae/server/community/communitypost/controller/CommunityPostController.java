@@ -1,9 +1,9 @@
 package com.parksupark.soomjae.server.community.communitypost.controller;
 
 import com.parksupark.soomjae.server.auth.username.dto.UsernamePasswordUserDetails;
+import com.parksupark.soomjae.server.community.communitypost.dto.CommunityPostDetailResponse;
 import com.parksupark.soomjae.server.community.communitypost.dto.CommunityPostListResponse;
 import com.parksupark.soomjae.server.community.communitypost.dto.CommunityPostRequest;
-import com.parksupark.soomjae.server.community.communitypost.dto.CommunityPostResponse;
 import com.parksupark.soomjae.server.community.communitypost.service.CommunityPostService;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,9 +29,9 @@ public class CommunityPostController {
 
     @PostMapping("/v1/boards/community/posts")
     public ResponseEntity<Map<String, Object>> postCommunityPost(
-            @RequestBody CommunityPostRequest communityPostRequest,
-            @AuthenticationPrincipal
-            UsernamePasswordUserDetails userDetails) {
+        @RequestBody CommunityPostRequest communityPostRequest,
+        @AuthenticationPrincipal
+        UsernamePasswordUserDetails userDetails) {
         Long postId = communityPostService.create(communityPostRequest, userDetails);
         Map<String, Object> response = new HashMap<>();
         response.put("postId", postId);
@@ -44,28 +44,28 @@ public class CommunityPostController {
     //유저 마이페이지 위한 memberId로 다건 조회
     @GetMapping("/v1/members/{memberId}/activities/posts/community")
     ResponseEntity<CommunityPostListResponse> getByMemberId(@PathVariable Long memberId,
-            @PageableDefault(size = 10) Pageable pageable) {
+        @PageableDefault(size = 10) Pageable pageable) {
         return ResponseEntity.ok(communityPostService.readByMemberId(memberId, pageable));
     }
 
 
     //postId로 상세 조회
     @GetMapping("/v1/boards/community/posts/{postId}")
-    ResponseEntity<CommunityPostResponse> getByPostId(@PathVariable Long postId) {
+    ResponseEntity<CommunityPostDetailResponse> getByPostId(@PathVariable Long postId) {
         return ResponseEntity.ok(communityPostService.readBypostId(postId));
     }
 
     //리스트 조회
     @GetMapping("/v1/boards/community/posts/list")
     ResponseEntity<CommunityPostListResponse> getCommunityList(
-            @PageableDefault(size = 10) Pageable pageable) {
+        @PageableDefault(size = 10) Pageable pageable) {
         return ResponseEntity.ok(communityPostService.readByFilter(pageable));
     }
 
     //수정
     @PutMapping("/v1/boards/community/posts/{postId}")
     ResponseEntity<Long> putCommunityPost(@PathVariable Long postId,
-            @RequestBody CommunityPostRequest request) {
+        @RequestBody CommunityPostRequest request) {
         return ResponseEntity.ok(communityPostService.update(postId, request));
     }
 

@@ -9,5 +9,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     List<Comment> findByPostTypeAndPostIdAndDeletedTimeIsNull(String postType, Long postId);
 
+    long countByPostTypeAndPostIdAndDeletedTimeIsNull(String postType, Long postId);
+
     Optional<Comment> findByIdAndDeletedTimeIsNull(Long commentId);
 }

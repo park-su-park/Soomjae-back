@@ -1,16 +1,17 @@
 package com.parksupark.soomjae.server.community.communitypost.dto;
 
 import com.parksupark.soomjae.server.community.category.entity.Category;
+import com.parksupark.soomjae.server.community.comment.dto.CommentResponse;
 import com.parksupark.soomjae.server.community.communitypost.entity.CommunityPost;
 import com.parksupark.soomjae.server.community.location.entity.Location;
 import com.parksupark.soomjae.server.member.dto.MemberResponse;
 import com.parksupark.soomjae.server.member.entity.Member;
 import java.time.Instant;
+import java.util.List;
 import lombok.Getter;
 
-
 @Getter
-public class CommunityPostResponse {
+public class CommunityPostDetailResponse {
 
     private final Long postId;
 
@@ -28,12 +29,12 @@ public class CommunityPostResponse {
 
     private final Instant createdTime;
 
-    private final Long commentNum;
+    private final List<CommentResponse> comments;
 
 
-    public CommunityPostResponse(Long postId, String title, String content,
+    public CommunityPostDetailResponse(Long postId, String title, String content,
         MemberResponse author, String category, String location,
-        Instant createdTime, Long commentNum) {
+        Instant createdTime, List<CommentResponse> comments) {
         this.postId = postId;
         this.postType = "community";
         this.title = title;
@@ -42,10 +43,11 @@ public class CommunityPostResponse {
         this.category = category;
         this.location = location;
         this.createdTime = createdTime;
-        this.commentNum = commentNum;
+        this.comments = comments;
     }
 
-    public static CommunityPostResponse of(CommunityPost communityPost, Long commentNum) {
+    public static CommunityPostDetailResponse of(CommunityPost communityPost,
+        List<CommentResponse> comments) {
         Member author = communityPost.getMember();
 
         Category category = communityPost.getCategory();
@@ -60,9 +62,9 @@ public class CommunityPostResponse {
             locationName = location.getName();
         }
 
-        return new CommunityPostResponse(communityPost.getId(), communityPost.getTitle(),
+        return new CommunityPostDetailResponse(communityPost.getId(), communityPost.getTitle(),
             communityPost.getContent(),
             MemberResponse.of(author), categoryName, locationName,
-            communityPost.getCreatedTime(), commentNum);
+            communityPost.getCreatedTime(), comments);
     }
 }
