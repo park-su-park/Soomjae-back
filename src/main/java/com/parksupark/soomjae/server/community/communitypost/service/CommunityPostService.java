@@ -40,19 +40,8 @@ public class CommunityPostService {
     public Long create(
         CommunityPostRequest communityPostRequest, UsernamePasswordUserDetails userDetails) {
 
-        Category category = null;
-        if (communityPostRequest.getCategory() != null) {
-            category = categoryRepository.findById(
-                    Long.parseLong(communityPostRequest.getCategory()))
-                .orElseThrow(() -> new IllegalStateException(CATEGORY_NOT_FOUND));
-        }
-        Location location = null;
-        if (communityPostRequest.getLocation() != null) {
-            location = locationRepository.findByCode(
-                    Long.parseLong(communityPostRequest.getLocation()))
-                .orElseThrow(() -> new IllegalStateException(
-                    LocationConstant.LOCATION_NOT_FOUND));
-        }
+        Category category = getCategory(communityPostRequest);
+        Location location = getLocation(communityPostRequest);
         Member member = userDetails.getMember();
 
         CommunityPost entity = communityPostRequest.toEntity(member, category, location);
@@ -61,7 +50,19 @@ public class CommunityPostService {
     }
 
     public CommunityPostListResponse readByFilter(Pageable pageable) {
-        List<CommunityPost> contents = communityPostRepository.findAll(pageable).getContent();
+        List<CommunityPost> posts = communityPostRepository.findAll(pageable).getContent();
+        List<CommunityPostResponse> response = getCommunityPostResponses(posts);
+        return CommunityPostListResponse.of(response);
+    }
+
+    public CommunityPostListResponse readByMemberId(Long memberId, Pageable pageable) {
+        List<CommunityPost> posts = communityPostRepository.findByMemberId(memberId, pageable)
+            .getContent();
+        List<CommunityPostResponse> response = getCommunityPostResponses(posts);
+        return CommunityPostListResponse.of(response);
+    }
+
+    private List<CommunityPostResponse> getCommunityPostResponses(List<CommunityPost> contents) {
         List<CommunityPostResponse> response = new ArrayList<>();
         for (CommunityPost post : contents) {
             long commentNum = commentRepository.countByPostTypeAndPostIdAndDeletedTimeIsNull(
@@ -70,7 +71,7 @@ public class CommunityPostService {
                 commentNum);
             response.add(communityPostResponse);
         }
-        return CommunityPostListResponse.of(response);
+        return response;
     }
 
     public CommunityPostDetailResponse readByPostId(Long postId) {
@@ -83,18 +84,6 @@ public class CommunityPostService {
         return CommunityPostDetailResponse.of(communityPost, comments);
     }
 
-    //페이징 기능 추 후 구현
-    public CommunityPostListResponse readByMemberId(Long memberId, Pageable pageable) {
-        List<CommunityPost> posts = communityPostRepository.findByMemberId(memberId, pageable)
-            .getContent();
-        List<CommunityPostResponse> response = new ArrayList<>();
-        for (CommunityPost post : posts) {
-            long commentNum = commentRepository.countByPostTypeAndPostIdAndDeletedTimeIsNull(
-                COMMUNITY_POST_TYPE, post.getId());
-            response.add(CommunityPostResponse.of(post, commentNum));
-        }
-        return CommunityPostListResponse.of(response);
-    }
 
     @Transactional
     public Long update(Long communityPostId, CommunityPostRequest communityPostRequest) {
@@ -107,19 +96,8 @@ public class CommunityPostService {
     private void updateCommunityPost(CommunityPostRequest communityPostRequest,
         CommunityPost communityPost) {
 
-        Category category = null;
-        if (communityPostRequest.getCategory() != null) {
-            category = categoryRepository.findById(
-                    Long.parseLong(communityPostRequest.getCategory()))
-                .orElseThrow(() -> new IllegalStateException(CATEGORY_NOT_FOUND));
-        }
-        Location location = null;
-        if (communityPostRequest.getLocation() != null) {
-            location = locationRepository.findByCode(
-                    Long.parseLong(communityPostRequest.getLocation()))
-                .orElseThrow(() -> new IllegalStateException(
-                    LocationConstant.LOCATION_NOT_FOUND));
-        }
+        Category category = getCategory(communityPostRequest);
+        Location location = getLocation(communityPostRequest);
         communityPost.setTitle(communityPostRequest.getTitle());
         communityPost.setContent(communityPostRequest.getContent());
         communityPost.setCategory(category);
@@ -133,5 +111,17 @@ public class CommunityPostService {
         communityPostRepository.delete(communityPost);
     }
 
+    private Category getCategory(CommunityPostRequest communityPostRequest) {
+        return communityPostRequest.getCategory() != null ? categoryRepository.findById(
+                Long.parseLong(communityPostRequest.getCategory()))
+            .orElseThrow(() -> new IllegalStateException(CATEGORY_NOT_FOUND)) : null;
+    }
+
+    private Location getLocation(CommunityPostRequest communityPostRequest) {
+        return communityPostRequest.getLocation() != null ? locationRepository.findByCode(
+                Long.parseLong(communityPostRequest.getLocation()))
+            .orElseThrow(() -> new IllegalStateException(LocationConstant.LOCATION_NOT_FOUND))
+            : null;
+    }
 
 }
