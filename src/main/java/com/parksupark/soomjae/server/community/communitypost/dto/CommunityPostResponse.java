@@ -31,9 +31,8 @@ public class CommunityPostResponse {
     private final Long commentNum;
 
 
-    public CommunityPostResponse(Long postId, String title, String content,
-        MemberResponse author, String category, String location,
-        Instant createdTime, Long commentNum) {
+    public CommunityPostResponse(Long postId, String title, String content, MemberResponse author,
+        String category, String location, Instant createdTime, Long commentNum) {
         this.postId = postId;
         this.postType = "community";
         this.title = title;
@@ -61,8 +60,7 @@ public class CommunityPostResponse {
         }
 
         return new CommunityPostResponse(communityPost.getId(), communityPost.getTitle(),
-            communityPost.getContent(),
-            MemberResponse.of(author), categoryName, locationName,
+            communityPost.getContent(), MemberResponse.of(author), categoryName, locationName,
             communityPost.getCreatedTime(), commentNum);
     }
 }
