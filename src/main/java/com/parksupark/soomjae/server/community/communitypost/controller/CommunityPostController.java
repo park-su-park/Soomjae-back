@@ -44,8 +44,10 @@ public class CommunityPostController {
     //유저 마이페이지 위한 memberId로 다건 조회
     @GetMapping("/v1/members/{memberId}/activities/posts/community")
     ResponseEntity<CommunityPostListResponse> getByMemberId(@PathVariable Long memberId,
-        @PageableDefault(size = 10) Pageable pageable) {
-        return ResponseEntity.ok(communityPostService.readByMemberId(memberId, pageable));
+        @PageableDefault(size = 10, page = 0) Pageable pageable) {
+        Pageable zeroBasedPageable = Pageable.ofSize(pageable.getPageSize())
+            .withPage(Math.max(pageable.getPageNumber() - 1, 0));
+        return ResponseEntity.ok(communityPostService.readByMemberId(memberId, zeroBasedPageable));
     }
 
 
@@ -58,8 +60,10 @@ public class CommunityPostController {
     //리스트 조회
     @GetMapping("/v1/boards/community/posts/list")
     ResponseEntity<CommunityPostListResponse> getCommunityList(
-        @PageableDefault(size = 10) Pageable pageable) {
-        return ResponseEntity.ok(communityPostService.readByFilter(pageable));
+        @PageableDefault(size = 10, page = 0) Pageable pageable) {
+        Pageable zeroBasedPageable = Pageable.ofSize(pageable.getPageSize())
+            .withPage(Math.max(pageable.getPageNumber() - 1, 0));
+        return ResponseEntity.ok(communityPostService.readByFilter(zeroBasedPageable));
     }
 
     //수정
