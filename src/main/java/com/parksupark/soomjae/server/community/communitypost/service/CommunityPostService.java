@@ -39,7 +39,6 @@ public class CommunityPostService {
     @Transactional
     public Long create(
         CommunityPostRequest communityPostRequest, UsernamePasswordUserDetails userDetails) {
-        Member member = userDetails.getMember();
 
         Category category = null;
         if (communityPostRequest.getCategory() != null) {
@@ -54,6 +53,8 @@ public class CommunityPostService {
                 .orElseThrow(() -> new IllegalStateException(
                     LocationConstant.LOCATION_NOT_FOUND));
         }
+        Member member = userDetails.getMember();
+
         CommunityPost entity = communityPostRequest.toEntity(member, category, location);
 
         return communityPostRepository.save(entity).getId();
