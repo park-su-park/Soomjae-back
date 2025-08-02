@@ -54,7 +54,7 @@ public class CommunityPostController {
     //postId로 상세 조회
     @GetMapping("/v1/boards/community/posts/{postId}")
     ResponseEntity<CommunityPostDetailResponse> getByPostId(@PathVariable Long postId) {
-        return ResponseEntity.ok(communityPostService.readBypostId(postId));
+        return ResponseEntity.ok(communityPostService.readByPostId(postId));
     }
 
     //리스트 조회

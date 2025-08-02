@@ -72,7 +72,7 @@ public class CommunityPostService {
         return CommunityPostListResponse.of(response);
     }
 
-    public CommunityPostDetailResponse readBypostId(Long postId) {
+    public CommunityPostDetailResponse readByPostId(Long postId) {
         CommunityPost communityPost = communityPostRepository.findById(postId)
             .orElseThrow(() -> new IllegalStateException(COMMUNITY_POST_NOT_FOUND));
         List<CommentResponse> comments = commentRepository
