@@ -53,17 +53,19 @@ public class CommunityPostController {
 
     //postId로 상세 조회
     @GetMapping("/v1/boards/community/posts/{postId}")
-    ResponseEntity<CommunityPostDetailResponse> getByPostId(@PathVariable Long postId) {
-        return ResponseEntity.ok(communityPostService.readByPostId(postId));
+    ResponseEntity<CommunityPostDetailResponse> getByPostId(@PathVariable Long postId,
+        @AuthenticationPrincipal UsernamePasswordUserDetails userDetails) {
+        return ResponseEntity.ok(communityPostService.readByPostId(postId, userDetails));
     }
 
     //리스트 조회
     @GetMapping("/v1/boards/community/posts/list")
     ResponseEntity<CommunityPostListResponse> getCommunityList(
-        @PageableDefault(size = 10, page = 0) Pageable pageable) {
+        @PageableDefault(size = 10, page = 0) Pageable pageable,
+        @AuthenticationPrincipal UsernamePasswordUserDetails userDetails) {
         Pageable zeroBasedPageable = Pageable.ofSize(pageable.getPageSize())
             .withPage(Math.max(pageable.getPageNumber() - 1, 0));
-        return ResponseEntity.ok(communityPostService.readByFilter(zeroBasedPageable));
+        return ResponseEntity.ok(communityPostService.readByFilter(zeroBasedPageable, userDetails));
     }
 
     //수정
