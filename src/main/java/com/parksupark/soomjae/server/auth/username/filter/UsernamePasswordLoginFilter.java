@@ -21,7 +21,6 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -44,7 +43,7 @@ public class UsernamePasswordLoginFilter extends UsernamePasswordAuthenticationF
         JwtProvider jwtProvider,
         RefreshTokenService refreshTokenService,
         boolean cookieSecure
-        ) {
+    ) {
 
         this.authenticationManager = authenticationManager;
         this.objectMapper = objectMapper;
