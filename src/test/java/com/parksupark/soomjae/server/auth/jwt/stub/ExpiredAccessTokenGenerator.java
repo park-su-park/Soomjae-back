@@ -1,15 +1,15 @@
-package com.parksupark.soomjae.server.auth.common.jwt;
+package com.parksupark.soomjae.server.auth.jwt.stub;
 
+import com.parksupark.soomjae.server.auth.jwt.AbstractJwtKeyHolder;
+import com.parksupark.soomjae.server.auth.jwt.access.AccessTokenGenerator;
 import io.jsonwebtoken.Jwts;
 import java.util.Date;
 import java.util.Map;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
-@Component
-public class DefaultJwtGenerator extends AbstractJwtKeyHolder implements JwtGenerator {
+public class ExpiredAccessTokenGenerator extends AbstractJwtKeyHolder implements
+    AccessTokenGenerator {
 
-    public DefaultJwtGenerator(@Value("${jwt.secret}") String secret) {
+    public ExpiredAccessTokenGenerator(String secret) {
         super(secret);
     }
 
@@ -17,7 +17,7 @@ public class DefaultJwtGenerator extends AbstractJwtKeyHolder implements JwtGene
     public String generate(String subject, Map<String, Object> claims) {
         long nowMillis = System.currentTimeMillis();
         Date now = new Date(nowMillis);
-        Date expiry = new Date(nowMillis + 1000 * 60 * 60);
+        Date expiry = new Date(nowMillis - 1000 * 60);
 
         return Jwts.builder()
             .subject(subject)

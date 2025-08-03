@@ -1,4 +1,4 @@
-package com.parksupark.soomjae.server.auth.common.jwt;
+package com.parksupark.soomjae.server.auth.jwt;
 
 import java.util.Base64;
 import javax.crypto.SecretKey;

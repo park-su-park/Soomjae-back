@@ -10,7 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.parksupark.soomjae.server.auth.common.jwt.JwtGenerator;
+import com.parksupark.soomjae.server.auth.jwt.access.AccessTokenGenerator;
 import com.parksupark.soomjae.server.member.dto.*;
 import com.parksupark.soomjae.server.member.entity.Member;
 import com.parksupark.soomjae.server.member.exception.DuplicateEmailException;
@@ -53,7 +53,7 @@ class MemberE2ETest {
     private MemberRepository memberRepository;
 
     @Autowired
-    private JwtGenerator jwtGenerator;
+    private AccessTokenGenerator accessTokenGenerator;
 
 
     // === API 엔드포인트 상수
@@ -330,7 +330,7 @@ class MemberE2ETest {
     private String createJwt(Member member) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("role", member.getRole().getKey());
-        return jwtGenerator.generate(member.getEmail(), claims);
+        return accessTokenGenerator.generate(member.getEmail(), claims);
     }
 
     private Member saveMember() {

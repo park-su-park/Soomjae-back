@@ -16,6 +16,11 @@ public class ErrorMessages {
 
     public static final String VALIDATION_FAILED_MESSAGE = "요청 바디 값 검증에 실패했습니다.";
 
+    public static final String REFRESH_TOKEN_NOT_FOUND_FROM_COOKIE_MESSAGE =
+            "Refresh Token을 쿠키에서 찾을 수 없습니다.";
+    public static final String REFRESH_TOKEN_VALIDATION_FAILED_MESSAGE =
+            "Refresh Token 검증에 실패했습니다.";
+
 
     private ErrorMessages() {
     }

@@ -1,6 +1,6 @@
-package com.parksupark.soomjae.server.auth.common.jwt.filter;
+package com.parksupark.soomjae.server.auth.jwt.filter;
 
-import com.parksupark.soomjae.server.auth.common.jwt.JwtProvider;
+import com.parksupark.soomjae.server.auth.jwt.JwtProvider;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,7 +22,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         FilterChain filterChain) throws ServletException, IOException {
 
         String token = jwtProvider.resolveToken(request);
-        if (token != null && jwtProvider.validateToken(token)) {
+        if (token != null && jwtProvider.validateAccessToken(token)) {
             Authentication authentication = jwtProvider.getAuthentication(token);
 
             // thread safety
