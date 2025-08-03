@@ -9,7 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.parksupark.soomjae.server.auth.username.dto.UsernamePasswordLoginRequest;
-import com.parksupark.soomjae.server.community.category.dto.CategoryRequestDto;
+import com.parksupark.soomjae.server.community.category.dto.CategoryRequest;
 import com.parksupark.soomjae.server.community.category.entity.Category;
 import com.parksupark.soomjae.server.community.category.repository.CategoryRepository;
 import com.parksupark.soomjae.server.community.category.service.CategoryService;
@@ -26,6 +26,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -47,13 +48,13 @@ class CategoryIntergrationTest {
 
     @BeforeAll
     static void setUp(@Autowired MockMvc mockMvc,
-            @Autowired ObjectMapper objectMapper,
-            @Autowired MemberRepository memberRepository,
-            @Autowired PasswordEncoder passwordEncoder,
-            @Autowired CategoryRepository categoryRepository) throws Exception {
+                      @Autowired ObjectMapper objectMapper,
+                      @Autowired MemberRepository memberRepository,
+                      @Autowired PasswordEncoder passwordEncoder,
+                      @Autowired CategoryRepository categoryRepository) throws Exception {
 
         Category category = new Category(null, "전체 카테고리", null, null, 0);
-        categoryRepository.saveAndFlush(category);
+        categoryRepository.save(category);
 
         String username = "testuser";
         String password = "testpssword";
@@ -79,7 +80,7 @@ class CategoryIntergrationTest {
     @Test
     @DisplayName("JWT 필터를 통과하여 카테고리 생성 성공")
     void createCategory_withJwt() throws Exception {
-        CategoryRequestDto requestDto = new CategoryRequestDto("카테고리1", "1");
+        CategoryRequest requestDto = new CategoryRequest("카테고리1", "1");
 
         mockMvc.perform(post("/v1/categories")
                         .header("Authorization", "Bearer " + token)
@@ -103,7 +104,7 @@ class CategoryIntergrationTest {
     @Test
     @DisplayName("전체 카테고리 조회 테스트")
     void readAllCategories() throws Exception {
-        CategoryRequestDto responseDto = new CategoryRequestDto("영어", null);
+        CategoryRequest responseDto = new CategoryRequest("영어", null);
         categoryService.createCategory(responseDto);
 
         mockMvc.perform(get("/v1/categories/all")

@@ -1,13 +1,14 @@
 package com.parksupark.soomjae.server.community.communitypost.dto;
 
+import com.parksupark.soomjae.server.community.comment.dto.CommentResponse;
 import com.parksupark.soomjae.server.community.communitypost.entity.CommunityPost;
 import com.parksupark.soomjae.server.member.dto.MemberResponse;
 import java.time.Instant;
+import java.util.List;
 import lombok.Getter;
 
-
 @Getter
-public class CommunityPostResponse {
+public class CommunityPostDetailResponse {
 
     private final Long postId;
 
@@ -25,10 +26,11 @@ public class CommunityPostResponse {
 
     private final Instant createdTime;
 
-    private final Long commentNum;
+    private final List<CommentResponse> comments;
 
 
-    private CommunityPostResponse(CommunityPost communityPost, Long commentNum) {
+    private CommunityPostDetailResponse(CommunityPost communityPost,
+        List<CommentResponse> comments) {
         this.postId = communityPost.getId();
         this.postType = "community";
         this.title = communityPost.getTitle();
@@ -39,10 +41,11 @@ public class CommunityPostResponse {
             communityPost.getCategory() != null ? communityPost.getCategory().getName() : null;
         this.location =
             communityPost.getLocation() != null ? communityPost.getLocation().getName() : null;
-        this.commentNum = commentNum;
+        this.comments = comments;
     }
 
-    public static CommunityPostResponse of(CommunityPost communityPost, Long commentNum) {
-        return new CommunityPostResponse(communityPost, commentNum);
+    public static CommunityPostDetailResponse of(CommunityPost communityPost,
+        List<CommentResponse> comments) {
+        return new CommunityPostDetailResponse(communityPost, comments);
     }
 }

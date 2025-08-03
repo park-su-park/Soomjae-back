@@ -5,13 +5,11 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.parksupark.soomjae.server.community.category.dto.CategoryRequestDto;
-import com.parksupark.soomjae.server.community.category.dto.CategoryResponseDto;
+import com.parksupark.soomjae.server.community.category.dto.CategoryRequest;
+import com.parksupark.soomjae.server.community.category.dto.CategoryResponse;
 import com.parksupark.soomjae.server.community.category.service.CategoryService;
 import com.parksupark.soomjae.server.testconfig.TestSecurityConfig;
 import java.util.ArrayList;
@@ -24,6 +22,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+
 
 @WebMvcTest(CategoryController.class)
 @Import({TestSecurityConfig.class})
@@ -39,7 +38,7 @@ class CategoryControllerWithoutSecurityTest {
     @Test
     @DisplayName("카테고리 생성 테스트")
     void createCategory_shouldReturnId() throws Exception {
-        CategoryRequestDto requestDto = new CategoryRequestDto("카테고리1", "1");
+        CategoryRequest requestDto = new CategoryRequest("카테고리1", "1");
 
         when(categoryService.createCategory(any())).thenReturn(1L);
 
@@ -53,7 +52,7 @@ class CategoryControllerWithoutSecurityTest {
     @Test
     @DisplayName("카테고리 단건 조회 테스트")
     void readCategory() throws Exception {
-        CategoryResponseDto responseDto = new CategoryResponseDto(1L, "카테고리1", 1, null);
+        CategoryResponse responseDto = new CategoryResponse(1L, "카테고리1", 1, null);
         when(categoryService.readCategory(1L)).thenReturn(responseDto);
 
         mockMvc.perform(get("/v1/categories")
@@ -66,9 +65,9 @@ class CategoryControllerWithoutSecurityTest {
     @Test
     @DisplayName("전체 카테고리 조회 테스트")
     void readAllCategories() throws Exception {
-        CategoryResponseDto parentResponseDto = new CategoryResponseDto(1L, "전체 카테고리", 0,
+        CategoryResponse parentResponseDto = new CategoryResponse(1L, "전체 카테고리", 0,
                 new ArrayList<>());
-        CategoryResponseDto childResponseDto = new CategoryResponseDto(2L, "영어", 1,
+        CategoryResponse childResponseDto = new CategoryResponse(2L, "영어", 1,
                 new ArrayList<>());
         parentResponseDto.getChilds().add(childResponseDto);
 

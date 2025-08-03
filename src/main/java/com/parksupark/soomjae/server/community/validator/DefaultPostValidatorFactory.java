@@ -1,4 +1,4 @@
-package com.parksupark.soomjae.server.community.like.service.validator;
+package com.parksupark.soomjae.server.community.validator;
 
 import com.parksupark.soomjae.server.common.exception.ErrorMessages;
 import com.parksupark.soomjae.server.community.common.exception.InvalidPostTypeException;
@@ -15,13 +15,13 @@ public class DefaultPostValidatorFactory implements PostValidatorFactory {
 
     public DefaultPostValidatorFactory(List<PostValidator> validators) {
         this.validatorMap = validators.stream()
-            .collect(Collectors.toMap(PostValidator::getPostType, v -> v));
+                .collect(Collectors.toMap(PostValidator::getPostType, v -> v));
     }
 
     @Override
     public PostValidator getValidator(String postType) {
         return Optional.ofNullable(validatorMap.get(postType))
-            .orElseThrow(() -> new InvalidPostTypeException(
-                ErrorMessages.INVALID_POST_TYPE_EXCEPTION_MESSAGE + postType));
+                .orElseThrow(() -> new InvalidPostTypeException(
+                        ErrorMessages.INVALID_POST_TYPE_EXCEPTION_MESSAGE + postType));
     }
 }
