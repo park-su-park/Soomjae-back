@@ -21,6 +21,7 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -35,17 +36,21 @@ public class UsernamePasswordLoginFilter extends UsernamePasswordAuthenticationF
     private final ObjectMapper objectMapper;
     private final JwtProvider jwtProvider;
     private final RefreshTokenService refreshTokenService;
+    private final boolean cookieSecure;
 
     public UsernamePasswordLoginFilter(
-            AuthenticationManager authenticationManager,
-            ObjectMapper objectMapper,
-            JwtProvider jwtProvider,
-            RefreshTokenService refreshTokenService
-    ) {
+        AuthenticationManager authenticationManager,
+        ObjectMapper objectMapper,
+        JwtProvider jwtProvider,
+        RefreshTokenService refreshTokenService,
+        boolean cookieSecure
+        ) {
+
         this.authenticationManager = authenticationManager;
         this.objectMapper = objectMapper;
         this.jwtProvider = jwtProvider;
         this.refreshTokenService = refreshTokenService;
+        this.cookieSecure = cookieSecure;
         super.setFilterProcessesUrl("/v1/auth/login");
     }
 
@@ -122,7 +127,7 @@ public class UsernamePasswordLoginFilter extends UsernamePasswordAuthenticationF
         ResponseCookie cookie = ResponseCookie.from("refresh_token", refreshToken.getToken())
                 .httpOnly(true)
                 // 개발 환경에선 false
-                .secure(false)
+                .secure(cookieSecure)
                 .sameSite("Strict")
                 .maxAge(Duration.between(Instant.now(), refreshToken.getExpiresAt()))
                 .path("/")

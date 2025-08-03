@@ -51,7 +51,7 @@ class UsernamePasswordLoginFilterTest {
     @BeforeEach
     void setUp() {
         filter = new UsernamePasswordLoginFilter(authenticationManager, objectMapper, jwtProvider,
-            refreshTokenService);
+            refreshTokenService, false);
     }
 
 
