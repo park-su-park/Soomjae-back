@@ -96,7 +96,7 @@ public class DefaultMemberService implements MemberService {
 
     private MemberResponse createMemberResponse(Member member) {
         return new MemberResponse(member.getId(), member.getEmail(), member.getNickname(),
-            member.getCreatedTime(), member.getModifiedTime(), member.getRole());
+            member.getRole(), member.getCreatedTime(), member.getModifiedTime());
     }
 
 
