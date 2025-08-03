@@ -1,6 +1,6 @@
-package com.parksupark.soomjae.server.community.communitypost.dto;
+package com.parksupark.soomjae.server.community.post.communitypost.dto;
 
-import com.parksupark.soomjae.server.community.communitypost.entity.CommunityPost;
+import com.parksupark.soomjae.server.community.post.communitypost.entity.CommunityPost;
 import com.parksupark.soomjae.server.member.dto.MemberResponse;
 import java.time.Instant;
 import lombok.Getter;

@@ -1,10 +1,11 @@
-package com.parksupark.soomjae.server.community.communitypost.dto;
+package com.parksupark.soomjae.server.community.post.communitypost.dto;
 
-import com.parksupark.soomjae.server.community.communitypost.entity.CommunityPost;
+import com.parksupark.soomjae.server.community.post.common.dto.PostResponse;
+import com.parksupark.soomjae.server.community.post.communitypost.entity.CommunityPost;
 import lombok.Getter;
 
 @Getter
-public class CommunityPostResponse extends CommunityPostBaseResponse {
+public class CommunityPostResponse extends CommunityPostBaseResponse implements PostResponse {
 
     private final Long commentNum;
 

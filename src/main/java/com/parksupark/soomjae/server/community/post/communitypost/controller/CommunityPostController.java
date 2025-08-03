@@ -1,10 +1,10 @@
-package com.parksupark.soomjae.server.community.communitypost.controller;
+package com.parksupark.soomjae.server.community.post.communitypost.controller;
 
 import com.parksupark.soomjae.server.auth.username.dto.UsernamePasswordUserDetails;
-import com.parksupark.soomjae.server.community.communitypost.dto.CommunityPostDetailResponse;
-import com.parksupark.soomjae.server.community.communitypost.dto.CommunityPostListResponse;
-import com.parksupark.soomjae.server.community.communitypost.dto.CommunityPostRequest;
-import com.parksupark.soomjae.server.community.communitypost.service.CommunityPostService;
+import com.parksupark.soomjae.server.community.post.common.dto.PostListResponse;
+import com.parksupark.soomjae.server.community.post.communitypost.dto.CommunityPostDetailResponse;
+import com.parksupark.soomjae.server.community.post.communitypost.dto.CommunityPostRequest;
+import com.parksupark.soomjae.server.community.post.communitypost.service.CommunityPostService;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
@@ -43,7 +43,7 @@ public class CommunityPostController {
 
     //유저 마이페이지 위한 memberId로 다건 조회
     @GetMapping("/v1/members/{memberId}/activities/posts/community")
-    ResponseEntity<CommunityPostListResponse> getByMemberId(@PathVariable Long memberId,
+    ResponseEntity<PostListResponse> getByMemberId(@PathVariable Long memberId,
         @PageableDefault(size = 10, page = 0) Pageable pageable) {
         Pageable zeroBasedPageable = Pageable.ofSize(pageable.getPageSize())
             .withPage(Math.max(pageable.getPageNumber() - 1, 0));
@@ -60,7 +60,7 @@ public class CommunityPostController {
 
     //리스트 조회
     @GetMapping("/v1/boards/community/posts/list")
-    ResponseEntity<CommunityPostListResponse> getCommunityList(
+    ResponseEntity<PostListResponse> getCommunityList(
         @PageableDefault(size = 10, page = 0) Pageable pageable,
         @AuthenticationPrincipal UsernamePasswordUserDetails userDetails) {
         Pageable zeroBasedPageable = Pageable.ofSize(pageable.getPageSize())
