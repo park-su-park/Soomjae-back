@@ -10,16 +10,21 @@ public class MeetingPostDetailResponse extends MeetingPostBaseResponse {
 
     private final List<CommentResponse> comments;
 
+    private final Boolean isParticipatedByMe;
+
 
     private MeetingPostDetailResponse(MeetingPost meetingPost, Long likeNum,
-        Boolean isLikedByMe, List<CommentResponse> comments, int currentParticipantCount) {
+        Boolean isLikedByMe, List<CommentResponse> comments, int currentParticipantCount,
+        Boolean isParticipatedByMe) {
         super(meetingPost, likeNum, isLikedByMe, currentParticipantCount);
         this.comments = comments;
+        this.isParticipatedByMe = isParticipatedByMe;
     }
 
     public static MeetingPostDetailResponse of(MeetingPost meetingPost, Long likeNum,
-        Boolean isLikedByMe, List<CommentResponse> comments, int currentParticipantCount) {
+        Boolean isLikedByMe, List<CommentResponse> comments, int currentParticipantCount,
+        Boolean isParticipatedByMe) {
         return new MeetingPostDetailResponse(meetingPost, likeNum, isLikedByMe, comments,
-            currentParticipantCount);
+            currentParticipantCount, isParticipatedByMe);
     }
 }
