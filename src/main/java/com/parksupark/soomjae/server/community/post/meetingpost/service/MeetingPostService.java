@@ -1,5 +1,6 @@
 package com.parksupark.soomjae.server.community.post.meetingpost.service;
 
+import static com.parksupark.soomjae.server.common.exception.ErrorMessages.ALREADY_PARTICIPATE_IN_POST;
 import static com.parksupark.soomjae.server.common.exception.ErrorMessages.MEETING_PARTICIPANTS_FULL_EXCEPTION_MESSAGE;
 import static com.parksupark.soomjae.server.common.exception.ErrorMessages.MEETING_POST_NOT_FOUND;
 import static com.parksupark.soomjae.server.common.exception.ErrorMessages.NOT_PARTICIPANT_OF_POST;
@@ -170,9 +171,15 @@ public class MeetingPostService {
             .orElseThrow(() -> new IllegalStateException(MEETING_POST_NOT_FOUND));
 
         Member participant = userDetails.getMember();
+
         long participantsNum = participationRepository.countByMeetingPostId(postId);
+
         if (participantsNum >= meetingPost.getMaximumParticipants()) {
             throw new IllegalStateException(MEETING_PARTICIPANTS_FULL_EXCEPTION_MESSAGE);
+        }
+        if (participationRepository.existsByMeetingPostIdAndParticipantId(postId,
+            participant.getId())) {
+            throw new IllegalStateException(ALREADY_PARTICIPATE_IN_POST);
         }
 
         participationRepository.save(new Participation(participant, meetingPost));
