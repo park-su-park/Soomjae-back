@@ -91,8 +91,10 @@ public class MeetingPostService {
 
         Long likeNum = likeRepository.countByPostTypeAndPostId(MEETING_POST_TYPE,
             meetingPost.getId());
+        long currentParticipantCount = participationRepository.countByMeetingPostId(postId);
 
-        return MeetingPostDetailResponse.of(meetingPost, likeNum, isLikedByMe, comments);
+        return MeetingPostDetailResponse.of(meetingPost, likeNum, isLikedByMe, comments,
+            (int) currentParticipantCount);
     }
 
 
@@ -146,9 +148,11 @@ public class MeetingPostService {
                 COMMUNITY_POST_TYPE, post.getId(), memberId);
             Long likeNum = likeRepository.countByPostTypeAndPostId(COMMUNITY_POST_TYPE,
                 post.getId());
+            long currentParticipantCount = participationRepository.countByMeetingPostId(
+                post.getId());
 
             PostResponse meetingPostResponse = MeetingPostResponse.of(post,
-                commentNum, isLikedByMe, likeNum);
+                commentNum, isLikedByMe, likeNum, (int) currentParticipantCount);
 
             response.add(meetingPostResponse);
         }

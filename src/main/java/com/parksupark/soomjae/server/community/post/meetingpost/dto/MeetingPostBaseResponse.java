@@ -21,12 +21,14 @@ public abstract class MeetingPostBaseResponse {
 
     private final int maximumParticipants;
 
+    private final int currentParticipantCount;
+
     private final Instant startTime;
 
     private final Instant endTime;
 
     protected MeetingPostBaseResponse(MeetingPost meetingPost, Long likeNum,
-        Boolean isLikedByMe) {
+        Boolean isLikedByMe, int currentParticipantCount) {
         this.postId = meetingPost.getId();
         this.postType = "community";
         this.title = meetingPost.getTitle();
@@ -42,5 +44,6 @@ public abstract class MeetingPostBaseResponse {
         this.maximumParticipants = meetingPost.getMaximumParticipants();
         this.startTime = meetingPost.getStartTime();
         this.endTime = meetingPost.getEndTime();
+        this.currentParticipantCount = currentParticipantCount;
     }
 }

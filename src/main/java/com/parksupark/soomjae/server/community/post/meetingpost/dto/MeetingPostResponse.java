@@ -9,14 +9,16 @@ public class MeetingPostResponse extends MeetingPostBaseResponse implements Post
 
     private final Long commentNum;
 
+
     private MeetingPostResponse(MeetingPost meetingPost, Long likeNum, Boolean isLikedByMe,
-        Long commentNum) {
-        super(meetingPost, likeNum, isLikedByMe);
+        Long commentNum, int currentParticipantCount) {
+        super(meetingPost, likeNum, isLikedByMe, currentParticipantCount);
         this.commentNum = commentNum;
     }
 
     public static MeetingPostResponse of(MeetingPost meetingPost, Long likeNum,
-        Boolean isLikedByMe, Long commentNum) {
-        return new MeetingPostResponse(meetingPost, likeNum, isLikedByMe, commentNum);
+        Boolean isLikedByMe, Long commentNum, int currentParticipantCount) {
+        return new MeetingPostResponse(meetingPost, likeNum, isLikedByMe, commentNum,
+            currentParticipantCount);
     }
 }
