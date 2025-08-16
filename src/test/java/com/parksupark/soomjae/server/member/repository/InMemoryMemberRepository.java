@@ -70,8 +70,8 @@ public class InMemoryMemberRepository implements MemberRepository {
     public Optional<Member> findByProviderAndProviderId(AuthProvider provider, String providerId) {
         return store.values().stream()
             .filter(member ->
-                Objects.equals(provider, member.getProvider()) &&
-                    Objects.equals(providerId, member.getProviderId()))
+                Objects.equals(provider, member.getProvider())
+                    && Objects.equals(providerId, member.getProviderId()))
             .findFirst();
     }
 

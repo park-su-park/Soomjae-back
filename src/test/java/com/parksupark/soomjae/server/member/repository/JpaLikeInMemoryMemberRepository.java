@@ -163,8 +163,8 @@ public class JpaLikeInMemoryMemberRepository implements MemberRepository {
         // 1. 영속성 컨텍스트에서 조회 (1차 캐시)
         Optional<Member> contextResult = persistenceContext.values().stream()
             .filter(member ->
-                Objects.equals(provider, member.getProvider()) &&
-                    Objects.equals(providerId, member.getProviderId()))
+                Objects.equals(provider, member.getProvider())
+                    && Objects.equals(providerId, member.getProviderId()))
             .findFirst();
 
         if (contextResult.isPresent()) {
@@ -173,11 +173,12 @@ public class JpaLikeInMemoryMemberRepository implements MemberRepository {
 
         // 2. DB에서 찾기 (영속성 컨텍스트에 없는 엔티티만)
         Optional<Member> storeResult = persistentStore.entrySet().stream()
-            .filter(entry -> !persistenceContext.containsKey(entry.getKey())) // 이미 영속성 컨텍스트에 있는 건 제외
+            .filter(
+                entry -> !persistenceContext.containsKey(entry.getKey())) // 이미 영속성 컨텍스트에 있는 건 제외
             .map(Map.Entry::getValue)
             .filter(member ->
-                Objects.equals(provider, member.getProvider()) &&
-                    Objects.equals(providerId, member.getProviderId()))
+                Objects.equals(provider, member.getProvider())
+                    && Objects.equals(providerId, member.getProviderId()))
             .findFirst();
 
         if (storeResult.isPresent()) {
