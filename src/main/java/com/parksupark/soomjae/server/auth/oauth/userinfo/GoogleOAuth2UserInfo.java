@@ -1,4 +1,4 @@
-package com.parksupark.soomjae.server.auth.oauth.userInfo;
+package com.parksupark.soomjae.server.auth.oauth.userinfo;
 
 import java.util.Map;
 import lombok.RequiredArgsConstructor;

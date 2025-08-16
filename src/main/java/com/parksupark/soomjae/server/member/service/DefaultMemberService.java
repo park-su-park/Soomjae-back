@@ -86,7 +86,8 @@ public class DefaultMemberService implements MemberService {
     @Transactional(readOnly = true)
     @Override
     public CheckDuplicateEmailResponse checkDuplicateEmail(String email) {
-        return new CheckDuplicateEmailResponse(memberRepository.existsByEmailAndProvider(email, AuthProvider.LOCAL));
+        return new CheckDuplicateEmailResponse(
+            memberRepository.existsByEmailAndProvider(email, AuthProvider.LOCAL));
     }
 
     private Member findMemberById(Long id) {

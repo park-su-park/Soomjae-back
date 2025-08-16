@@ -11,6 +11,11 @@ import com.parksupark.soomjae.server.member.entity.Member;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,12 +23,6 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
-
-import java.io.IOException;
-import java.time.Duration;
-import java.time.Instant;
-import java.util.HashMap;
-import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
@@ -54,7 +53,8 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
         CreateRefreshTokenRequest createRefreshTokenRequest =
             new CreateRefreshTokenRequest(member.getEmail(), member.getId());
-        RefreshToken refreshToken = refreshTokenService.createRefreshToken(createRefreshTokenRequest);
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(
+            createRefreshTokenRequest);
 
         setCookie(response, refreshToken);
 

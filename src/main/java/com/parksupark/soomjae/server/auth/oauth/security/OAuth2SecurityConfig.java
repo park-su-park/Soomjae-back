@@ -18,8 +18,8 @@ import org.springframework.security.web.SecurityFilterChain;
 public class OAuth2SecurityConfig {
 
     private final CustomOAuth2UserService customOAuth2UserService;
-    private final OAuth2SuccessHandler oAuth2SuccessHandler;
-    private final OAuth2FailureHandler oAuth2FailureHandler;
+    private final OAuth2SuccessHandler oauth2Successhandler;
+    private final OAuth2FailureHandler oauth2Failurehandler;
 
     @Bean
     @Order(1)
@@ -33,8 +33,8 @@ public class OAuth2SecurityConfig {
                 .userInfoEndpoint(userInfo -> userInfo
                     .userService(customOAuth2UserService)
                 )
-                .successHandler(oAuth2SuccessHandler)
-                .failureHandler(oAuth2FailureHandler)
+                .successHandler(oauth2Successhandler)
+                .failureHandler(oauth2Failurehandler)
             );
 
         return http.build();

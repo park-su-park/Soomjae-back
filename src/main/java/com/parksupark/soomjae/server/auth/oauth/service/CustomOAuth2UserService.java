@@ -2,8 +2,8 @@ package com.parksupark.soomjae.server.auth.oauth.service;
 
 import com.parksupark.soomjae.server.auth.oauth.AuthProvider;
 import com.parksupark.soomjae.server.auth.oauth.dto.CustomOAuth2User;
-import com.parksupark.soomjae.server.auth.oauth.userInfo.OAuth2UserInfo;
-import com.parksupark.soomjae.server.auth.oauth.userInfo.OAuth2UserInfoFactory;
+import com.parksupark.soomjae.server.auth.oauth.userinfo.OAuth2UserInfo;
+import com.parksupark.soomjae.server.auth.oauth.userinfo.OAuth2UserInfoFactory;
 import com.parksupark.soomjae.server.member.entity.Member;
 import com.parksupark.soomjae.server.member.repository.MemberRepository;
 import java.util.Optional;
@@ -27,19 +27,19 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     @Transactional
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
 
-        OAuth2User oAuth2User = super.loadUser(userRequest);
+        OAuth2User oauth2User = super.loadUser(userRequest);
 
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
         AuthProvider provider = AuthProvider.valueOf(registrationId.toUpperCase());
 
         OAuth2UserInfo userInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(provider,
-            oAuth2User.getAttributes());
+            oauth2User.getAttributes());
         
         // TODO: 이메일 인증 여부 체크
 
         Member member = findOrCreateMember(userInfo, provider);
 
-        return new CustomOAuth2User(member, oAuth2User.getAttributes());
+        return new CustomOAuth2User(member, oauth2User.getAttributes());
 
     }
 
@@ -56,7 +56,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             if (!member.getEmail().equals(userInfo.getEmail())) {
                 member.updateEmail(userInfo.getEmail());
                 memberRepository.save(member);
-                log.info("OAuth2 사용자 이메일 주소 업데이트: {} -> {}", member.getEmail(), userInfo.getEmail());
+                log.info("OAuth2 사용자 이메일 주소 업데이트: {} -> {}", member.getEmail(),
+                    userInfo.getEmail());
             }
 
             return member;

@@ -1,4 +1,4 @@
-package com.parksupark.soomjae.server.auth.oauth.userInfo;
+package com.parksupark.soomjae.server.auth.oauth.userinfo;
 
 public interface OAuth2UserInfo {
 
