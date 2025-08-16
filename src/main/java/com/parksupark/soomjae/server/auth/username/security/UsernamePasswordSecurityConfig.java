@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -47,6 +48,7 @@ public class UsernamePasswordSecurityConfig {
      * </ul>
      */
     @Bean
+    @Order(2)
     public SecurityFilterChain securityFilterChain(HttpSecurity http,
             AuthenticationManager authenticationManager,
             AuthenticationProvider authenticationProvider)
@@ -56,6 +58,7 @@ public class UsernamePasswordSecurityConfig {
             authenticationManager, objectMapper, jwtProvider, refreshTokenService, cookieSecure);
 
         http
+            .securityMatcher("/**")
                 .csrf(csrf -> csrf.disable())
 
                 .formLogin(form -> form.disable())

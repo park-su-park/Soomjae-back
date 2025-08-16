@@ -1,5 +1,6 @@
 package com.parksupark.soomjae.server.member.repository;
 
+import com.parksupark.soomjae.server.auth.oauth.AuthProvider;
 import com.parksupark.soomjae.server.member.entity.Member;
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -138,6 +139,62 @@ public class JpaLikeInMemoryMemberRepository implements MemberRepository {
             // 스냅샷 업데이트
             entitySnapshots.put(dirtyId, deepCopy(dirtyEntity));
         }
+    }
+
+    @Override
+    public boolean existsByEmailAndProvider(String email, AuthProvider provider) {
+        // 먼저 영속성 컨텍스트에서 확인
+        boolean existsInContext = persistenceContext.values().stream()
+            .anyMatch(
+                member -> email.equals(member.getEmail()) && provider.equals(member.getProvider()));
+
+        if (existsInContext) {
+            return true;
+        }
+
+        return persistentStore.entrySet().stream()
+            .filter(entry -> persistenceContext.containsKey(entry.getKey()))
+            .anyMatch(entry -> email.equals(entry.getValue().getEmail()) && provider.equals(
+                entry.getValue().getProvider()));
+    }
+
+    @Override
+    public Optional<Member> findByProviderAndProviderId(AuthProvider provider, String providerId) {
+        // 1. 영속성 컨텍스트에서 조회 (1차 캐시)
+        Optional<Member> contextResult = persistenceContext.values().stream()
+            .filter(member ->
+                Objects.equals(provider, member.getProvider()) &&
+                    Objects.equals(providerId, member.getProviderId()))
+            .findFirst();
+
+        if (contextResult.isPresent()) {
+            return contextResult;
+        }
+
+        // 2. DB에서 찾기 (영속성 컨텍스트에 없는 엔티티만)
+        Optional<Member> storeResult = persistentStore.entrySet().stream()
+            .filter(entry -> !persistenceContext.containsKey(entry.getKey())) // 이미 영속성 컨텍스트에 있는 건 제외
+            .map(Map.Entry::getValue)
+            .filter(member ->
+                Objects.equals(provider, member.getProvider()) &&
+                    Objects.equals(providerId, member.getProviderId()))
+            .findFirst();
+
+        if (storeResult.isPresent()) {
+            Member storedMember = storeResult.get();
+            Member managedMember = deepCopy(storedMember);
+
+            // 3. 1차 캐시에 저장
+            persistenceContext.put(storedMember.getId(), managedMember);
+
+            // 4. 스냅샷에 저장 (더티 체킹용)
+            entitySnapshots.put(storedMember.getId(), deepCopy(storedMember));
+
+            // 영속성 컨텍스트에서 관리하는 객체를 반환
+            return Optional.of(managedMember);
+        }
+
+        return Optional.empty();
     }
 
     @Override
