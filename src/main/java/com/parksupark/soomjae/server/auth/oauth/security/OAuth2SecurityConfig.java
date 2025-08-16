@@ -33,7 +33,7 @@ public class OAuth2SecurityConfig {
     public SecurityFilterChain oauth2FilterChain(HttpSecurity http) throws Exception {
         http
             .securityMatcher("/oauth2/**", "/login/oauth2/**")
-            .csrf(csrf -> csrf.disable())
+            .csrf(csrf -> csrf.ignoringRequestMatchers("/oauth2/**", "/login/oauth2/**"))
             .sessionManagement(session ->
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .oauth2Login(oauth2 -> oauth2
