@@ -21,6 +21,13 @@ public class OAuth2SecurityConfig {
     private final OAuth2SuccessHandler oauth2Successhandler;
     private final OAuth2FailureHandler oauth2Failurehandler;
 
+    /**
+     * <b>Why CSRF is disabled:</b>
+     * <ul>
+     *     <li>OAuth2에서는 state 파라미터가 CSRF 보호 역할</li>
+     *     <li>JWT 기반 stateless 인증에는 CSRF가 불필요</li>
+     * </ul>
+     */
     @Bean
     @Order(1)
     public SecurityFilterChain oauth2FilterChain(HttpSecurity http) throws Exception {
