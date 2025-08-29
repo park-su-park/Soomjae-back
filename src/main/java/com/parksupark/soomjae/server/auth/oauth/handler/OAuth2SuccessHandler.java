@@ -41,23 +41,19 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         HttpServletResponse response,
         Authentication authentication) throws IOException, ServletException {
 
-        CustomOAuth2User oauth2User = (CustomOAuth2User) authentication.getPrincipal();
-        Member member = oauth2User.getMember();
+        Member member = extractMemberFromAuthentication(authentication);
 
         log.info("OAuth2 로그인 성공: {}, provider: {}", member.getEmail(), member.getProvider());
 
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("role", member.getRole().getKey());
+        String accessToken = createAccessToken(member);
 
-        String accessToken = jwtProvider.generateAccessToken(member.getEmail(), claims);
+        createAndSetRefreshToken(response, member);
 
-        CreateRefreshTokenRequest createRefreshTokenRequest =
-            new CreateRefreshTokenRequest(member.getEmail(), member.getId());
-        RefreshToken refreshToken = refreshTokenService.createRefreshToken(
-            createRefreshTokenRequest);
+        sendSuccessResponse(response, accessToken, member);
+    }
 
-        setCookie(response, refreshToken);
-
+    private void sendSuccessResponse(HttpServletResponse response, String accessToken, Member member)
+        throws IOException {
         OAuth2AuthSuccessResponse successResponse =
             new OAuth2AuthSuccessResponse(accessToken, member.getId());
 
@@ -65,6 +61,27 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         objectMapper.writeValue(response.getWriter(), successResponse);
+    }
+
+    private void createAndSetRefreshToken(HttpServletResponse response, Member member) {
+        CreateRefreshTokenRequest createRefreshTokenRequest =
+            new CreateRefreshTokenRequest(member.getEmail(), member.getId());
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(
+            createRefreshTokenRequest);
+
+        setCookie(response, refreshToken);
+    }
+
+    private String createAccessToken(Member member) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("role", member.getRole().getKey());
+
+        return jwtProvider.generateAccessToken(member.getEmail(), claims);
+    }
+
+    private Member extractMemberFromAuthentication(Authentication authentication) {
+        CustomOAuth2User oauth2User = (CustomOAuth2User) authentication.getPrincipal();
+        return oauth2User.getMember();
     }
 
     private void setCookie(HttpServletResponse response, RefreshToken refreshToken) {
