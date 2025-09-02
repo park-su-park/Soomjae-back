@@ -1,6 +1,7 @@
 package com.parksupark.soomjae.server.common.exception;
 
 import com.parksupark.soomjae.server.auth.common.exception.RefreshFailedException;
+import com.parksupark.soomjae.server.auth.oauth.exception.OAuth2AuthenticationProcessingException;
 import com.parksupark.soomjae.server.common.dto.ValidationErrorDetail;
 import com.parksupark.soomjae.server.common.dto.ValidationErrorResponse;
 import com.parksupark.soomjae.server.community.common.exception.AlreadyLikedException;
@@ -22,7 +23,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(IllegalStateException.class)
     protected ResponseEntity<String> handleMethodArgumentNotValidException(
-            IllegalStateException e) {
+        IllegalStateException e) {
         return ResponseEntity.status(400).body(e.getMessage());
     }
 
@@ -31,34 +32,34 @@ public class GlobalExceptionHandler {
         LikeNotFoundException.class, AlreadyLikedException.class, MemberNotFoundException.class,
         DuplicateEmailException.class})
     protected ResponseEntity<String> handleInvalidPostTypeException(
-            RuntimeException e) {
+        RuntimeException e) {
 
         return ResponseEntity.status(400).body(e.getMessage());
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     protected ResponseEntity<String> handleDataIntegrityViolationException(
-            DataIntegrityViolationException e) {
+        DataIntegrityViolationException e) {
 
         return ResponseEntity.status(400)
-                .body(ErrorMessages.DATA_INTEGRITY_VIOLATION_EXCEPTION_MESSAGE);
+            .body(ErrorMessages.DATA_INTEGRITY_VIOLATION_EXCEPTION_MESSAGE);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     protected ResponseEntity<ValidationErrorResponse> handleValidationException(
-            MethodArgumentNotValidException e) {
+        MethodArgumentNotValidException e) {
 
         List<FieldError> fieldErrors = e.getBindingResult().getFieldErrors();
         List<ValidationErrorDetail> errors = fieldErrors.stream()
-                .map(error -> new ValidationErrorDetail(
-                        error.getField(),
-                        error.getRejectedValue(),
-                        error.getDefaultMessage()
-                ))
-                .toList();
+            .map(error -> new ValidationErrorDetail(
+                error.getField(),
+                error.getRejectedValue(),
+                error.getDefaultMessage()
+            ))
+            .toList();
 
         ValidationErrorResponse errorResponse = new ValidationErrorResponse(
-                ErrorMessages.VALIDATION_FAILED_MESSAGE, errors);
+            ErrorMessages.VALIDATION_FAILED_MESSAGE, errors);
 
         return ResponseEntity.status(400).body(errorResponse);
     }
@@ -67,7 +68,16 @@ public class GlobalExceptionHandler {
     protected ResponseEntity<String> handleRefreshFailedException(RuntimeException e) {
 
         return ResponseEntity.status(401)
-                .header("Set-Cookie", "refreshToken=; Path=/; HttpOnly; Max-Age=0")
-                .body(e.getMessage());
+            .header("Set-Cookie", "refreshToken=; Path=/; HttpOnly; Max-Age=0")
+            .body(e.getMessage());
     }
+
+    @ExceptionHandler(OAuth2AuthenticationProcessingException.class)
+    protected ResponseEntity<String> handleOAuth2AuthenticationProcessingException(
+        RuntimeException e) {
+
+        return ResponseEntity.status(400)
+            .body(e.getMessage());
+    }
+
 }

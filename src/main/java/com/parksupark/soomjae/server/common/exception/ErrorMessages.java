@@ -21,6 +21,9 @@ public class ErrorMessages {
     public static final String REFRESH_TOKEN_VALIDATION_FAILED_MESSAGE =
             "Refresh Token 검증에 실패했습니다.";
 
+    public static final String OAUTH2_EMAIL_NOT_VERIFIED_MESSAGE = "이메일이 인증되지 않았습니다.";
+    public static final String OAUTH2_PROVIDER_NOT_SUPPORT_MESSAGE = "지원하지 않는 OAuth Provider: ";
+
 
     private ErrorMessages() {
     }
