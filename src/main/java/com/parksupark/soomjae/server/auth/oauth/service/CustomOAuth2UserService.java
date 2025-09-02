@@ -47,6 +47,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     /**
      * OAuth2 사용자의 이메일 인증 상태를 검증
+     * 
      * <p>보안상의 이유로 이메일이 인증되지 않은 사용자의 가입을 차단</p>
      *
      * @param userInfo OAuth2 Provider별 OAuth2UserInfo 구현체

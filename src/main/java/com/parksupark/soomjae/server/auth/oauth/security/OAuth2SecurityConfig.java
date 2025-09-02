@@ -33,17 +33,17 @@ public class OAuth2SecurityConfig {
     @Order(1)
     public SecurityFilterChain oauth2FilterChain(HttpSecurity http) throws Exception {
         http
-                .securityMatcher("/oauth2/**", "/login/oauth2/**")
-                .csrf(AbstractHttpConfigurer::disable)
-                .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .oauth2Login(oauth2 -> oauth2
-                        .userInfoEndpoint(userInfo -> userInfo
-                                .userService(customOAuth2UserService)
-                        )
-                        .successHandler(oauth2Successhandler)
-                        .failureHandler(oauth2Failurehandler)
-                );
+            .securityMatcher("/oauth2/**", "/login/oauth2/**")
+            .csrf(AbstractHttpConfigurer::disable)
+            .sessionManagement(session ->
+                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .oauth2Login(oauth2 -> oauth2
+                .userInfoEndpoint(userInfo -> userInfo
+                    .userService(customOAuth2UserService)
+                )
+                .successHandler(oauth2Successhandler)
+                .failureHandler(oauth2Failurehandler)
+            );
 
         return http.build();
     }

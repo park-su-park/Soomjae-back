@@ -52,7 +52,8 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         sendSuccessResponse(response, accessToken, member);
     }
 
-    private void sendSuccessResponse(HttpServletResponse response, String accessToken, Member member)
+    private void sendSuccessResponse(HttpServletResponse response,
+                                     String accessToken, Member member)
             throws IOException {
         OAuth2AuthSuccessResponse successResponse =
                 new OAuth2AuthSuccessResponse(accessToken, member.getId());
