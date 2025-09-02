@@ -53,9 +53,9 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
     }
 
     private void sendSuccessResponse(HttpServletResponse response, String accessToken, Member member)
-        throws IOException {
+            throws IOException {
         OAuth2AuthSuccessResponse successResponse =
-            new OAuth2AuthSuccessResponse(accessToken, member.getId());
+                new OAuth2AuthSuccessResponse(accessToken, member.getId());
 
         // JSON 응답 (기존과 동일)
         response.setContentType("application/json");

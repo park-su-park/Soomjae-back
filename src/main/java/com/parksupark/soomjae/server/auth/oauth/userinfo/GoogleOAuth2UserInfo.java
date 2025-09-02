@@ -6,8 +6,8 @@ import lombok.RequiredArgsConstructor;
 
 /**
  * Google OAuth2 UserInfo 구현체
- * <p>Google OAuth2 API의 응답 구조에 마춰 사용자 정보를 추출</p>
  *
+ * <p>Google OAuth2 API의 응답 구조에 마춰 사용자 정보를 추출</p>
  * <pre>
  * Google 응답 예시:
  * {

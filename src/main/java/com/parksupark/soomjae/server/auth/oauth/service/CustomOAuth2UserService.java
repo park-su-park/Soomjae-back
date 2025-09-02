@@ -48,7 +48,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     /**
      * OAuth2 사용자의 이메일 인증 상태를 검증
      * <p>보안상의 이유로 이메일이 인증되지 않은 사용자의 가입을 차단</p>
-     * @param userInfo: OAuth2 Provider별 OAuth2UserInfo 구현체 (GoogleOAuth2UserInfo, KakaoOAuth2UserInfo)
+     *
+     * @param userInfo OAuth2 Provider별 OAuth2UserInfo 구현체
      * @throws OAuth2AuthenticationProcessingException 이메일이 인증되지 않은 경우 발생
      */
     private void checkEmailVerification(OAuth2UserInfo userInfo) {
@@ -61,6 +62,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     /**
      * OAuth2 제공자 정보를 기반으로 기존 회원을 조회하거나 신규 회원을 생성합니다.
+     *
      * <p>OAuth2 로그인 시 다음과 같은 로직으로 회원을 처리합니다:</p>
      * <ul>
      *   <li><b>기존 회원 존재:</b> 이메일 정보 업데이트 후 반환</li>
