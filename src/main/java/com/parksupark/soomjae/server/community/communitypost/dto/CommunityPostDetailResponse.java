@@ -35,7 +35,7 @@ public class CommunityPostDetailResponse {
         this.postType = "community";
         this.title = communityPost.getTitle();
         this.content = communityPost.getContent();
-        this.author = MemberResponse.of(communityPost.getMember());
+        this.author = MemberResponse.create(communityPost.getMember());
         this.createdTime = communityPost.getCreatedTime();
         this.category =
             communityPost.getCategory() != null ? communityPost.getCategory().getName() : null;
