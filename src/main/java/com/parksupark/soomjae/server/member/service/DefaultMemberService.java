@@ -4,6 +4,7 @@ import com.parksupark.soomjae.server.auth.oauth.AuthProvider;
 import com.parksupark.soomjae.server.common.exception.ErrorMessages;
 import com.parksupark.soomjae.server.member.dto.CheckDuplicateEmailResponse;
 import com.parksupark.soomjae.server.member.dto.CreateMemberRequest;
+import com.parksupark.soomjae.server.member.dto.MemberBasicInfo;
 import com.parksupark.soomjae.server.member.dto.MemberResponse;
 import com.parksupark.soomjae.server.member.entity.Member;
 import com.parksupark.soomjae.server.member.exception.DuplicateEmailException;
@@ -42,11 +43,11 @@ public class DefaultMemberService implements MemberService {
     @Transactional(readOnly = true)
     @Override
     public MemberResponse readMember(Long id) {
-        Member member = memberRepository.findById(id)
+        MemberBasicInfo memberBasicInfo = memberRepository.findBasicInfoById(id)
             .orElseThrow(() -> new MemberNotFoundException(
                 ErrorMessages.MEMBER_NOT_FOUND_EXCEPTION_MESSAGE));
 
-        return createMemberResponse(member);
+        return createMemberResponse(memberBasicInfo);
     }
 
     @Transactional
@@ -97,8 +98,11 @@ public class DefaultMemberService implements MemberService {
     }
 
     private MemberResponse createMemberResponse(Member member) {
-        return new MemberResponse(member.getId(), member.getEmail(), member.getNickname(),
-            member.getRole(), member.getCreatedTime(), member.getModifiedTime());
+        return MemberResponse.create(member);
+    }
+
+    private MemberResponse createMemberResponse(MemberBasicInfo memberBasicInfo) {
+        return MemberResponse.create(memberBasicInfo);
     }
 
 
