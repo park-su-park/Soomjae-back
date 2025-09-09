@@ -15,6 +15,7 @@ import com.parksupark.soomjae.server.community.communitypost.dto.CommunityPostRe
 import com.parksupark.soomjae.server.community.communitypost.dto.CommunityPostResponse;
 import com.parksupark.soomjae.server.community.communitypost.entity.CommunityPost;
 import com.parksupark.soomjae.server.community.communitypost.repository.CommunityPostRepository;
+import com.parksupark.soomjae.server.community.like.repository.LikeRepository;
 import com.parksupark.soomjae.server.community.location.constant.LocationConstant;
 import com.parksupark.soomjae.server.community.location.entity.Location;
 import com.parksupark.soomjae.server.community.location.repository.LocationRepository;
@@ -35,6 +36,7 @@ public class CommunityPostService {
     private final CategoryRepository categoryRepository;
     private final LocationRepository locationRepository;
     private final CommentRepository commentRepository;
+    private final LikeRepository likeRepository;
 
     @Transactional
     public Long create(
@@ -49,39 +51,38 @@ public class CommunityPostService {
         return communityPostRepository.save(entity).getId();
     }
 
-    public CommunityPostListResponse readByFilter(Pageable pageable) {
+    public CommunityPostListResponse readByFilter(Pageable pageable,
+        UsernamePasswordUserDetails userDetails) {
         List<CommunityPost> posts = communityPostRepository.findAll(pageable).getContent();
-        List<CommunityPostResponse> response = getCommunityPostResponses(posts);
+        List<CommunityPostResponse> response = getCommunityPostResponses(posts,
+            userDetails.getMember().getId());
         return CommunityPostListResponse.of(response);
     }
 
     public CommunityPostListResponse readByMemberId(Long memberId, Pageable pageable) {
         List<CommunityPost> posts = communityPostRepository.findByMemberId(memberId, pageable)
             .getContent();
-        List<CommunityPostResponse> response = getCommunityPostResponses(posts);
+        List<CommunityPostResponse> response = getCommunityPostResponses(posts, memberId);
         return CommunityPostListResponse.of(response);
     }
 
-    private List<CommunityPostResponse> getCommunityPostResponses(List<CommunityPost> contents) {
-        List<CommunityPostResponse> response = new ArrayList<>();
-        for (CommunityPost post : contents) {
-            long commentNum = commentRepository.countByPostTypeAndPostIdAndDeletedTimeIsNull(
-                COMMUNITY_POST_TYPE, post.getId());
-            CommunityPostResponse communityPostResponse = CommunityPostResponse.of(post,
-                commentNum);
-            response.add(communityPostResponse);
-        }
-        return response;
-    }
-
-    public CommunityPostDetailResponse readByPostId(Long postId) {
+    public CommunityPostDetailResponse readByPostId(Long postId,
+        UsernamePasswordUserDetails userDetails) {
         CommunityPost communityPost = communityPostRepository.findById(postId)
             .orElseThrow(() -> new IllegalStateException(COMMUNITY_POST_NOT_FOUND));
+
         List<CommentResponse> comments = commentRepository
             .findByPostTypeAndPostIdAndDeletedTimeIsNull(
                 COMMUNITY_POST_TYPE, communityPost.getId()).stream().map(CommentResponse::of)
             .toList();
-        return CommunityPostDetailResponse.of(communityPost, comments);
+
+        Boolean isLikedByMe = likeRepository.existsByPostTypeAndPostIdAndMemberId(
+            COMMUNITY_POST_TYPE, communityPost.getId(), userDetails.getMember().getId());
+
+        Long likeNum = likeRepository.countByPostTypeAndPostId(COMMUNITY_POST_TYPE,
+            communityPost.getId());
+
+        return CommunityPostDetailResponse.of(communityPost, likeNum, isLikedByMe, comments);
     }
 
 
@@ -122,6 +123,26 @@ public class CommunityPostService {
                 Long.parseLong(communityPostRequest.getLocation()))
             .orElseThrow(() -> new IllegalStateException(LocationConstant.LOCATION_NOT_FOUND))
             : null;
+    }
+
+    private List<CommunityPostResponse> getCommunityPostResponses(List<CommunityPost> contents,
+        Long memberId) {
+        List<CommunityPostResponse> response = new ArrayList<>();
+        for (CommunityPost post : contents) {
+            long commentNum = commentRepository.countByPostTypeAndPostIdAndDeletedTimeIsNull(
+                COMMUNITY_POST_TYPE, post.getId());
+
+            Boolean isLikedByMe = likeRepository.existsByPostTypeAndPostIdAndMemberId(
+                COMMUNITY_POST_TYPE, post.getId(), memberId);
+            Long likeNum = likeRepository.countByPostTypeAndPostId(COMMUNITY_POST_TYPE,
+                post.getId());
+
+            CommunityPostResponse communityPostResponse = CommunityPostResponse.of(post,
+                commentNum, isLikedByMe, likeNum);
+
+            response.add(communityPostResponse);
+        }
+        return response;
     }
 
 }
