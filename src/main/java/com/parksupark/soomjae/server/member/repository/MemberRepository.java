@@ -25,7 +25,11 @@ public interface MemberRepository {
 
     Optional<Member> findByProviderAndProviderId(AuthProvider provider, String providerId);
 
-    Optional<MemberBasicInfo> findBasicInfoById(Long id);
+    default Optional<MemberBasicInfo> findBasicInfoById(Long id) {
+        return Optional.empty();
+    }
 
-    Optional<MemberBasicInfo> findBasicInfoByEmail(String email);
+    default Optional<MemberBasicInfo> findBasicInfoByEmail(String email) {
+        return Optional.empty();
+    }
 }
