@@ -91,6 +91,12 @@ public class DefaultMemberService implements MemberService {
             memberRepository.existsByEmailAndProvider(email, AuthProvider.LOCAL));
     }
 
+    /**
+     * update 에 사용 하기 위해 Member 엔티티 자체를 조회
+     *
+     * @param id
+     * @return Member
+     */
     private Member findMemberById(Long id) {
         return memberRepository.findById(id)
                 .orElseThrow(() -> new MemberNotFoundException(
