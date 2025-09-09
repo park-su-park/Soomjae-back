@@ -4,7 +4,8 @@ import com.parksupark.soomjae.server.member.Role;
 import java.time.Instant;
 
 /**
- * <p>단순 Member 데이터 응답에 사용될 조회 성능 향상용 Projection 클래스</p>
+ * 단순 Member 데이터 응답에 사용될 조회 성능 향상용 Projection 클래스
+ *
  * <p>(Member는 칼럼이 적어 성능 향상이 미미하긴함)</p>
  */
 public interface MemberBasicInfo {

@@ -94,8 +94,8 @@ public class DefaultMemberService implements MemberService {
     /**
      * update 에 사용 하기 위해 Member 엔티티 자체를 조회
      *
-     * @param id
-     * @return Member
+     * @param id 조회에 사용할 Member의 id
+     * @return Member 엔티티 객체
      */
     private Member findMemberById(Long id) {
         return memberRepository.findById(id)
