@@ -26,7 +26,18 @@ public class MemberResponse {
         this.modifiedTime = modifiedTime;
     }
 
-    public static MemberResponse of(Member member) {
+    public static MemberResponse create(MemberBasicInfo memberBasicInfo) {
+        return new MemberResponse(
+            memberBasicInfo.getId(),
+            memberBasicInfo.getEmail(),
+            memberBasicInfo.getNickname(),
+            memberBasicInfo.getRole(),
+            memberBasicInfo.getCreatedTime(),
+            memberBasicInfo.getModifiedTime()
+        );
+    }
+
+    public static MemberResponse create(Member member) {
         return new MemberResponse(member.getId(), member.getEmail(), member.getNickname(),
             member.getRole(), member.getCreatedTime(), member.getModifiedTime());
     }
