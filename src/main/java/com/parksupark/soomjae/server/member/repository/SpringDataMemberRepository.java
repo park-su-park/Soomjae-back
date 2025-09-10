@@ -6,7 +6,10 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface SpringDataMemberRepository extends JpaRepository<Member, Long>, MemberRepository {
+
+    @Override
     Optional<MemberBasicInfo> findBasicInfoById(Long id);
 
+    @Override
     Optional<MemberBasicInfo> findBasicInfoByEmail(String email);
 }
