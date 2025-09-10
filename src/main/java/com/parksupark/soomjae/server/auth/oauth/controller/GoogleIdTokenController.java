@@ -1,10 +1,9 @@
 package com.parksupark.soomjae.server.auth.oauth.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.parksupark.soomjae.server.auth.jwt.entity.RefreshToken;
 import com.parksupark.soomjae.server.auth.oauth.dto.GoogleIdTokenVerificationRequest;
-import com.parksupark.soomjae.server.auth.oauth.dto.GoogleIdTokenVerificationResult;
 import com.parksupark.soomjae.server.auth.oauth.dto.GoogleIdTokenVerificationResponse;
+import com.parksupark.soomjae.server.auth.oauth.dto.GoogleIdTokenVerificationResult;
 import com.parksupark.soomjae.server.auth.oauth.service.GoogleIdTokenService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -40,8 +39,9 @@ public class GoogleIdTokenController {
 
         setCookie(response, result.getRefreshToken());
 
-        GoogleIdTokenVerificationResponse googleIdTokenVerificationResponse = new GoogleIdTokenVerificationResponse(
-            result.getAccessToken(), result.getMember().getId());
+        GoogleIdTokenVerificationResponse googleIdTokenVerificationResponse =
+            new GoogleIdTokenVerificationResponse(result.getAccessToken(),
+                result.getMember().getId());
 
         return ResponseEntity.ok(googleIdTokenVerificationResponse);
 

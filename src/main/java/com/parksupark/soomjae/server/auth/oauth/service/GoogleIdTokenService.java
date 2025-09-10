@@ -66,7 +66,9 @@ public class GoogleIdTokenService {
         }
     }
 
-    private GoogleIdToken verifyToken(String idTokenString) throws GeneralSecurityException, IOException {
+    private GoogleIdToken verifyToken(String idTokenString)
+        throws GeneralSecurityException, IOException {
+
         if (verifier == null) {
             verifier = new GoogleIdTokenVerifier.Builder(
                 GoogleNetHttpTransport.newTrustedTransport(),
@@ -74,7 +76,7 @@ public class GoogleIdTokenService {
                 .setAudience(Collections.singletonList(googleClientId))
                 .build();
         }
-        
+
         // Google 공개키로 서명 검증
         GoogleIdToken idToken = verifier.verify(idTokenString);
 
@@ -111,7 +113,8 @@ public class GoogleIdTokenService {
         if (existingMember.isPresent()) {
             Member member = existingMember.get();
 
-            log.info("기존 OAuth2 사용자 로그인: {}, provider: {}", userInfo.getEmail(), AuthProvider.GOOGLE);
+            log.info("기존 OAuth2 사용자 로그인: {}, provider: {}", userInfo.getEmail(),
+                AuthProvider.GOOGLE);
 
             // 이메일 주소가 변경되었을 수 있으니 업데이트
             if (!member.getEmail().equals(userInfo.getEmail())) {

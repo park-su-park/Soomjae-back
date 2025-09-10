@@ -13,8 +13,8 @@ public class GoogleIdTokenVerificationResult {
     private final RefreshToken refreshToken;
     private final Member member;
 
-    public static GoogleIdTokenVerificationResult success(String accessToken, RefreshToken refreshToken,
-        Member member) {
+    public static GoogleIdTokenVerificationResult success(String accessToken,
+        RefreshToken refreshToken, Member member) {
         return new GoogleIdTokenVerificationResult(accessToken, refreshToken, member);
     }
 
