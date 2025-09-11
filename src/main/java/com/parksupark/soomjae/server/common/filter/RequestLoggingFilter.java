@@ -50,7 +50,8 @@ public class RequestLoggingFilter extends OncePerRequestFilter {
             headers.put(headerName, request.getHeader(headerName))
         );
         try {
-            String jsonHeaders = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(headers);
+            String jsonHeaders = objectMapper.writerWithDefaultPrettyPrinter()
+                .writeValueAsString(headers);
             log.info("Request Headers:\n{}", jsonHeaders);
         } catch (JsonProcessingException e) {
             log.info("Request Headers: (failed to format as JSON)");
@@ -73,7 +74,8 @@ public class RequestLoggingFilter extends OncePerRequestFilter {
             headers.put(headerName, response.getHeader(headerName));
         }
         try {
-            String jsonHeaders = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(headers);
+            String jsonHeaders = objectMapper.writerWithDefaultPrettyPrinter()
+                .writeValueAsString(headers);
             log.info("Response Headers:\n{}", jsonHeaders);
         } catch (JsonProcessingException e) {
             log.info("Response Headers: (failed to format as JSON)");
