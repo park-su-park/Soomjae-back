@@ -11,11 +11,13 @@ public class MeetingPostResponse extends MeetingPostBaseResponse implements Post
 
 
     private MeetingPostResponse(MeetingPost meetingPost, PostStatsResponse postStatsResponse) {
-        super(meetingPost, postStatsResponse.getLikeCount(), postStatsResponse.isLikedByMe(), postStatsResponse.getParticipantCount().intValue())
+        super(meetingPost, postStatsResponse.getLikeCount(), postStatsResponse.isLikedByMe(),
+            postStatsResponse.getParticipantCount().intValue());
         this.commentNum = postStatsResponse.getPostId();
     }
 
-    public static MeetingPostResponse of(MeetingPost meetingPost, PostStatsResponse postStatsResponse) {
+    public static MeetingPostResponse of(MeetingPost meetingPost,
+        PostStatsResponse postStatsResponse) {
         return new MeetingPostResponse(meetingPost, postStatsResponse);
     }
 }
