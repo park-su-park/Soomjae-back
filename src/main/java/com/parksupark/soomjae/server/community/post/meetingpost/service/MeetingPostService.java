@@ -5,7 +5,6 @@ import static com.parksupark.soomjae.server.common.exception.ErrorMessages.MEETI
 import static com.parksupark.soomjae.server.common.exception.ErrorMessages.MEETING_POST_NOT_FOUND;
 import static com.parksupark.soomjae.server.common.exception.ErrorMessages.NOT_PARTICIPANT_OF_POST;
 import static com.parksupark.soomjae.server.community.category.constant.CategoryConstant.CATEGORY_NOT_FOUND;
-import static com.parksupark.soomjae.server.community.common.constant.PostConstant.COMMUNITY_POST_TYPE;
 import static com.parksupark.soomjae.server.community.common.constant.PostConstant.MEETING_POST_TYPE;
 
 import com.parksupark.soomjae.server.auth.username.dto.UsernamePasswordUserDetails;
@@ -22,16 +21,17 @@ import com.parksupark.soomjae.server.community.participation.dto.ParticipationRe
 import com.parksupark.soomjae.server.community.participation.entity.Participation;
 import com.parksupark.soomjae.server.community.participation.repository.ParticipationRepository;
 import com.parksupark.soomjae.server.community.post.common.dto.PostListResponse;
-import com.parksupark.soomjae.server.community.post.common.dto.PostResponse;
 import com.parksupark.soomjae.server.community.post.meetingpost.dto.MeetingPostDetailResponse;
 import com.parksupark.soomjae.server.community.post.meetingpost.dto.MeetingPostRequest;
 import com.parksupark.soomjae.server.community.post.meetingpost.dto.MeetingPostResponse;
+import com.parksupark.soomjae.server.community.post.meetingpost.dto.PostStatsResponse;
 import com.parksupark.soomjae.server.community.post.meetingpost.entity.MeetingPost;
 import com.parksupark.soomjae.server.community.post.meetingpost.repository.MeetingPostRepository;
 import com.parksupark.soomjae.server.member.dto.MemberResponse;
 import com.parksupark.soomjae.server.member.entity.Member;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -65,7 +65,7 @@ public class MeetingPostService {
     public PostListResponse readMeetingPostList(Pageable pageable,
         UsernamePasswordUserDetails userDetails) {
         List<MeetingPost> posts = meetingPostRepository.findAll(pageable).getContent();
-        List<PostResponse> response = getMeetingPostResponses(posts,
+        List<MeetingPostResponse> response = getMeetingPostResponses(posts,
             userDetails.getMember().getId());
         return PostListResponse.of(response);
     }
@@ -73,8 +73,25 @@ public class MeetingPostService {
     public PostListResponse readByMemberId(Long memberId, Pageable pageable) {
         List<MeetingPost> posts = meetingPostRepository.findByMemberId(memberId, pageable)
             .getContent();
-        List<PostResponse> response = getMeetingPostResponses(posts, memberId);
+        List<MeetingPostResponse> response = getMeetingPostResponses(posts, memberId);
         return PostListResponse.of(response);
+    }
+
+    private List<MeetingPostResponse> getMeetingPostResponses(List<MeetingPost> contents,
+        Long memberId) {
+        List<PostStatsResponse> postStats = meetingPostRepository.findPostStats(
+            contents.stream().map(MeetingPost::getId).toList(), memberId);
+
+        List<MeetingPostResponse> response = new ArrayList<>();
+
+        for (PostStatsResponse postStat : postStats) {
+            Optional<MeetingPost> postOptional = contents.stream()
+                .filter(p -> postStat.getPostId() == p.getId()).findFirst();
+
+            postOptional.ifPresent(
+                meetingPost -> response.add(MeetingPostResponse.of(meetingPost, postStat)));
+        }
+        return response;
     }
 
     public MeetingPostDetailResponse readByPostId(Long postId,
@@ -142,27 +159,6 @@ public class MeetingPostService {
             : null;
     }
 
-    private List<PostResponse> getMeetingPostResponses(List<MeetingPost> contents,
-        Long memberId) {
-        List<PostResponse> response = new ArrayList<>();
-        for (MeetingPost post : contents) {
-            long commentNum = commentRepository.countByPostTypeAndPostIdAndDeletedTimeIsNull(
-                COMMUNITY_POST_TYPE, post.getId());
-
-            Boolean isLikedByMe = likeRepository.existsByPostTypeAndPostIdAndMemberId(
-                COMMUNITY_POST_TYPE, post.getId(), memberId);
-            Long likeNum = likeRepository.countByPostTypeAndPostId(COMMUNITY_POST_TYPE,
-                post.getId());
-            long currentParticipantCount = participationRepository.countByMeetingPostId(
-                post.getId());
-
-            PostResponse meetingPostResponse = MeetingPostResponse.of(post,
-                commentNum, isLikedByMe, likeNum, (int) currentParticipantCount);
-
-            response.add(meetingPostResponse);
-        }
-        return response;
-    }
 
     @Transactional
     public ParticipationResponse participate(Long postId, UsernamePasswordUserDetails userDetails) {
