@@ -65,7 +65,7 @@ public class MeetingPostService {
     public PostListResponse readMeetingPostList(Pageable pageable,
         UsernamePasswordUserDetails userDetails) {
         List<MeetingPost> posts = meetingPostRepository.findAll(pageable).getContent();
-        List<MeetingPostResponse> response = getMeetingPostResponses(posts,
+        List<MeetingPostResponse> response = getMeetingPostStats(posts,
             userDetails.getMember().getId());
         return PostListResponse.of(response);
     }
@@ -73,11 +73,11 @@ public class MeetingPostService {
     public PostListResponse readByMemberId(Long memberId, Pageable pageable) {
         List<MeetingPost> posts = meetingPostRepository.findByMemberId(memberId, pageable)
             .getContent();
-        List<MeetingPostResponse> response = getMeetingPostResponses(posts, memberId);
+        List<MeetingPostResponse> response = getMeetingPostStats(posts, memberId);
         return PostListResponse.of(response);
     }
 
-    private List<MeetingPostResponse> getMeetingPostResponses(List<MeetingPost> contents,
+    private List<MeetingPostResponse> getMeetingPostStats(List<MeetingPost> contents,
         Long memberId) {
         List<PostStatsResponse> postStats = meetingPostRepository.findPostStats(
             contents.stream().map(MeetingPost::getId).toList(), memberId);
