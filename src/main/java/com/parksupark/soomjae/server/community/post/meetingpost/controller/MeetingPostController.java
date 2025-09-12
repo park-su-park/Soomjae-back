@@ -64,24 +64,25 @@ public class MeetingPostController {
 
     //리스트 조회
     @GetMapping("/v1/boards/meeting/posts/list")
-    ResponseEntity<PostListResponse> getCommunityList(
+    ResponseEntity<PostListResponse> getMeetingPostList(
         @PageableDefault(size = 10, page = 0) Pageable pageable,
         @AuthenticationPrincipal UsernamePasswordUserDetails userDetails) {
         Pageable zeroBasedPageable = Pageable.ofSize(pageable.getPageSize())
             .withPage(Math.max(pageable.getPageNumber() - 1, 0));
-        return ResponseEntity.ok(meetingPostService.readByFilter(zeroBasedPageable, userDetails));
+        return ResponseEntity.ok(
+            meetingPostService.readMeetingPostList(zeroBasedPageable, userDetails));
     }
 
     //수정
     @PutMapping("/v1/boards/meeting/posts/{postId}")
-    ResponseEntity<Long> putCommunityPost(@PathVariable Long postId,
+    ResponseEntity<Long> putMeetingPost(@PathVariable Long postId,
         @RequestBody MeetingPostRequest request) {
         return ResponseEntity.ok(meetingPostService.update(postId, request));
     }
 
     //삭제
     @DeleteMapping("/v1/boards/meeting/posts/{postId}")
-    ResponseEntity<Void> deleteCommunityPost(@PathVariable Long postId) {
+    ResponseEntity<Void> deleteMeetingPost(@PathVariable Long postId) {
         meetingPostService.delete(postId);
         return ResponseEntity.ok().build();
     }

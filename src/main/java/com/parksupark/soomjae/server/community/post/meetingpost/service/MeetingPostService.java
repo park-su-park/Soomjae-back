@@ -62,7 +62,7 @@ public class MeetingPostService {
         return meetingPostRepository.save(entity).getId();
     }
 
-    public PostListResponse readByFilter(Pageable pageable,
+    public PostListResponse readMeetingPostList(Pageable pageable,
         UsernamePasswordUserDetails userDetails) {
         List<MeetingPost> posts = meetingPostRepository.findAll(pageable).getContent();
         List<PostResponse> response = getMeetingPostResponses(posts,
