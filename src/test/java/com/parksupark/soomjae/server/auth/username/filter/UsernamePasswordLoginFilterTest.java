@@ -8,7 +8,6 @@ import com.parksupark.soomjae.server.auth.common.exception.FilterAuthenticationF
 import com.parksupark.soomjae.server.auth.jwt.JwtProvider;
 import com.parksupark.soomjae.server.auth.jwt.dto.CreateRefreshTokenRequest;
 import com.parksupark.soomjae.server.auth.jwt.entity.RefreshToken;
-import com.parksupark.soomjae.server.auth.jwt.service.NoOpRefreshTokenService;
 import com.parksupark.soomjae.server.auth.jwt.service.RefreshTokenService;
 import com.parksupark.soomjae.server.auth.username.dto.UsernamePasswordAuthSuccessResponse;
 import com.parksupark.soomjae.server.auth.username.dto.UsernamePasswordLoginRequest;
@@ -16,7 +15,6 @@ import com.parksupark.soomjae.server.auth.username.dto.UsernamePasswordUserDetai
 import com.parksupark.soomjae.server.member.Role;
 import com.parksupark.soomjae.server.member.entity.Member;
 import jakarta.servlet.FilterChain;
-
 import java.time.Duration;
 import java.time.Instant;
 import java.util.HashMap;
