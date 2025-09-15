@@ -3,7 +3,7 @@ package com.parksupark.soomjae.server.community.post.meetingpost.dto;
 import lombok.Getter;
 
 @Getter
-public class PostStatsResponse {
+public class MeetingPostStatsResponse {
 
     private Long postId;
     private Long commentCount;
@@ -11,7 +11,8 @@ public class PostStatsResponse {
     private Long participantCount;
     private boolean likedByMe;
 
-    public PostStatsResponse(Long postId, Long commentCount, Long likeCount, Long participantCount,
+    public MeetingPostStatsResponse(Long postId, Long commentCount, Long likeCount,
+        Long participantCount,
         boolean likedByMe) {
         this.postId = postId;
         this.commentCount = commentCount;
