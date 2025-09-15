@@ -100,7 +100,7 @@ public class MeetingPostController {
     }
 
     @GetMapping("/v1/boards/meeting/posts/{postId}/participants")
-    ResponseEntity<ParticipantListResponse> readParticipatns(@PathVariable Long postId) {
+    ResponseEntity<ParticipantListResponse> readParticipants(@PathVariable Long postId) {
         return ResponseEntity.ok(meetingPostService.findAllParticipantsByPostId(postId));
     }
 }
