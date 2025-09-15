@@ -15,8 +15,9 @@ public class CommunityPostResponse extends CommunityPostBaseResponse implements 
         this.commentNum = commentNum;
     }
 
-    public static CommunityPostResponse of(CommunityPost communityPost, Long likeNum,
-        Boolean isLikedByMe, Long commentNum) {
-        return new CommunityPostResponse(communityPost, likeNum, isLikedByMe, commentNum);
+    public static CommunityPostResponse of(CommunityPost communityPost,
+        CommunityPostStatsResponse communityPostStatsResponse) {
+        return new CommunityPostResponse(communityPost, communityPostStatsResponse.getLikeCount(),
+            communityPostStatsResponse.isLikedByMe(), communityPostStatsResponse.getCommentCount());
     }
 }
