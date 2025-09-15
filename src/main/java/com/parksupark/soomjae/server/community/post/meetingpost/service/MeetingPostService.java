@@ -1,6 +1,7 @@
 package com.parksupark.soomjae.server.community.post.meetingpost.service;
 
 import static com.parksupark.soomjae.server.common.exception.ErrorMessages.ALREADY_PARTICIPATE_IN_POST;
+import static com.parksupark.soomjae.server.common.exception.ErrorMessages.CLOSED_MEETING;
 import static com.parksupark.soomjae.server.common.exception.ErrorMessages.MEETING_PARTICIPANTS_FULL_EXCEPTION_MESSAGE;
 import static com.parksupark.soomjae.server.common.exception.ErrorMessages.MEETING_POST_NOT_FOUND;
 import static com.parksupark.soomjae.server.common.exception.ErrorMessages.NOT_PARTICIPANT_OF_POST;
@@ -29,6 +30,7 @@ import com.parksupark.soomjae.server.community.post.meetingpost.entity.MeetingPo
 import com.parksupark.soomjae.server.community.post.meetingpost.repository.MeetingPostRepository;
 import com.parksupark.soomjae.server.member.dto.MemberResponse;
 import com.parksupark.soomjae.server.member.entity.Member;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -187,9 +189,19 @@ public class MeetingPostService {
     @Transactional
     public String cancelParticipation(Long postId, UsernamePasswordUserDetails userDetails) {
         Member participant = userDetails.getMember();
+
+        MeetingPost meetingPost = meetingPostRepository.findById(postId)
+            .orElseThrow(() -> new IllegalStateException(
+                MEETING_POST_NOT_FOUND));
+
+        if (meetingPost.getEndTime().isBefore(Instant.now())) {
+            throw new IllegalStateException(CLOSED_MEETING);
+        }
+
         Participation participation = participationRepository.findByMeetingPostIdAndParticipantId(
                 postId, participant.getId())
             .orElseThrow(() -> new IllegalStateException(NOT_PARTICIPANT_OF_POST));
+
         participationRepository.delete(participation);
         return "참여 취소 성공";
     }
