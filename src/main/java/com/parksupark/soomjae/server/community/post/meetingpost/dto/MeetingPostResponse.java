@@ -10,14 +10,15 @@ public class MeetingPostResponse extends MeetingPostBaseResponse implements Post
     private final Long commentNum;
 
 
-    private MeetingPostResponse(MeetingPost meetingPost, PostStatsResponse postStatsResponse) {
+    private MeetingPostResponse(MeetingPost meetingPost,
+        MeetingPostStatsResponse postStatsResponse) {
         super(meetingPost, postStatsResponse.getLikeCount(), postStatsResponse.isLikedByMe(),
             postStatsResponse.getParticipantCount().intValue());
         this.commentNum = postStatsResponse.getPostId();
     }
 
     public static MeetingPostResponse of(MeetingPost meetingPost,
-        PostStatsResponse postStatsResponse) {
+        MeetingPostStatsResponse postStatsResponse) {
         return new MeetingPostResponse(meetingPost, postStatsResponse);
     }
 }

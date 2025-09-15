@@ -1,6 +1,6 @@
 package com.parksupark.soomjae.server.community.post.meetingpost.repository;
 
-import com.parksupark.soomjae.server.community.post.meetingpost.dto.PostStatsResponse;
+import com.parksupark.soomjae.server.community.post.meetingpost.dto.MeetingPostStatsResponse;
 import com.parksupark.soomjae.server.community.post.meetingpost.entity.MeetingPost;
 import jakarta.persistence.LockModeType;
 import java.util.List;
@@ -23,7 +23,7 @@ public interface MeetingPostRepository extends JpaRepository<MeetingPost, Long> 
     Optional<MeetingPost> findByIdForUpdate(@Param("id") Long id);
 
     @Query("""
-        SELECT new com.parksupark.soomjae.server.community.post.meetingpost.dto.PostStatsResponse(
+        SELECT new com.parksupark.soomjae.server.community.post.meetingpost.dto.MeetingPostStatsResponse(
             m.id,
             COUNT(DISTINCT c.id),
             COUNT(DISTINCT l.id),
@@ -38,7 +38,7 @@ public interface MeetingPostRepository extends JpaRepository<MeetingPost, Long> 
         WHERE m.id IN :postIds
         GROUP BY m.id
         """)
-    List<PostStatsResponse> findPostStats(@Param("postIds") List<Long> postIds,
+    List<MeetingPostStatsResponse> findPostStats(@Param("postIds") List<Long> postIds,
         @Param("memberId") Long memberId);
 }
 

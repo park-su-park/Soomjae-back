@@ -24,7 +24,7 @@ import com.parksupark.soomjae.server.community.post.common.dto.PostListResponse;
 import com.parksupark.soomjae.server.community.post.meetingpost.dto.MeetingPostDetailResponse;
 import com.parksupark.soomjae.server.community.post.meetingpost.dto.MeetingPostRequest;
 import com.parksupark.soomjae.server.community.post.meetingpost.dto.MeetingPostResponse;
-import com.parksupark.soomjae.server.community.post.meetingpost.dto.PostStatsResponse;
+import com.parksupark.soomjae.server.community.post.meetingpost.dto.MeetingPostStatsResponse;
 import com.parksupark.soomjae.server.community.post.meetingpost.entity.MeetingPost;
 import com.parksupark.soomjae.server.community.post.meetingpost.repository.MeetingPostRepository;
 import com.parksupark.soomjae.server.member.dto.MemberResponse;
@@ -79,12 +79,12 @@ public class MeetingPostService {
 
     private List<MeetingPostResponse> getMeetingPostStats(List<MeetingPost> contents,
         Long memberId) {
-        List<PostStatsResponse> postStats = meetingPostRepository.findPostStats(
+        List<MeetingPostStatsResponse> postStats = meetingPostRepository.findPostStats(
             contents.stream().map(MeetingPost::getId).toList(), memberId);
 
         List<MeetingPostResponse> response = new ArrayList<>();
 
-        for (PostStatsResponse postStat : postStats) {
+        for (MeetingPostStatsResponse postStat : postStats) {
             Optional<MeetingPost> postOptional = contents.stream()
                 .filter(p -> postStat.getPostId() == p.getId()).findFirst();
 
