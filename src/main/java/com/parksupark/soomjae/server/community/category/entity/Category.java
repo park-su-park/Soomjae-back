@@ -29,6 +29,7 @@ public class Category {
     private String name;
 
     @OneToMany(mappedBy = "parent")
+    @Builder.Default
     private List<Category> childs = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
