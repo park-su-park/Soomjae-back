@@ -1,4 +1,4 @@
-package com.parksupark.soomjae.server.community.communitypost.entity;
+package com.parksupark.soomjae.server.community.post.meetingpost.entity;
 
 import com.parksupark.soomjae.server.common.entity.BaseEntity;
 import com.parksupark.soomjae.server.community.category.entity.Category;
@@ -12,6 +12,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import java.time.Instant;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,15 +21,15 @@ import lombok.Setter;
 
 @Entity
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
-public class CommunityPost extends BaseEntity {
+public class MeetingPost extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "community_post_id")
+    @Column(name = "meeting_post_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -46,5 +47,11 @@ public class CommunityPost extends BaseEntity {
 
     private String title;
     private String content;
+
+    private int maximumParticipants;
+
+    private Instant startTime;
+
+    private Instant endTime;
 
 }
