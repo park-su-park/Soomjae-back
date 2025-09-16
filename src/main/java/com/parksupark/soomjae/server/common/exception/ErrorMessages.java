@@ -30,6 +30,7 @@ public class ErrorMessages {
     public static final String INVALID_ISSUER_MESSAGE = "유효하지 않은 issuer";
     public static final String OAUTH2_GOOGLE_ID_TOKEN_VERIFICATION_FAILED_MESSAGE =
         "Google Id Token 검증 실패";
+
     private ErrorMessages() {
     }
 }
