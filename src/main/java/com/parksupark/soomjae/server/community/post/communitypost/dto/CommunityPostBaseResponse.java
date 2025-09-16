@@ -4,6 +4,7 @@ import static com.parksupark.soomjae.server.community.common.constant.PostConsta
 
 import com.parksupark.soomjae.server.community.post.communitypost.entity.CommunityPost;
 import com.parksupark.soomjae.server.member.dto.MemberResponse;
+import jakarta.annotation.Nullable;
 import java.time.Instant;
 import lombok.Getter;
 
@@ -15,7 +16,9 @@ public abstract class CommunityPostBaseResponse {
     private final String title;
     private final String content;
     private final MemberResponse author;
+    @Nullable
     private final String category;
+    @Nullable
     private final String location;
     private final Instant createdTime;
     private final Long likeNum;

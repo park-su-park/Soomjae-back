@@ -65,7 +65,8 @@ public class CommunityPostController {
         @AuthenticationPrincipal UsernamePasswordUserDetails userDetails) {
         Pageable zeroBasedPageable = Pageable.ofSize(pageable.getPageSize())
             .withPage(Math.max(pageable.getPageNumber() - 1, 0));
-        return ResponseEntity.ok(communityPostService.readByFilter(zeroBasedPageable, userDetails));
+        return ResponseEntity.ok(
+            communityPostService.readCommunityPostList(zeroBasedPageable, userDetails));
     }
 
     //수정

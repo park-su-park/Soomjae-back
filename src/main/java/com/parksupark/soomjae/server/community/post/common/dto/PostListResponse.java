@@ -9,9 +9,9 @@ import lombok.Getter;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class PostListResponse {
 
-    List<PostResponse> posts;
+    List<? extends PostResponse> posts;
 
-    public static PostListResponse of(List<PostResponse> posts) {
+    public static PostListResponse of(List<? extends PostResponse> posts) {
         return new PostListResponse(posts);
     }
 }

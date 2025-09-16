@@ -14,15 +14,16 @@ import com.parksupark.soomjae.server.community.location.constant.LocationConstan
 import com.parksupark.soomjae.server.community.location.entity.Location;
 import com.parksupark.soomjae.server.community.location.repository.LocationRepository;
 import com.parksupark.soomjae.server.community.post.common.dto.PostListResponse;
-import com.parksupark.soomjae.server.community.post.common.dto.PostResponse;
 import com.parksupark.soomjae.server.community.post.communitypost.dto.CommunityPostDetailResponse;
 import com.parksupark.soomjae.server.community.post.communitypost.dto.CommunityPostRequest;
 import com.parksupark.soomjae.server.community.post.communitypost.dto.CommunityPostResponse;
+import com.parksupark.soomjae.server.community.post.communitypost.dto.CommunityPostStatsResponse;
 import com.parksupark.soomjae.server.community.post.communitypost.entity.CommunityPost;
 import com.parksupark.soomjae.server.community.post.communitypost.repository.CommunityPostRepository;
 import com.parksupark.soomjae.server.member.entity.Member;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,10 +53,11 @@ public class CommunityPostService {
         return communityPostRepository.save(entity).getId();
     }
 
-    public PostListResponse readByFilter(Pageable pageable,
+
+    public PostListResponse readCommunityPostList(Pageable pageable,
         UsernamePasswordUserDetails userDetails) {
         List<CommunityPost> posts = communityPostRepository.findAll(pageable).getContent();
-        List<PostResponse> response = getCommunityPostResponses(posts,
+        List<CommunityPostResponse> response = getCommunityPostResponses(posts,
             userDetails.getMember().getId());
         return PostListResponse.of(response);
     }
@@ -63,7 +65,7 @@ public class CommunityPostService {
     public PostListResponse readByMemberId(Long memberId, Pageable pageable) {
         List<CommunityPost> posts = communityPostRepository.findByMemberId(memberId, pageable)
             .getContent();
-        List<PostResponse> response = getCommunityPostResponses(posts, memberId);
+        List<CommunityPostResponse> response = getCommunityPostResponses(posts, memberId);
         return PostListResponse.of(response);
     }
 
@@ -126,22 +128,19 @@ public class CommunityPostService {
             : null;
     }
 
-    private List<PostResponse> getCommunityPostResponses(List<CommunityPost> contents,
+    private List<CommunityPostResponse> getCommunityPostResponses(List<CommunityPost> contents,
         Long memberId) {
-        List<PostResponse> response = new ArrayList<>();
-        for (CommunityPost post : contents) {
-            long commentNum = commentRepository.countByPostTypeAndPostIdAndDeletedTimeIsNull(
-                COMMUNITY_POST_TYPE, post.getId());
+        List<CommunityPostStatsResponse> postStats = communityPostRepository.findPostStats(
+            contents.stream().map(CommunityPost::getId).toList(), memberId);
 
-            Boolean isLikedByMe = likeRepository.existsByPostTypeAndPostIdAndMemberId(
-                COMMUNITY_POST_TYPE, post.getId(), memberId);
-            Long likeNum = likeRepository.countByPostTypeAndPostId(COMMUNITY_POST_TYPE,
-                post.getId());
+        List<CommunityPostResponse> response = new ArrayList<>();
 
-            PostResponse communityPostResponse = CommunityPostResponse.of(post,
-                commentNum, isLikedByMe, likeNum);
+        for (CommunityPostStatsResponse postStat : postStats) {
+            Optional<CommunityPost> postOptional = contents.stream()
+                .filter(p -> postStat.getPostId() == p.getId()).findFirst();
 
-            response.add(communityPostResponse);
+            postOptional.ifPresent(
+                meetingPost -> response.add(CommunityPostResponse.of(meetingPost, postStat)));
         }
         return response;
     }

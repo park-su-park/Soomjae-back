@@ -3,6 +3,8 @@ package com.parksupark.soomjae.server.community.post.meetingpost.controller;
 import static com.parksupark.soomjae.server.community.common.constant.PostConstant.MEETING_POST_TYPE;
 
 import com.parksupark.soomjae.server.auth.username.dto.UsernamePasswordUserDetails;
+import com.parksupark.soomjae.server.community.participation.dto.ParticipantListResponse;
+import com.parksupark.soomjae.server.community.participation.dto.ParticipationResponse;
 import com.parksupark.soomjae.server.community.post.common.dto.PostListResponse;
 import com.parksupark.soomjae.server.community.post.meetingpost.dto.MeetingPostDetailResponse;
 import com.parksupark.soomjae.server.community.post.meetingpost.dto.MeetingPostRequest;
@@ -85,4 +87,20 @@ public class MeetingPostController {
         return ResponseEntity.ok().build();
     }
 
+    @PostMapping("/v1/boards/meeting/posts/{postId}/join")
+    ResponseEntity<ParticipationResponse> createParticipation(@PathVariable Long postId,
+        @AuthenticationPrincipal UsernamePasswordUserDetails userDetails) {
+        return ResponseEntity.ok(meetingPostService.participate(postId, userDetails));
+    }
+
+    @DeleteMapping("/v1/boards/meeting/posts/{postId}/join")
+    ResponseEntity<String> deleteParticipation(@PathVariable Long postId,
+        @AuthenticationPrincipal UsernamePasswordUserDetails userDetails) {
+        return ResponseEntity.ok(meetingPostService.cancelParticipation(postId, userDetails));
+    }
+
+    @GetMapping("/v1/boards/meeting/posts/{postId}/participants")
+    ResponseEntity<ParticipantListResponse> readParticipants(@PathVariable Long postId) {
+        return ResponseEntity.ok(meetingPostService.findAllParticipantsByPostId(postId));
+    }
 }
