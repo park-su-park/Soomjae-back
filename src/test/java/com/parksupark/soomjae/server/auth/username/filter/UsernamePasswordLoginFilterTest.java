@@ -6,7 +6,8 @@ import static org.mockito.Mockito.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.parksupark.soomjae.server.auth.common.exception.FilterAuthenticationFailedException;
 import com.parksupark.soomjae.server.auth.jwt.JwtProvider;
-import com.parksupark.soomjae.server.auth.jwt.service.NoOpRefreshTokenService;
+import com.parksupark.soomjae.server.auth.jwt.dto.CreateRefreshTokenRequest;
+import com.parksupark.soomjae.server.auth.jwt.entity.RefreshToken;
 import com.parksupark.soomjae.server.auth.jwt.service.RefreshTokenService;
 import com.parksupark.soomjae.server.auth.username.dto.UsernamePasswordAuthSuccessResponse;
 import com.parksupark.soomjae.server.auth.username.dto.UsernamePasswordLoginRequest;
@@ -14,6 +15,8 @@ import com.parksupark.soomjae.server.auth.username.dto.UsernamePasswordUserDetai
 import com.parksupark.soomjae.server.member.Role;
 import com.parksupark.soomjae.server.member.entity.Member;
 import jakarta.servlet.FilterChain;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,7 +43,8 @@ class UsernamePasswordLoginFilterTest {
 
     private UsernamePasswordLoginFilter filter;
 
-    private final RefreshTokenService refreshTokenService = new NoOpRefreshTokenService();
+    @Mock
+    private RefreshTokenService refreshTokenService;
 
     private final Map<String, Object> claimsWithRole = new HashMap<>() {
         {
@@ -113,19 +117,29 @@ class UsernamePasswordLoginFilterTest {
     void successfulAuthentication_withValidAuthentication_shouldWriteJwtToResponse()
         throws Exception {
         final String username = "test";
-        final String fakeToken = "fake token";
+        final Long memberId = 1L;
+        final String fakeToken = "fake-token";
+        final String fakeRefreshToken = "fake-refresh-token";
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final MockHttpServletResponse response = new MockHttpServletResponse();
         final FilterChain filterChain = mock(FilterChain.class);
         final Member member = mock(Member.class);
-        when(member.getId()).thenReturn(1L);
+        final RefreshToken refreshToken = mock(RefreshToken.class);
+
+        when(member.getId()).thenReturn(memberId);
         when(member.getEmail()).thenReturn(username);
         when(member.getRole()).thenReturn(Role.USER);
+        when(refreshToken.getToken()).thenReturn(fakeRefreshToken);
         final Authentication authResult = mock(Authentication.class);
 
         when(authResult.getPrincipal()).thenReturn(new UsernamePasswordUserDetails(member));
 
         when(jwtProvider.generateAccessToken(username, claimsWithRole)).thenReturn(fakeToken);
+
+        when(refreshToken.getExpiresAt()).thenReturn(Instant.now().plus(Duration.ofDays(7)));
+
+        when(refreshTokenService.createRefreshToken(any(CreateRefreshTokenRequest.class)))
+            .thenReturn(refreshToken);
 
         filter.successfulAuthentication(request, response, filterChain, authResult);
 

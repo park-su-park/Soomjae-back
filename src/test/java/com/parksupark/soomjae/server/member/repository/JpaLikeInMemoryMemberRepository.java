@@ -1,8 +1,11 @@
 package com.parksupark.soomjae.server.member.repository;
 
 import com.parksupark.soomjae.server.auth.oauth.AuthProvider;
+import com.parksupark.soomjae.server.member.Role;
+import com.parksupark.soomjae.server.member.dto.MemberBasicInfo;
 import com.parksupark.soomjae.server.member.entity.Member;
 import java.lang.reflect.Field;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -229,6 +232,42 @@ public class JpaLikeInMemoryMemberRepository implements MemberRepository {
         persistenceContext.remove(id);
         entitySnapshots.remove(id);
         persistentStore.remove(id);
+    }
+
+    @Override
+    public Optional<MemberBasicInfo> findBasicInfoById(Long id) {
+        return findById(id)
+            .map(member -> new MemberBasicInfo() {
+                @Override
+                public Long getId() {
+                    return member.getId();
+                }
+
+                @Override
+                public String getEmail() {
+                    return member.getEmail();
+                }
+
+                @Override
+                public String getNickname() {
+                    return member.getNickname();
+                }
+
+                @Override
+                public Role getRole() {
+                    return member.getRole();
+                }
+
+                @Override
+                public Instant getCreatedTime() {
+                    return member.getCreatedTime();
+                }
+
+                @Override
+                public Instant getModifiedTime() {
+                    return member.getModifiedTime();
+                }
+            });
     }
 
     private void validateConstraintsForPersistenceContext() {
