@@ -13,7 +13,7 @@ public abstract class MeetingPostBaseResponse {
     private final String postType;
     private final String title;
     private final String content;
-    
+
     private final MemberResponse author;
 
     @Nullable
@@ -38,7 +38,7 @@ public abstract class MeetingPostBaseResponse {
         this.postType = "community";
         this.title = meetingPost.getTitle();
         this.content = meetingPost.getContent();
-        this.author = MemberResponse.of(meetingPost.getMember());
+        this.author = MemberResponse.create(meetingPost.getMember());
         this.createdTime = meetingPost.getCreatedTime();
         this.category =
             meetingPost.getCategory() != null ? meetingPost.getCategory().getName() : null;
