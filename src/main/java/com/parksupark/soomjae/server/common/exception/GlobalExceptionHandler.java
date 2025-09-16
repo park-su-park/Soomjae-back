@@ -1,5 +1,7 @@
 package com.parksupark.soomjae.server.common.exception;
 
+import com.parksupark.soomjae.server.auth.common.exception.RefreshFailedException;
+import com.parksupark.soomjae.server.auth.oauth.exception.OAuth2AuthenticationProcessingException;
 import com.parksupark.soomjae.server.common.dto.ValidationErrorDetail;
 import com.parksupark.soomjae.server.common.dto.ValidationErrorResponse;
 import com.parksupark.soomjae.server.community.common.exception.AlreadyLikedException;
@@ -44,7 +46,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ValidationErrorResponse> handleValidationException(
+    protected ResponseEntity<ValidationErrorResponse> handleValidationException(
         MethodArgumentNotValidException e) {
 
         List<FieldError> fieldErrors = e.getBindingResult().getFieldErrors();
@@ -61,4 +63,21 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(400).body(errorResponse);
     }
+
+    @ExceptionHandler(RefreshFailedException.class)
+    protected ResponseEntity<String> handleRefreshFailedException(RuntimeException e) {
+
+        return ResponseEntity.status(401)
+            .header("Set-Cookie", "refreshToken=; Path=/; HttpOnly; Max-Age=0")
+            .body(e.getMessage());
+    }
+
+    @ExceptionHandler(OAuth2AuthenticationProcessingException.class)
+    protected ResponseEntity<String> handleOAuth2AuthenticationProcessingException(
+        RuntimeException e) {
+
+        return ResponseEntity.status(400)
+            .body(e.getMessage());
+    }
+
 }

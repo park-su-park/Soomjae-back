@@ -1,8 +1,10 @@
 package com.parksupark.soomjae.server.member.service;
 
+import com.parksupark.soomjae.server.auth.oauth.AuthProvider;
 import com.parksupark.soomjae.server.common.exception.ErrorMessages;
 import com.parksupark.soomjae.server.member.dto.CheckDuplicateEmailResponse;
 import com.parksupark.soomjae.server.member.dto.CreateMemberRequest;
+import com.parksupark.soomjae.server.member.dto.MemberBasicInfo;
 import com.parksupark.soomjae.server.member.dto.MemberResponse;
 import com.parksupark.soomjae.server.member.entity.Member;
 import com.parksupark.soomjae.server.member.exception.DuplicateEmailException;
@@ -28,7 +30,7 @@ public class DefaultMemberService implements MemberService {
     public MemberResponse createMember(CreateMemberRequest request) {
         final String email = request.getEmail();
 
-        validateEmailUniqueness(email);
+        validateEmailAndProviderUniqueness(email, AuthProvider.LOCAL);
 
         final String encodedPassword = passwordEncoder.encode(request.getPassword());
         final String nickname = request.getNickname();
@@ -41,11 +43,11 @@ public class DefaultMemberService implements MemberService {
     @Transactional(readOnly = true)
     @Override
     public MemberResponse readMember(Long id) {
-        Member member = memberRepository.findById(id)
+        MemberBasicInfo memberBasicInfo = memberRepository.findBasicInfoById(id)
             .orElseThrow(() -> new MemberNotFoundException(
                 ErrorMessages.MEMBER_NOT_FOUND_EXCEPTION_MESSAGE));
 
-        return createMemberResponse(member);
+        return createMemberResponse(memberBasicInfo);
     }
 
     @Transactional
@@ -54,7 +56,7 @@ public class DefaultMemberService implements MemberService {
 
         Member member = findMemberById(id);
 
-        validateEmailUniqueness(email);
+        validateEmailAndProviderUniqueness(email, member.getProvider());
 
         member.updateEmail(email);
         return createMemberResponse(member);
@@ -85,9 +87,16 @@ public class DefaultMemberService implements MemberService {
     @Transactional(readOnly = true)
     @Override
     public CheckDuplicateEmailResponse checkDuplicateEmail(String email) {
-        return new CheckDuplicateEmailResponse(memberRepository.existsByEmail(email));
+        return new CheckDuplicateEmailResponse(
+            memberRepository.existsByEmailAndProvider(email, AuthProvider.LOCAL));
     }
 
+    /**
+     * update 에 사용 하기 위해 Member 엔티티 자체를 조회
+     *
+     * @param id 조회에 사용할 Member의 id
+     * @return Member 엔티티 객체
+     */
     private Member findMemberById(Long id) {
         return memberRepository.findById(id)
                 .orElseThrow(() -> new MemberNotFoundException(
@@ -95,14 +104,17 @@ public class DefaultMemberService implements MemberService {
     }
 
     private MemberResponse createMemberResponse(Member member) {
-        return new MemberResponse(member.getId(), member.getEmail(), member.getNickname(),
-            member.getCreatedTime(), member.getModifiedTime());
+        return MemberResponse.create(member);
+    }
+
+    private MemberResponse createMemberResponse(MemberBasicInfo memberBasicInfo) {
+        return MemberResponse.create(memberBasicInfo);
     }
 
 
     // 추후 중복 검사가 필요한 필드가 늘어날 경우 확장해야함
-    private void validateEmailUniqueness(String email) {
-        if (memberRepository.existsByEmail(email)) {
+    private void validateEmailAndProviderUniqueness(String email, AuthProvider provider) {
+        if (memberRepository.existsByEmailAndProvider(email, provider)) {
             throw new DuplicateEmailException(ErrorMessages.DUPLICATE_EMAIL_EXCEPTION_MESSAGE);
         }
     }

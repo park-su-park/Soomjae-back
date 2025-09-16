@@ -2,7 +2,10 @@ package com.parksupark.soomjae.server.auth.username.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.parksupark.soomjae.server.auth.common.exception.FilterAuthenticationFailedException;
-import com.parksupark.soomjae.server.auth.common.jwt.JwtProvider;
+import com.parksupark.soomjae.server.auth.jwt.JwtProvider;
+import com.parksupark.soomjae.server.auth.jwt.dto.CreateRefreshTokenRequest;
+import com.parksupark.soomjae.server.auth.jwt.entity.RefreshToken;
+import com.parksupark.soomjae.server.auth.jwt.service.RefreshTokenService;
 import com.parksupark.soomjae.server.auth.username.dto.UsernamePasswordAuthSuccessResponse;
 import com.parksupark.soomjae.server.auth.username.dto.UsernamePasswordLoginRequest;
 import com.parksupark.soomjae.server.auth.username.dto.UsernamePasswordUserDetails;
@@ -13,9 +16,12 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -28,13 +34,23 @@ public class UsernamePasswordLoginFilter extends UsernamePasswordAuthenticationF
     private final AuthenticationManager authenticationManager;
     private final ObjectMapper objectMapper;
     private final JwtProvider jwtProvider;
+    private final RefreshTokenService refreshTokenService;
+    private final boolean cookieSecure;
 
-    public UsernamePasswordLoginFilter(AuthenticationManager authenticationManager,
-        ObjectMapper objectMapper, JwtProvider jwtProvider) {
+    public UsernamePasswordLoginFilter(
+        AuthenticationManager authenticationManager,
+        ObjectMapper objectMapper,
+        JwtProvider jwtProvider,
+        RefreshTokenService refreshTokenService,
+        boolean cookieSecure
+    ) {
+
         this.authenticationManager = authenticationManager;
         this.objectMapper = objectMapper;
         this.jwtProvider = jwtProvider;
-        super.setFilterProcessesUrl("/auth/login");
+        this.refreshTokenService = refreshTokenService;
+        this.cookieSecure = cookieSecure;
+        super.setFilterProcessesUrl("/v1/auth/login");
     }
 
     @Override
@@ -74,10 +90,19 @@ public class UsernamePasswordLoginFilter extends UsernamePasswordAuthenticationF
 
         claims.put("role", role.getKey());
 
-        String token = jwtProvider.generateToken(username, claims);
+        String accessToken = jwtProvider.generateAccessToken(username, claims);
+
+        // refresh token 생성
+        CreateRefreshTokenRequest createRefreshTokenRequest =
+                new CreateRefreshTokenRequest(username, member.getId());
+        RefreshToken refreshToken =
+                refreshTokenService.createRefreshToken(createRefreshTokenRequest);
+
+        // 쿠키 설정
+        setCookie(response, refreshToken);
 
         UsernamePasswordAuthSuccessResponse successResponse =
-            new UsernamePasswordAuthSuccessResponse(token, member.getId());
+            new UsernamePasswordAuthSuccessResponse(accessToken, member.getId());
 
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
@@ -95,5 +120,18 @@ public class UsernamePasswordLoginFilter extends UsernamePasswordAuthenticationF
         // 로그인 실패 응답 처리
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         // 응답 바디는 추후 구현
+    }
+
+    private void setCookie(HttpServletResponse response, RefreshToken refreshToken) {
+        ResponseCookie cookie = ResponseCookie.from("refresh_token", refreshToken.getToken())
+                .httpOnly(true)
+                // 개발 환경에선 false
+                .secure(cookieSecure)
+                .sameSite("Strict")
+                .maxAge(Duration.between(Instant.now(), refreshToken.getExpiresAt()))
+                .path("/")
+                .build();
+
+        response.addHeader("Set-Cookie", cookie.toString());
     }
 }

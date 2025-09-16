@@ -1,5 +1,6 @@
 package com.parksupark.soomjae.server.member.repository;
 
+import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.parksupark.soomjae.server.member.entity.Member;
@@ -46,10 +47,12 @@ class SpringDataMemberRepositoryTest {
         memberRepository.save(member);
 
         // when + then
-        assertThrows(DataIntegrityViolationException.class, () -> {
-            memberRepository.save(Member.create(email, password, "hello"));
+        memberRepository.save(Member.create(email, password, "hello"));
+        assertThatThrownBy(() -> {
             memberRepository.flush();
-        });
+        })
+            .isInstanceOf(DataIntegrityViolationException.class);
+
     }
 
     @Test
