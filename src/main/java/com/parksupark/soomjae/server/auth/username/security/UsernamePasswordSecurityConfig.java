@@ -1,13 +1,16 @@
 package com.parksupark.soomjae.server.auth.username.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.parksupark.soomjae.server.auth.common.jwt.JwtProvider;
-import com.parksupark.soomjae.server.auth.common.jwt.filter.JwtAuthenticationFilter;
+import com.parksupark.soomjae.server.auth.jwt.JwtProvider;
+import com.parksupark.soomjae.server.auth.jwt.filter.JwtAuthenticationFilter;
+import com.parksupark.soomjae.server.auth.jwt.service.RefreshTokenService;
 import com.parksupark.soomjae.server.auth.username.filter.UsernamePasswordLoginFilter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -32,6 +35,10 @@ public class UsernamePasswordSecurityConfig {
     private final ObjectMapper objectMapper;
     private final PasswordEncoder passwordEncoder;
     private final UserDetailsService userDetailsService;
+    private final RefreshTokenService refreshTokenService;
+
+    @Value("${app.cookie.secure}")
+    private boolean cookieSecure;
 
     /**
      * <b>Why CSRF is disabled:</b>
@@ -41,15 +48,17 @@ public class UsernamePasswordSecurityConfig {
      * </ul>
      */
     @Bean
+    @Order(2)
     public SecurityFilterChain securityFilterChain(HttpSecurity http,
             AuthenticationManager authenticationManager,
             AuthenticationProvider authenticationProvider)
             throws Exception {
 
         UsernamePasswordLoginFilter usernamePasswordLoginFilter = new UsernamePasswordLoginFilter(
-                authenticationManager, objectMapper, jwtProvider);
+            authenticationManager, objectMapper, jwtProvider, refreshTokenService, cookieSecure);
 
         http
+            .securityMatcher("/**")
                 .csrf(csrf -> csrf.disable())
 
                 .formLogin(form -> form.disable())

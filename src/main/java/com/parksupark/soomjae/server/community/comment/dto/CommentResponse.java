@@ -27,6 +27,6 @@ public class CommentResponse {
 
     public static CommentResponse of(Comment comment) {
         return new CommentResponse(comment.getId(), comment.getContent(),
-                MemberResponse.of(comment.getMember()), comment.getCreatedTime());
+                MemberResponse.create(comment.getMember()), comment.getCreatedTime());
     }
 }

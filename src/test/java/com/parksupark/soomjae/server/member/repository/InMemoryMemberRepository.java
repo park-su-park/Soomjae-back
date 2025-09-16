@@ -1,9 +1,11 @@
 package com.parksupark.soomjae.server.member.repository;
 
+import com.parksupark.soomjae.server.auth.oauth.AuthProvider;
 import com.parksupark.soomjae.server.member.entity.Member;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -62,6 +64,22 @@ public class InMemoryMemberRepository implements MemberRepository {
     @Override
     public void flush() {
         // nothing to do
+    }
+
+    @Override
+    public Optional<Member> findByProviderAndProviderId(AuthProvider provider, String providerId) {
+        return store.values().stream()
+            .filter(member ->
+                Objects.equals(provider, member.getProvider())
+                    && Objects.equals(providerId, member.getProviderId()))
+            .findFirst();
+    }
+
+    @Override
+    public boolean existsByEmailAndProvider(String email, AuthProvider provider) {
+        return store.values().stream()
+            .anyMatch(
+                member -> member.getEmail().equals(email) && member.getProvider().equals(provider));
     }
 
     public void clear() {

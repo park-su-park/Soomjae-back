@@ -6,11 +6,18 @@ import lombok.Getter;
 public class UsernamePasswordAuthSuccessResponse {
 
     private final String accessToken;
-    private static final String TOKEN_TYPE = "Bearer";
+    private final String tokenType;
     private final Long memberId;
+
+    public UsernamePasswordAuthSuccessResponse() {
+        this.accessToken = null;
+        this.tokenType = null;
+        this.memberId = null;
+    }
 
     public UsernamePasswordAuthSuccessResponse(String accessToken, Long memberId) {
         this.accessToken = accessToken;
+        this.tokenType = "Bearer";
         this.memberId = memberId;
     }
 }

@@ -14,6 +14,15 @@ public class ErrorMessages {
     public static final String COMMENT_OWNER_MISMATCH_EXCEPTION_MESSAGE = "삭제하려는 댓글이 본인의 댓글이 아닙니다.";
     public static final String VALIDATION_FAILED_MESSAGE = "요청 바디 값 검증에 실패했습니다.";
 
+    public static final String REFRESH_TOKEN_NOT_FOUND_FROM_COOKIE_MESSAGE =
+        "Refresh Token을 쿠키에서 찾을 수 없습니다.";
+    public static final String REFRESH_TOKEN_VALIDATION_FAILED_MESSAGE =
+        "Refresh Token 검증에 실패했습니다.";
+
+    public static final String OAUTH2_EMAIL_NOT_VERIFIED_MESSAGE = "이메일이 인증되지 않았습니다.";
+    public static final String OAUTH2_PROVIDER_NOT_SUPPORT_MESSAGE = "지원하지 않는 OAuth Provider: ";
+
+
     private ErrorMessages() {
     }
 }

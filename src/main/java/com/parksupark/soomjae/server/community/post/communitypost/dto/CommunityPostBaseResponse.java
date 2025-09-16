@@ -1,5 +1,7 @@
 package com.parksupark.soomjae.server.community.post.communitypost.dto;
 
+import static com.parksupark.soomjae.server.community.common.constant.PostConstant.COMMUNITY_POST_TYPE;
+
 import com.parksupark.soomjae.server.community.post.communitypost.entity.CommunityPost;
 import com.parksupark.soomjae.server.member.dto.MemberResponse;
 import java.time.Instant;
@@ -22,10 +24,10 @@ public abstract class CommunityPostBaseResponse {
     protected CommunityPostBaseResponse(CommunityPost communityPost, Long likeNum,
         Boolean isLikedByMe) {
         this.postId = communityPost.getId();
-        this.postType = "community";
+        this.postType = COMMUNITY_POST_TYPE;
         this.title = communityPost.getTitle();
         this.content = communityPost.getContent();
-        this.author = MemberResponse.of(communityPost.getMember());
+        this.author = MemberResponse.create(communityPost.getMember());
         this.createdTime = communityPost.getCreatedTime();
         this.category =
             communityPost.getCategory() != null ? communityPost.getCategory().getName() : null;
