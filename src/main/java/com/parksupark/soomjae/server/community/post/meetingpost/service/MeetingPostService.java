@@ -209,6 +209,7 @@ public class MeetingPostService {
     public ParticipantListResponse findAllParticipantsByPostId(Long postId) {
         return ParticipantListResponse.of(
             participationRepository.findByMeetingPostId(postId).stream()
-                .map(participation -> MemberResponse.create(participation.getParticipant())).toList());
+                .map(participation -> MemberResponse.create(participation.getParticipant()))
+                .toList());
     }
 }
