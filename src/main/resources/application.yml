@@ -91,8 +91,8 @@ spring:
       client:
         registration:
           google:
-            client-id: ${oauth.google.client-id}
-            client-secret: ${oauth.google.client-secret}
+            client-id: test-client-id
+            client-secret: test-client-secret
             scope: email+profile
         provider:
           google:
