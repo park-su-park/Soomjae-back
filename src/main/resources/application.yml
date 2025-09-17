@@ -1,0 +1,122 @@
+spring:
+  profiles:
+    active: local
+    group:
+      local: local, common, secret
+      blue: blue, common, secret
+      green: green, common, secret
+
+server:
+  env: blue
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            redirect-uri: http://localhost:8080/login/oauth2/code/google
+
+server:
+  port: 8080
+  serverAddress: localhost
+
+serverName: local_server
+---
+
+spring:
+  config:
+    activate:
+      on-profile: blue
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            redirect-uri: http://13.54.160.4/login/oauth2/code/google
+
+server:
+  port: 8080
+  serverAddress: 13.54.160.4
+
+serverName: blue_server
+---
+
+spring:
+  config:
+    activate:
+      on-profile: green
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            redirect-uri: http://13.54.160.4/login/oauth2/code/google
+
+server:
+  port: 8081
+  serverAddress: 13.54.160.4
+
+serverName: green_server
+---
+
+
+
+# ===============================
+# Spring Boot
+# ===============================
+spring:
+  config:
+    activate:
+      on-profile: common
+    import: optional:file:.env[.properties]
+
+
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${oauth.google.client-id}
+            client-secret: ${oauth.google.client-secret}
+            scope: email+profile
+        provider:
+          google:
+            authorization-uri: https://accounts.google.com/o/oauth2/auth
+            token-uri: https://oauth2.googleapis.com/token
+            user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
+            user-name-attribute: sub
+          kakao:
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user-name-attribute: id
+          # Apple은 나중에 구현
+
+  devtools:
+    restart:
+      enabled: true
+    livereload:
+      enabled: true
+
+
+# ===============================
+# 쿠키 보안 설정
+# ===============================
+app:
+  cookie:
+    secure: false
