@@ -50,42 +50,43 @@ public class UsernamePasswordSecurityConfig {
     @Bean
     @Order(2)
     public SecurityFilterChain securityFilterChain(HttpSecurity http,
-            AuthenticationManager authenticationManager,
-            AuthenticationProvider authenticationProvider)
-            throws Exception {
+        AuthenticationManager authenticationManager,
+        AuthenticationProvider authenticationProvider)
+        throws Exception {
 
         UsernamePasswordLoginFilter usernamePasswordLoginFilter = new UsernamePasswordLoginFilter(
             authenticationManager, objectMapper, jwtProvider, refreshTokenService, cookieSecure);
 
         http
             .securityMatcher("/**")
-                .csrf(csrf -> csrf.disable())
+            .csrf(csrf -> csrf.disable())
 
-                .formLogin(form -> form.disable())
+            .formLogin(form -> form.disable())
 
-                .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .sessionManagement(session ->
+                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/login", "/v1/members/create-member").permitAll()
-                        .anyRequest().permitAll()
-                )
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/auth/login", "/v1/members/create-member").permitAll()
+                .requestMatchers("/hc", "/env").permitAll()
+                .anyRequest().permitAll()
+            )
 
-                .authenticationProvider(authenticationProvider)
+            .authenticationProvider(authenticationProvider)
 
-                .authenticationManager(authenticationManager)
+            .authenticationManager(authenticationManager)
 
-                .addFilterBefore(jwtAuthenticationFilter(),
-                        UsernamePasswordAuthenticationFilter.class)
-                .addFilterAt(usernamePasswordLoginFilter,
-                        UsernamePasswordAuthenticationFilter.class);
+            .addFilterBefore(jwtAuthenticationFilter(),
+                UsernamePasswordAuthenticationFilter.class)
+            .addFilterAt(usernamePasswordLoginFilter,
+                UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration)
-            throws Exception {
+        throws Exception {
 
         return configuration.getAuthenticationManager();
     }
