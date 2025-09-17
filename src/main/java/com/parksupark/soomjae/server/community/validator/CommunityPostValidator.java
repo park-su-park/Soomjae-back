@@ -1,7 +1,7 @@
 package com.parksupark.soomjae.server.community.validator;
 
 import com.parksupark.soomjae.server.community.common.constant.PostConstant;
-import com.parksupark.soomjae.server.community.communitypost.repository.CommunityPostRepository;
+import com.parksupark.soomjae.server.community.post.communitypost.repository.CommunityPostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

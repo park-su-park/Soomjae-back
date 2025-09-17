@@ -37,7 +37,7 @@ public class AuthController {
         }
 
         for (Cookie cookie : request.getCookies()) {
-            if ("refreshToken".equals(cookie.getName())) {
+            if ("refresh_token".equals(cookie.getName())) {
                 return cookie.getValue();
             }
         }

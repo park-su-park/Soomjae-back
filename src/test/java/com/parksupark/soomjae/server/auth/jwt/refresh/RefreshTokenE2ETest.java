@@ -84,7 +84,7 @@ class RefreshTokenE2ETest {
 
         // when + then
         MvcResult result = mockMvc.perform(post("/v1/auth/refresh")
-                .cookie(new Cookie("refreshToken", refreshToken)))
+                .cookie(new Cookie("refresh_token", refreshToken)))
             .andExpect(status().isOk())
             .andReturn();
 
@@ -104,7 +104,7 @@ class RefreshTokenE2ETest {
         String expiredRefreshToken = expiredRefreshTokenGenerator.generate(email);
 
         MvcResult result = mockMvc.perform(post(REFRESH_URI)
-                .cookie(new Cookie("refreshToken", expiredRefreshToken)))
+                .cookie(new Cookie("refresh_token", expiredRefreshToken)))
             .andExpect(status().isUnauthorized())
             .andReturn();
 
@@ -112,7 +112,7 @@ class RefreshTokenE2ETest {
         Cookie refreshTokenCookie = null;
 
         for (Cookie cookie : cookies) {
-            if ("refreshToken".equals(cookie.getName())) {
+            if ("refresh_token".equals(cookie.getName())) {
                 refreshTokenCookie = cookie;
                 break;
             }
@@ -127,7 +127,7 @@ class RefreshTokenE2ETest {
         Cookie[] cookies = mvcResult.getResponse().getCookies();
 
         for (Cookie cookie : cookies) {
-            if ("refreshToken".equals(cookie.getName())) {
+            if ("refresh_token".equals(cookie.getName())) {
                 return cookie.getValue();
             }
         }
