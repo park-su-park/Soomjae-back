@@ -1,4 +1,4 @@
-addpackage com.parksupark.soomjae.server.common.controller;
+package com.parksupark.soomjae.server.common.controller;
 
 import java.util.HashMap;
 import java.util.Map;
