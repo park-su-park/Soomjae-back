@@ -38,6 +38,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.4'
     implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
+    implementation 'com.google.api-client:google-api-client:2.6.0'
+    implementation 'com.google.auth:google-auth-library-oauth2-http:1.19.0'
 
 
     compileOnly 'org.projectlombok:lombok'

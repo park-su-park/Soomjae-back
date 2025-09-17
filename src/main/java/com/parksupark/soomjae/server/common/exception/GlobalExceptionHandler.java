@@ -68,7 +68,7 @@ public class GlobalExceptionHandler {
     protected ResponseEntity<String> handleRefreshFailedException(RuntimeException e) {
 
         return ResponseEntity.status(401)
-            .header("Set-Cookie", "refreshToken=; Path=/; HttpOnly; Max-Age=0")
+            .header("Set-Cookie", "refresh_token=; Path=/; HttpOnly; Max-Age=0")
             .body(e.getMessage());
     }
 

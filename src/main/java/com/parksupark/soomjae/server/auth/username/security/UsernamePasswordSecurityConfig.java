@@ -48,7 +48,7 @@ public class UsernamePasswordSecurityConfig {
      * </ul>
      */
     @Bean
-    @Order(2)
+    @Order(3)
     public SecurityFilterChain securityFilterChain(HttpSecurity http,
         AuthenticationManager authenticationManager,
         AuthenticationProvider authenticationProvider)

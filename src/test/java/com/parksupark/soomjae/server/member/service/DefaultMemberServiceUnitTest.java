@@ -167,8 +167,11 @@ class DefaultMemberServiceUnitTest {
     }
 
     private Member saveMember() {
-        return memberRepository.save(
-                Member.create(email, passwordEncoder.encode(password), nickname));
+        Member member = memberRepository.save(
+            Member.create(email, passwordEncoder.encode(password), nickname));
+        memberRepository.flush();
+
+        return member;
     }
 
 }

@@ -1,7 +1,7 @@
-package com.parksupark.soomjae.server.community.communitypost.dto;
+package com.parksupark.soomjae.server.community.post.communitypost.dto;
 
 import com.parksupark.soomjae.server.community.comment.dto.CommentResponse;
-import com.parksupark.soomjae.server.community.communitypost.entity.CommunityPost;
+import com.parksupark.soomjae.server.community.post.communitypost.entity.CommunityPost;
 import java.util.List;
 import lombok.Getter;
 
