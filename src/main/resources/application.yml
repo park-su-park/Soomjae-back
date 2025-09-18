@@ -2,9 +2,9 @@ spring:
   profiles:
     active: local
     group:
-      local: local, common, secret
-      blue: blue, common, secret
-      green: green, common, secret
+      local: local, common
+      blue: blue, common
+      green: green, common
 
 server:
   env: blue
@@ -36,7 +36,7 @@ spring:
       client:
         registration:
           google:
-            redirect-uri: http://13.54.160.4/login/oauth2/code/google
+            redirect-uri: http://${EC2_IP}/login/oauth2/code/google
 
 server:
   port: 8080
@@ -54,7 +54,7 @@ spring:
       client:
         registration:
           google:
-            redirect-uri: http://13.54.160.4/login/oauth2/code/google
+            redirect-uri: http://${EC2_IP}/login/oauth2/code/google
 
 server:
   port: 8081
@@ -63,18 +63,16 @@ server:
 serverName: green_server
 ---
 
-
-
-# ===============================
-# Spring Boot
-# ===============================
 spring:
   config:
     activate:
       on-profile: common
     import: optional:file:.env[.properties]
 
-
+  datasource:
+    url: ${DB_URL}?serverTimezone=UTC
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
 
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
@@ -91,8 +89,8 @@ spring:
       client:
         registration:
           google:
-            client-id: test-client-id
-            client-secret: test-client-secret
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
             scope: email+profile
         provider:
           google:
@@ -120,3 +118,16 @@ spring:
 app:
   cookie:
     secure: false
+
+server:
+  ssl:
+    enabled: false
+    key-store: classpath:keystore.p12
+    key-store-type: PKCS12
+    key-store-password: ${KEYSTORE_PASSWORD}
+    key-alias: ${KEYSTORE_ALIAS}
+
+jwt:
+  secret: ${JWT_SECRET}
+  refresh:
+    secret: ${JWT_REFRESH_SECRET}
