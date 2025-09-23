@@ -76,9 +76,10 @@ public class DefaultLikeService implements LikeService {
 
         Long likeCount = likeRepository.countByPostTypeAndPostId(postType, postId);
 
-        Boolean liked = likeRepository.existsByPostTypeAndPostIdAndMemberId(postType,
-                postId, userDetails.getMember()
-                        .getId());
+        boolean liked =
+            userDetails != null && likeRepository.existsByPostTypeAndPostIdAndMemberId(postType,
+                postId,
+                userDetails.getMember().getId());
 
         return new LikeStatusResponse(liked, likeCount);
     }
