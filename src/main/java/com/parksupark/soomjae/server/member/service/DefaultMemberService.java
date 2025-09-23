@@ -2,6 +2,9 @@ package com.parksupark.soomjae.server.member.service;
 
 import com.parksupark.soomjae.server.auth.oauth.AuthProvider;
 import com.parksupark.soomjae.server.common.exception.ErrorMessages;
+import com.parksupark.soomjae.server.common.exception.ResourceNotFoundException;
+import com.parksupark.soomjae.server.email.entity.EmailVerification;
+import com.parksupark.soomjae.server.email.repository.EmailVerificationRepository;
 import com.parksupark.soomjae.server.member.dto.CheckDuplicateEmailResponse;
 import com.parksupark.soomjae.server.member.dto.CreateMemberRequest;
 import com.parksupark.soomjae.server.member.dto.MemberBasicInfo;
@@ -23,6 +26,7 @@ public class DefaultMemberService implements MemberService {
 
     private final PasswordEncoder passwordEncoder;
     private final MemberRepository memberRepository;
+    private final EmailVerificationRepository emailVerificationRepository;
 
     // nickname 필드에 대한 중복 체크는 추후에 자세한 nickname 초기화 정책이 나오면 구현
     @Transactional
@@ -31,6 +35,16 @@ public class DefaultMemberService implements MemberService {
         final String email = request.getEmail();
 
         validateEmailAndProviderUniqueness(email, AuthProvider.LOCAL);
+
+        EmailVerification emailVerification = emailVerificationRepository.findByEmail(email)
+            .orElseThrow(() -> new ResourceNotFoundException(
+                ErrorMessages.EMAIL_VERIFICATION_NOT_FOUND_MESSAGE));
+
+        if (!emailVerification.isVerified()) {
+            throw new IllegalArgumentException(ErrorMessages.EMAIL_NOT_VERIFIED_MESSAGE);
+        }
+
+        emailVerificationRepository.delete(emailVerification);
 
         final String encodedPassword = passwordEncoder.encode(request.getPassword());
         final String nickname = request.getNickname();

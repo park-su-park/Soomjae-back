@@ -8,6 +8,8 @@ import com.parksupark.soomjae.server.community.common.exception.AlreadyLikedExce
 import com.parksupark.soomjae.server.community.common.exception.InvalidPostIdException;
 import com.parksupark.soomjae.server.community.common.exception.InvalidPostTypeException;
 import com.parksupark.soomjae.server.community.common.exception.LikeNotFoundException;
+import com.parksupark.soomjae.server.email.exception.EmailVerificationExpiredException;
+import com.parksupark.soomjae.server.email.exception.EmailVerificationFailedException;
 import com.parksupark.soomjae.server.member.exception.DuplicateEmailException;
 import com.parksupark.soomjae.server.member.exception.MemberNotFoundException;
 import java.util.List;
@@ -30,10 +32,10 @@ public class GlobalExceptionHandler {
     // 어떠한 Exception 발생하더라도 동작이 같다면 굳이 나눌 필요는 없어보이긴 함
     @ExceptionHandler({InvalidPostTypeException.class, InvalidPostIdException.class,
         LikeNotFoundException.class, AlreadyLikedException.class, MemberNotFoundException.class,
-        DuplicateEmailException.class})
-    protected ResponseEntity<String> handleInvalidPostTypeException(
+        DuplicateEmailException.class, EmailVerificationExpiredException.class,
+        EmailVerificationFailedException.class, ResourceNotFoundException.class})
+    protected ResponseEntity<String> handleBadRequestException(
         RuntimeException e) {
-
         return ResponseEntity.status(400).body(e.getMessage());
     }
 
@@ -79,5 +81,4 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(400)
             .body(e.getMessage());
     }
-
 }
