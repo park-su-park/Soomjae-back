@@ -26,6 +26,10 @@ public class ErrorMessages {
 
     public static final String OAUTH2_EMAIL_NOT_VERIFIED_MESSAGE = "이메일이 인증되지 않았습니다.";
     public static final String OAUTH2_PROVIDER_NOT_SUPPORT_MESSAGE = "지원하지 않는 OAuth Provider: ";
+    public static final String INVALID_GOOGLE_ID_TOKEN_MESSAGE = "유효하지 않은 Google Id Token 입니다.";
+    public static final String INVALID_ISSUER_MESSAGE = "유효하지 않은 issuer";
+    public static final String OAUTH2_GOOGLE_ID_TOKEN_VERIFICATION_FAILED_MESSAGE =
+        "Google Id Token 검증 실패";
 
     public static final String EMAIL_VERIFICATION_NOT_FOUND_MESSAGE = "이메일 인증 정보를 찾을 수 없습니다.";
     public static final String EMAIL_VERIFICATION_EXPIRED_MESSAGE = "만료된 이메일 인증 정보입니다.";

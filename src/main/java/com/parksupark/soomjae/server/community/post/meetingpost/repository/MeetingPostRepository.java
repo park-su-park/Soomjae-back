@@ -23,7 +23,8 @@ public interface MeetingPostRepository extends JpaRepository<MeetingPost, Long> 
     Optional<MeetingPost> findByIdForUpdate(@Param("id") Long id);
 
     @Query("""
-        SELECT new com.parksupark.soomjae.server.community.post.meetingpost.dto.MeetingPostStatsResponse(
+        SELECT new
+        com.parksupark.soomjae.server.community.post.meetingpost.dto.MeetingPostStatsResponse(
             m.id,
             COUNT(DISTINCT c.id),
             COUNT(DISTINCT l.id),
@@ -34,7 +35,8 @@ public interface MeetingPostRepository extends JpaRepository<MeetingPost, Long> 
         LEFT JOIN Comment c ON c.postId = m.id
         LEFT JOIN likes l ON l.postId = m.id AND l.postType = 'meeting'
         LEFT JOIN Participation p ON p.meetingPost.id = m.id
-        LEFT JOIN likes lm ON lm.postId = m.id AND lm.postType = 'meeting' AND lm.member.id = :memberId
+        LEFT JOIN likes lm ON lm.postId = m.id AND lm.postType = 'meeting'
+        AND lm.member.id = :memberId
         WHERE m.id IN :postIds
         GROUP BY m.id
         """)

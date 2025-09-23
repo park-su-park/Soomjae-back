@@ -30,7 +30,7 @@ public class OAuth2SecurityConfig {
      * </ul>
      */
     @Bean
-    @Order(1)
+    @Order(2)
     public SecurityFilterChain oauth2FilterChain(HttpSecurity http) throws Exception {
         http
             .securityMatcher("/oauth2/**", "/login/oauth2/**")
