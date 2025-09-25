@@ -3,7 +3,6 @@ package com.parksupark.soomjae.server.email.service;
 import com.parksupark.soomjae.server.common.exception.ErrorMessages;
 import com.parksupark.soomjae.server.common.exception.ResourceNotFoundException;
 import com.parksupark.soomjae.server.email.entity.EmailVerification;
-import com.parksupark.soomjae.server.email.exception.EmailVerificationExpiredException;
 import com.parksupark.soomjae.server.email.exception.EmailVerificationFailedException;
 import com.parksupark.soomjae.server.email.repository.EmailVerificationRepository;
 import com.parksupark.soomjae.server.email.util.SecureCodeGenerator;
@@ -35,6 +34,8 @@ public class DefaultEmailVerificationService implements EmailVerificationService
 
         String code = codeGenerator.generateVerificationCode();
 
+        emailVerificationRepository.deleteByEmail(email);
+
         emailVerificationRepository.save(EmailVerification.create(email, code));
 
         sendVerificationEmail(email, subject, code);
@@ -43,11 +44,7 @@ public class DefaultEmailVerificationService implements EmailVerificationService
     @Override
     @Transactional
     public void verifyCode(String email, String code) {
-        EmailVerification emailVerification = emailVerificationRepository.findByEmail(email)
-            .orElseThrow(() -> new ResourceNotFoundException(
-                ErrorMessages.EMAIL_VERIFICATION_NOT_FOUND_MESSAGE));
-
-        isExpired(emailVerification);
+        EmailVerification emailVerification = findValidVerification(email);
 
         String normalizedCode = code.toUpperCase().trim();
 
@@ -81,14 +78,9 @@ public class DefaultEmailVerificationService implements EmailVerificationService
         }
     }
 
-    private void isExpired(EmailVerification emailVerification) {
-        Instant expiredAt = emailVerification.getExpiredAt();
-
-        if(expiredAt.isBefore(Instant.now())){
-            emailVerificationRepository.delete(emailVerification);
-
-            throw new EmailVerificationExpiredException(
-                ErrorMessages.EMAIL_VERIFICATION_EXPIRED_MESSAGE);
-        }
+    private EmailVerification findValidVerification(String email) {
+        return emailVerificationRepository.findByEmailAndExpiredAtAfter(email, Instant.now())
+            .orElseThrow(() -> new ResourceNotFoundException(
+                ErrorMessages.EMAIL_VERIFICATION_NOT_FOUND_MESSAGE));
     }
 }

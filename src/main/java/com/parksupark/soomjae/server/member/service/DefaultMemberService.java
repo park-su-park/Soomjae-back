@@ -13,6 +13,7 @@ import com.parksupark.soomjae.server.member.entity.Member;
 import com.parksupark.soomjae.server.member.exception.DuplicateEmailException;
 import com.parksupark.soomjae.server.member.exception.MemberNotFoundException;
 import com.parksupark.soomjae.server.member.repository.MemberRepository;
+import java.time.Instant;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -36,15 +37,13 @@ public class DefaultMemberService implements MemberService {
 
         validateEmailAndProviderUniqueness(email, AuthProvider.LOCAL);
 
-        EmailVerification emailVerification = emailVerificationRepository.findByEmail(email)
-            .orElseThrow(() -> new ResourceNotFoundException(
-                ErrorMessages.EMAIL_VERIFICATION_NOT_FOUND_MESSAGE));
+        EmailVerification emailVerification = findValidVerification(email);
 
         if (!emailVerification.isVerified()) {
             throw new IllegalArgumentException(ErrorMessages.EMAIL_NOT_VERIFIED_MESSAGE);
         }
 
-        emailVerificationRepository.delete(emailVerification);
+        emailVerificationRepository.deleteByEmail(email);
 
         final String encodedPassword = passwordEncoder.encode(request.getPassword());
         final String nickname = request.getNickname();
@@ -131,6 +130,12 @@ public class DefaultMemberService implements MemberService {
         if (memberRepository.existsByEmailAndProvider(email, provider)) {
             throw new DuplicateEmailException(ErrorMessages.DUPLICATE_EMAIL_EXCEPTION_MESSAGE);
         }
+    }
+
+    private EmailVerification findValidVerification(String email) {
+        return emailVerificationRepository.findByEmailAndExpiredAtAfter(email, Instant.now())
+            .orElseThrow(() -> new ResourceNotFoundException(
+                ErrorMessages.EMAIL_VERIFICATION_NOT_FOUND_MESSAGE));
     }
 
 }
