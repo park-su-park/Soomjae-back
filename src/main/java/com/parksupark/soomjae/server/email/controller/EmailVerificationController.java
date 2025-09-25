@@ -76,7 +76,6 @@ public class EmailVerificationController {
      *
      * @throws jakarta.validation.ConstraintViolationException 요청 파라미터 유효성 검증 실패 시
      * @throws com.parksupark.soomjae.server.common.exception.ResourceNotFoundException 해당 이메일의 EmailVerification 을 찾을 수 없을 경우
-     * @throws com.parksupark.soomjae.server.email.exception.EmailVerificationExpiredException 인증코드가 만료된 경우
      * @throws com.parksupark.soomjae.server.email.exception.EmailVerificationFailedException 인증코드가 일치하지 않을 경우
      *
      * @see com.parksupark.soomjae.server.email.service.DefaultEmailVerificationService#verifyCode(String, String)
