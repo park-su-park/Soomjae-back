@@ -8,10 +8,11 @@ public class SecureCodeGenerator {
 
     private final SecureRandom secureRandom = new SecureRandom();
     private static final String SAFE_CHARS = "23456789ABCDEFGHJKMNPQRSTUVWXYZ";
+    private static final int CODE_LENGTH = 6;
 
     public String generateVerificationCode() {
-        StringBuilder code = new StringBuilder();
-        for (int i = 0; i < 6; i++) {
+        StringBuilder code = new StringBuilder(CODE_LENGTH);
+        for (int i = 0; i < CODE_LENGTH; i++) {
             code.append(SAFE_CHARS.charAt(secureRandom.nextInt(SAFE_CHARS.length())));
         }
         return code.toString();

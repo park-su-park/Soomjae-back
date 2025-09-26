@@ -13,15 +13,19 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class EmailVerification extends BaseEntity {
 
+    private static final int EMAIL_MAX_LENGTH = 255;
+    private static final int CODE_LENGTH = 6;
+    private static final int EXPIRATION_SECONDS = 300;
+
     @Id
-    @Column(length = 255)
+    @Column(length = EMAIL_MAX_LENGTH)
     private String email;
 
-    @Column(length = 6, nullable = false)
+    @Column(length = CODE_LENGTH, nullable = false)
     private String code;
 
     @Column(nullable = false)
-    private Instant expiredAt;
+    private Instant expirationTime;
 
     @Column(nullable = false, columnDefinition = "boolean default false")
     private boolean verified;
@@ -29,7 +33,7 @@ public class EmailVerification extends BaseEntity {
     private EmailVerification(String email, String code) {
         this.email = email;
         this.code = code;
-        this.expiredAt = Instant.now().plusSeconds(300);
+        this.expirationTime = Instant.now().plusSeconds(EXPIRATION_SECONDS);
     }
 
     public static EmailVerification create(String email, String code) {
