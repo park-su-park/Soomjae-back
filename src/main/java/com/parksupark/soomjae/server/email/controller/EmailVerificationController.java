@@ -6,14 +6,11 @@ import com.parksupark.soomjae.server.email.service.EmailVerificationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/v1/mail")
+@RequestMapping("/v1/email")
 public class EmailVerificationController {
 
     private final EmailVerificationService emailVerificationService;
@@ -44,7 +41,7 @@ public class EmailVerificationController {
      *
      * @see com.parksupark.soomjae.server.email.service.DefaultEmailVerificationService#sendVerificationCode(String)
      */
-    @PostMapping("/send-code")
+    @PostMapping("/verification")
     public ResponseEntity<Void> sendVerificationCode(@RequestBody @Valid SendCodeRequest request) {
         emailVerificationService.sendVerificationCode(request.getEmail());
 
@@ -80,7 +77,7 @@ public class EmailVerificationController {
      *
      * @see com.parksupark.soomjae.server.email.service.DefaultEmailVerificationService#verifyCode(String, String)
      */
-    @PostMapping("/verify-code")
+    @PutMapping("/verification")
     public ResponseEntity<String> verifyCode(@RequestBody @Valid VerifyCodeRequest request) {
         String email = request.getEmail();
         String code = request.getCode();
