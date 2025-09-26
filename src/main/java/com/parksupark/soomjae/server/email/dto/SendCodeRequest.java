@@ -13,7 +13,7 @@ public class SendCodeRequest {
 
     @JsonCreator
     public SendCodeRequest(
-        @JsonProperty("mail") String email
+        @JsonProperty("email") String email
     ) {
         this.email = email;
     }
