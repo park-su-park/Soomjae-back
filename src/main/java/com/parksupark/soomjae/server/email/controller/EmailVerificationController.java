@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.async.DeferredResult;
 
 @RestController
 @RequiredArgsConstructor
@@ -32,7 +33,7 @@ public class EmailVerificationController {
      *   <li>동일한 이메일로 재요청 시 기존 코드는 새 코드로 덮어씌워집니다</li>
      *   <li>생성된 EmailVerification 의 유효기간은 5분입니다</li>
      * </ul>
-     *
+     *6
      * @param request 이메일 주소가 포함된 요청 객체
      * @return 발송 완료 응답 (HTTP 200)
      *
@@ -42,10 +43,8 @@ public class EmailVerificationController {
      * @see com.parksupark.soomjae.server.email.service.DefaultEmailVerificationService#sendVerificationCode(String)
      */
     @PostMapping("/verification")
-    public ResponseEntity<Void> sendVerificationCode(@RequestBody @Valid SendCodeRequest request) {
-        emailVerificationService.sendVerificationCode(request.getEmail());
-
-        return ResponseEntity.ok().build();
+    public DeferredResult<ResponseEntity<Void>> sendVerificationCode(@RequestBody @Valid SendCodeRequest request) {
+        return emailVerificationService.sendVerificationCode(request.getEmail());
     }
 
 
@@ -65,15 +64,13 @@ public class EmailVerificationController {
      * <ul>
      *   <li>코드는 대소문자 구분 없이 검증됩니다 (자동으로 대문자 변환)</li>
      *   <li>코드 앞뒤 공백은 자동으로 제거됩니다</li>
-     *   <li>만료된 인증 요청은 해당 요청 발생 시 DB에서 삭제됩니다 (TODO: Redis 사용하여 자동 삭제)</li>
      * </ul>
      *
      * @param request 이메일 주소와 인증코드가 포함된 요청 객체
      * @return 인증 성공 메시지 (HTTP 200)
      *
      * @throws jakarta.validation.ConstraintViolationException 요청 파라미터 유효성 검증 실패 시
-     * @throws com.parksupark.soomjae.server.common.exception.ResourceNotFoundException 해당 이메일의 EmailVerification 을 찾을 수 없을 경우
-     * @throws com.parksupark.soomjae.server.email.exception.EmailVerificationFailedException 인증코드가 일치하지 않을 경우
+     * @throws com.parksupark.soomjae.server.common.exception.ResourceNotFoundException 이메일과 코드를 사용한 EmailVerification 조회결과가 없을 경우
      *
      * @see com.parksupark.soomjae.server.email.service.DefaultEmailVerificationService#verifyCode(String, String)
      */
