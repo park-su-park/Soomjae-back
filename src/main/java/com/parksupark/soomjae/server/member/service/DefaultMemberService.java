@@ -2,8 +2,6 @@ package com.parksupark.soomjae.server.member.service;
 
 import com.parksupark.soomjae.server.auth.oauth.AuthProvider;
 import com.parksupark.soomjae.server.common.exception.ErrorMessages;
-import com.parksupark.soomjae.server.common.exception.ResourceNotFoundException;
-import com.parksupark.soomjae.server.email.entity.EmailVerification;
 import com.parksupark.soomjae.server.email.repository.EmailVerificationRepository;
 import com.parksupark.soomjae.server.member.dto.CheckDuplicateEmailResponse;
 import com.parksupark.soomjae.server.member.dto.CreateMemberRequest;
@@ -37,19 +35,17 @@ public class DefaultMemberService implements MemberService {
 
         validateEmailAndProviderUniqueness(email, AuthProvider.LOCAL);
 
-        EmailVerification emailVerification = findValidVerification(email);
-
-        if (!emailVerification.isVerified()) {
+        if (!emailVerificationRepository.existsByEmailAndVerifiedAndExpirationTimeAfter(email,
+            Instant.now())) {
             throw new IllegalArgumentException(ErrorMessages.EMAIL_NOT_VERIFIED_MESSAGE);
         }
-
-        emailVerificationRepository.deleteByEmail(email);
 
         final String encodedPassword = passwordEncoder.encode(request.getPassword());
         final String nickname = request.getNickname();
 
         Member member = Member.create(email, encodedPassword, nickname);
         memberRepository.save(member);
+        emailVerificationRepository.deleteByEmail(email);
         return createMemberResponse(member);
     }
 
@@ -130,12 +126,6 @@ public class DefaultMemberService implements MemberService {
         if (memberRepository.existsByEmailAndProvider(email, provider)) {
             throw new DuplicateEmailException(ErrorMessages.DUPLICATE_EMAIL_EXCEPTION_MESSAGE);
         }
-    }
-
-    private EmailVerification findValidVerification(String email) {
-        return emailVerificationRepository.findByEmailAndExpiredAtAfter(email, Instant.now())
-            .orElseThrow(() -> new ResourceNotFoundException(
-                ErrorMessages.EMAIL_VERIFICATION_NOT_FOUND_MESSAGE));
     }
 
 }
