@@ -45,7 +45,6 @@ public class DefaultEmailSender implements EmailSender {
 
             javaMailSender.send(message);
 
-            log.info("[{}] 비동기 스레드 반납", Thread.currentThread().getName());
             return CompletableFuture.completedFuture(null);
 
         } catch (MessagingException e) {
