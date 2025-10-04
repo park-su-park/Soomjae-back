@@ -5,7 +5,7 @@ import org.springframework.web.context.request.async.DeferredResult;
 
 public interface EmailVerificationService {
 
-    DeferredResult<ResponseEntity<Void>> sendVerificationCode(String email);
+    DeferredResult<ResponseEntity<?>> sendVerificationCode(String email);
 
     void verifyCode(String email, String code);
 

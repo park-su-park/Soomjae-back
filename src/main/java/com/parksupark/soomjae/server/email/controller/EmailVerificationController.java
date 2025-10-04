@@ -3,11 +3,13 @@ package com.parksupark.soomjae.server.email.controller;
 import com.parksupark.soomjae.server.email.dto.SendCodeRequest;
 import com.parksupark.soomjae.server.email.dto.VerifyCodeRequest;
 import com.parksupark.soomjae.server.email.service.EmailVerificationService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.async.DeferredResult;
+import org.springframework.web.filter.ShallowEtagHeaderFilter;
 
 @RestController
 @RequiredArgsConstructor
@@ -33,17 +35,16 @@ public class EmailVerificationController {
      *   <li>동일한 이메일로 재요청 시 기존 코드는 새 코드로 덮어씌워집니다</li>
      *   <li>생성된 EmailVerification 의 유효기간은 5분입니다</li>
      * </ul>
-     *6
+     *
      * @param request 이메일 주소가 포함된 요청 객체
      * @return 발송 완료 응답 (HTTP 200)
-     *
      * @throws jakarta.validation.ConstraintViolationException 유효하지 않은 이메일 형식일 경우
      * @throws com.parksupark.soomjae.server.email.exception.EmailVerificationFailedException 이메일 발송 실패 시
-     *
      * @see com.parksupark.soomjae.server.email.service.DefaultEmailVerificationService#sendVerificationCode(String)
      */
     @PostMapping("/verification")
-    public DeferredResult<ResponseEntity<Void>> sendVerificationCode(@RequestBody @Valid SendCodeRequest request) {
+    public DeferredResult<ResponseEntity<?>> sendVerificationCode(
+        @RequestBody @Valid SendCodeRequest request) {
         return emailVerificationService.sendVerificationCode(request.getEmail());
     }
 
