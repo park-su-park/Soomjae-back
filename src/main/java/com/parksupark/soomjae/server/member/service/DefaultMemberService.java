@@ -2,6 +2,7 @@ package com.parksupark.soomjae.server.member.service;
 
 import com.parksupark.soomjae.server.auth.oauth.AuthProvider;
 import com.parksupark.soomjae.server.common.exception.ErrorMessages;
+import com.parksupark.soomjae.server.email.repository.EmailVerificationRepository;
 import com.parksupark.soomjae.server.member.dto.CheckDuplicateEmailResponse;
 import com.parksupark.soomjae.server.member.dto.CreateMemberRequest;
 import com.parksupark.soomjae.server.member.dto.MemberBasicInfo;
@@ -10,6 +11,7 @@ import com.parksupark.soomjae.server.member.entity.Member;
 import com.parksupark.soomjae.server.member.exception.DuplicateEmailException;
 import com.parksupark.soomjae.server.member.exception.MemberNotFoundException;
 import com.parksupark.soomjae.server.member.repository.MemberRepository;
+import java.time.Instant;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,6 +25,7 @@ public class DefaultMemberService implements MemberService {
 
     private final PasswordEncoder passwordEncoder;
     private final MemberRepository memberRepository;
+    private final EmailVerificationRepository emailVerificationRepository;
 
     // nickname 필드에 대한 중복 체크는 추후에 자세한 nickname 초기화 정책이 나오면 구현
     @Transactional
@@ -32,11 +35,17 @@ public class DefaultMemberService implements MemberService {
 
         validateEmailAndProviderUniqueness(email, AuthProvider.LOCAL);
 
+        if (!emailVerificationRepository.existsByEmailAndVerifiedAndExpirationTimeAfter(email,
+            Instant.now())) {
+            throw new IllegalArgumentException(ErrorMessages.EMAIL_NOT_VERIFIED_MESSAGE);
+        }
+
         final String encodedPassword = passwordEncoder.encode(request.getPassword());
         final String nickname = request.getNickname();
 
         Member member = Member.create(email, encodedPassword, nickname);
         memberRepository.save(member);
+        emailVerificationRepository.deleteByEmail(email);
         return createMemberResponse(member);
     }
 

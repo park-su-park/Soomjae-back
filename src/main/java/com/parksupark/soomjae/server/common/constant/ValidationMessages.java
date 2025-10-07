@@ -11,6 +11,10 @@ public class ValidationMessages {
     // 이메일
     public static final String EMAIL_INVALID_FORMAT = "올바른 이메일 형식이 아닙니다.";
 
+    // 이메일 인증 코드
+    public static final String VERIFICATION_CODE_INVALID_FORMAT = "인증코드는 6자리 영문자와 숫자로만 구성되어야 합니다";
+
+
     private ValidationMessages() {
 
     }
