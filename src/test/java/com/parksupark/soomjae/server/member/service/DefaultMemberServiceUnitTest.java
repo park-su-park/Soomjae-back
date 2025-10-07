@@ -3,6 +3,8 @@ package com.parksupark.soomjae.server.member.service;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.parksupark.soomjae.server.email.repository.EmailVerificationRepository;
+import com.parksupark.soomjae.server.email.repository.NoOpEmailVerificationRepository;
 import com.parksupark.soomjae.server.member.dto.CheckDuplicateEmailResponse;
 import com.parksupark.soomjae.server.member.dto.CreateMemberRequest;
 import com.parksupark.soomjae.server.member.dto.MemberResponse;
@@ -22,12 +24,13 @@ class DefaultMemberServiceUnitTest {
 
     private final MemberRepository memberRepository = new JpaLikeInMemoryMemberRepository();
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private final EmailVerificationRepository emailVerificationRepository = new NoOpEmailVerificationRepository();
     private final String email = "test@example.com";
     private final String password = "test";
     private final String nickname = "test";
 
     private final MemberService memberService = new DefaultMemberService(passwordEncoder,
-        memberRepository);
+        memberRepository, emailVerificationRepository);
 
     @BeforeEach
     void setUp() {
