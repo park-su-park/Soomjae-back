@@ -24,7 +24,8 @@ class DefaultMemberServiceUnitTest {
 
     private final MemberRepository memberRepository = new JpaLikeInMemoryMemberRepository();
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-    private final EmailVerificationRepository emailVerificationRepository = new NoOpEmailVerificationRepository();
+    private final EmailVerificationRepository emailVerificationRepository =
+        new NoOpEmailVerificationRepository();
     private final String email = "test@example.com";
     private final String password = "test";
     private final String nickname = "test";

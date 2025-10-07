@@ -15,7 +15,6 @@ public class NoOpEmailVerificationRepository implements EmailVerificationReposit
 
     @Override
     public void deleteByEmail(String email) {
-
     }
 
     @Override
@@ -24,8 +23,8 @@ public class NoOpEmailVerificationRepository implements EmailVerificationReposit
     }
 
     @Override
-    public Optional<EmailVerification> findByEmailAndCodeAndExpirationTimeAfter(String email,
-        String code, Instant now) {
+    public Optional<EmailVerification> findByEmailAndCodeAndExpirationTimeAfter(
+        String email, String code, Instant now) {
         return Optional.empty();
     }
 
@@ -59,7 +58,7 @@ public class NoOpEmailVerificationRepository implements EmailVerificationReposit
     }
 
     @Override
-    public EmailVerification getReferenceById(Long aLong) {
+    public EmailVerification getReferenceById(Long id) {
         return null;
     }
 
@@ -94,14 +93,13 @@ public class NoOpEmailVerificationRepository implements EmailVerificationReposit
     }
 
     @Override
-    public <S extends EmailVerification, R> R findBy(Example<S> example,
-        Function<FetchableFluentQuery<S>, R> queryFunction) {
+    public <S extends EmailVerification, R> R findBy(
+        Example<S> example, Function<FetchableFluentQuery<S>, R> queryFunction) {
         return null;
     }
 
     @Override
     public void flush() {
-
     }
 
     @Override
@@ -116,26 +114,57 @@ public class NoOpEmailVerificationRepository implements EmailVerificationReposit
 
     @Override
     public void deleteAllInBatch(Iterable<EmailVerification> entities) {
-
     }
 
     @Override
-    public void deleteAllByIdInBatch(Iterable<Long> longs) {
-
+    public void deleteAllByIdInBatch(Iterable<Long> ids) {
     }
 
     @Override
     public void deleteAllInBatch() {
-
     }
 
     @Override
-    public EmailVerification getOne(Long aLong) {
+    public EmailVerification getOne(Long id) {
         return null;
     }
 
     @Override
-    public EmailVerification getById(Long aLong) {
+    public EmailVerification getById(Long id) {
+        return null;
+    }
+
+    @Override
+    public Optional<EmailVerification> findById(Long id) {
+        return Optional.empty();
+    }
+
+    @Override
+    public boolean existsById(Long id) {
+        return false;
+    }
+
+    @Override
+    public void deleteById(Long id) {
+    }
+
+    @Override
+    public List<EmailVerification> findAll() {
+        return List.of();
+    }
+
+    @Override
+    public List<EmailVerification> findAllById(Iterable<Long> ids) {
+        return List.of();
+    }
+
+    @Override
+    public List<EmailVerification> findAll(Sort sort) {
+        return List.of();
+    }
+
+    @Override
+    public Page<EmailVerification> findAll(Pageable pageable) {
         return null;
     }
 
@@ -150,62 +179,23 @@ public class NoOpEmailVerificationRepository implements EmailVerificationReposit
     }
 
     @Override
-    public Optional<EmailVerification> findById(Long aLong) {
-        return Optional.empty();
+    public void delete(EmailVerification entity) {
     }
 
     @Override
-    public boolean existsById(Long aLong) {
-        return false;
+    public void deleteAllById(Iterable<? extends Long> ids) {
     }
 
     @Override
-    public List<EmailVerification> findAll() {
-        return List.of();
+    public void deleteAll(Iterable<? extends EmailVerification> entities) {
     }
 
     @Override
-    public List<EmailVerification> findAllById(Iterable<Long> longs) {
-        return List.of();
+    public void deleteAll() {
     }
 
     @Override
     public long count() {
         return 0;
-    }
-
-    @Override
-    public void deleteById(Long aLong) {
-
-    }
-
-    @Override
-    public void delete(EmailVerification entity) {
-
-    }
-
-    @Override
-    public void deleteAllById(Iterable<? extends Long> longs) {
-
-    }
-
-    @Override
-    public void deleteAll(Iterable<? extends EmailVerification> entities) {
-
-    }
-
-    @Override
-    public void deleteAll() {
-
-    }
-
-    @Override
-    public List<EmailVerification> findAll(Sort sort) {
-        return List.of();
-    }
-
-    @Override
-    public Page<EmailVerification> findAll(Pageable pageable) {
-        return null;
     }
 }
