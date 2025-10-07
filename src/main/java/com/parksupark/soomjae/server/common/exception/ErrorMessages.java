@@ -31,6 +31,10 @@ public class ErrorMessages {
     public static final String OAUTH2_GOOGLE_ID_TOKEN_VERIFICATION_FAILED_MESSAGE =
         "Google Id Token 검증 실패";
 
+    public static final String REVIEW_ALREADY_EXISTS_MESSAGE = "이미 리뷰를 작성하였습니다.";
+    public static final String REVIEW_NOT_FOUND_MESSAGE = "작성된 리뷰가 없습니다.";
+    public static final String REVIEW_OWNER_MISMATCH_MESSAGE = "본인이 작성한 리뷰만 삭제할 수 있습니다.";
+
     private ErrorMessages() {
     }
 }
