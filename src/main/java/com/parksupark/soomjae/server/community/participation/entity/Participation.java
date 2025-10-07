@@ -11,12 +11,20 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor
 @Getter
+@Table(name = "participation", uniqueConstraints = {
+    @UniqueConstraint(
+        name = "uk_participation_member_post",
+        columnNames = {"member_id", "meeting_post_id"}
+    )
+})
 public class Participation extends BaseEntity {
 
     @Id
