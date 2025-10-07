@@ -37,7 +37,7 @@ public class EmailVerificationController {
      * @param request 이메일 주소가 포함된 요청 객체
      * @return 발송 완료 응답 (HTTP 200)
      * @throws jakarta.validation.ConstraintViolationException
-     * 유효하지 않은 이메일 형식일 경우
+     *  유효하지 않은 이메일 형식일 경우
      * @throws com.parksupark.soomjae.server.email.exception.EmailVerificationFailedException
      * 이메일 발송 실패 시
      * @see com.parksupark.soomjae.server.email.service.DefaultEmailVerificationService
