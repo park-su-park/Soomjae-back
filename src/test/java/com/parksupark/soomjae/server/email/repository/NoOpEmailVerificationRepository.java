@@ -37,10 +37,6 @@ public class NoOpEmailVerificationRepository implements EmailVerificationReposit
         return false;
     }
 
-    // ------------------------------------------------------------------------
-    // Basic CRUD Methods
-    // ------------------------------------------------------------------------
-
     @Override
     public <S extends EmailVerification> S save(S entity) {
         return null;
@@ -62,17 +58,17 @@ public class NoOpEmailVerificationRepository implements EmailVerificationReposit
     }
 
     @Override
-    public List<EmailVerification> findAll() {
-        return List.of();
-    }
-
-    @Override
     public List<EmailVerification> findAllById(Iterable<Long> ids) {
         return List.of();
     }
 
     @Override
     public long count() {
+        return 0;
+    }
+
+    @Override
+    public <S extends EmailVerification> long count(Example<S> example) {
         return 0;
     }
 
@@ -95,10 +91,6 @@ public class NoOpEmailVerificationRepository implements EmailVerificationReposit
     @Override
     public void deleteAll() {
     }
-
-    // ------------------------------------------------------------------------
-    // Advanced JPA Methods
-    // ------------------------------------------------------------------------
 
     @Override
     public void flush() {
@@ -141,9 +133,15 @@ public class NoOpEmailVerificationRepository implements EmailVerificationReposit
         return null;
     }
 
-    // ------------------------------------------------------------------------
-    // Sorting & Paging
-    // ------------------------------------------------------------------------
+    @Override
+    public <S extends EmailVerification> Optional<S> findOne(Example<S> example) {
+        return Optional.empty();
+    }
+
+    @Override
+    public List<EmailVerification> findAll() {
+        return List.of();
+    }
 
     @Override
     public List<EmailVerification> findAll(Sort sort) {
@@ -153,15 +151,6 @@ public class NoOpEmailVerificationRepository implements EmailVerificationReposit
     @Override
     public Page<EmailVerification> findAll(Pageable pageable) {
         return null;
-    }
-
-    // ------------------------------------------------------------------------
-    // Example Queries
-    // ------------------------------------------------------------------------
-
-    @Override
-    public <S extends EmailVerification> Optional<S> findOne(Example<S> example) {
-        return Optional.empty();
     }
 
     @Override
@@ -180,11 +169,6 @@ public class NoOpEmailVerificationRepository implements EmailVerificationReposit
     }
 
     @Override
-    public <S extends EmailVerification> long count(Example<S> example) {
-        return 0;
-    }
-
-    @Override
     public <S extends EmailVerification> boolean exists(Example<S> example) {
         return false;
     }
@@ -194,10 +178,6 @@ public class NoOpEmailVerificationRepository implements EmailVerificationReposit
         Example<S> example, Function<FetchableFluentQuery<S>, R> queryFunction) {
         return null;
     }
-
-    // ------------------------------------------------------------------------
-    // Object methods
-    // ------------------------------------------------------------------------
 
     @Override
     public int hashCode() {
