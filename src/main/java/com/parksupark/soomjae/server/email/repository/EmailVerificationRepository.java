@@ -21,7 +21,8 @@ public interface EmailVerificationRepository extends JpaRepository<EmailVerifica
             FROM EmailVerification e
             WHERE e.email = :email AND e.code = :code AND e.expirationTime > :now
             """)
-    Optional<EmailVerification> findByEmailAndCodeAndExpirationTimeAfter(@Param("email") String email,
+    Optional<EmailVerification> findByEmailAndCodeAndExpirationTimeAfter(
+        @Param("email") String email,
         @Param("code") String code, @Param("now") Instant now);
 
     @Query(

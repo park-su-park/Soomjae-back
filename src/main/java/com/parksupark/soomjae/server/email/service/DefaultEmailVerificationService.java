@@ -33,7 +33,8 @@ public class DefaultEmailVerificationService implements EmailVerificationService
     @Override
     @Transactional
     public DeferredResult<ResponseEntity<?>> sendVerificationCode(String email) {
-        DeferredResult<ResponseEntity<?>> deferredResult = new DeferredResult<>(DEFERRED_RESULT_TIMEOUT);
+        DeferredResult<ResponseEntity<?>> deferredResult = new DeferredResult<>(
+            DEFERRED_RESULT_TIMEOUT);
 
         String code = codeGenerator.generateVerificationCode();
 
@@ -43,7 +44,8 @@ public class DefaultEmailVerificationService implements EmailVerificationService
         emailFuture.orTimeout(DEFERRED_RESULT_TIMEOUT, TimeUnit.MILLISECONDS)
                 .whenComplete((result, throwable) -> {
                     if (throwable != null) {
-                        Throwable cause = throwable.getCause() != null ? throwable.getCause() : throwable;
+                        Throwable cause =
+                            throwable.getCause() != null ? throwable.getCause() : throwable;
 
                         Map<String, String> body = Map.of("message", cause.getMessage());
 
@@ -71,10 +73,11 @@ public class DefaultEmailVerificationService implements EmailVerificationService
     public void verifyCode(String email, String code) {
         String normalizedCode = code.toUpperCase().trim();
 
-        EmailVerification emailVerification = emailVerificationRepository.findByEmailAndCodeAndExpirationTimeAfter(
-            email, normalizedCode,
-            Instant.now()).orElseThrow(() -> new ResourceNotFoundException(
-            ErrorMessages.EMAIL_VERIFICATION_NOT_FOUND_MESSAGE));
+        EmailVerification emailVerification = emailVerificationRepository
+            .findByEmailAndCodeAndExpirationTimeAfter(
+                email, normalizedCode,
+                Instant.now()).orElseThrow(() -> new ResourceNotFoundException(
+                ErrorMessages.EMAIL_VERIFICATION_NOT_FOUND_MESSAGE));
 
         emailVerification.setVerified(true);
     }
