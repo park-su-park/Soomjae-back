@@ -40,7 +40,8 @@ public class EmailVerificationController {
      * 유효하지 않은 이메일 형식일 경우
      * @throws com.parksupark.soomjae.server.email.exception.EmailVerificationFailedException
      * 이메일 발송 실패 시
-     * @see com.parksupark.soomjae.server.email.service.DefaultEmailVerificationService#sendVerificationCode(String)
+     * @see com.parksupark.soomjae.server.email.service.DefaultEmailVerificationService
+     * #sendVerificationCode(String)
      */
     @PostMapping("/verification")
     public DeferredResult<ResponseEntity<?>> sendVerificationCode(
@@ -72,7 +73,8 @@ public class EmailVerificationController {
      * @throws jakarta.validation.ConstraintViolationException 요청 파라미터 유효성 검증 실패 시
      * @throws com.parksupark.soomjae.server.common.exception.ResourceNotFoundException
      * 이메일과 코드를 사용한 EmailVerification 조회결과가 없을 경우
-     * @see com.parksupark.soomjae.server.email.service.DefaultEmailVerificationService#verifyCode(String, String)
+     * @see com.parksupark.soomjae.server.email.service.DefaultEmailVerificationService
+     * #verifyCode(String, String)
      */
     @PutMapping("/verification")
     public ResponseEntity<String> verifyCode(@RequestBody @Valid VerifyCodeRequest request) {
