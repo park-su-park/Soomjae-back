@@ -20,11 +20,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 @Table(name = "participation", uniqueConstraints = {
-    @UniqueConstraint(
-        name = "uk_participation_member_post",
-        columnNames = {"member_id", "meeting_post_id"}
-    )
-})
+    @UniqueConstraint(name = "uk_participation_member_post",
+        columnNames = {"member_id", "meeting_post_id"})})
+
 public class Participation extends BaseEntity {
 
     @Id

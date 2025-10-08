@@ -43,7 +43,7 @@ public class Review extends BaseEntity {
     }
 
     public static Review create(Participation participation, BigDecimal star, String content) {
-        return new Review(participation ,star, content);
+        return new Review(participation, star, content);
     }
 
     public void updateReview(UpdateReviewRequest request) {
