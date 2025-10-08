@@ -31,6 +31,11 @@ public class ErrorMessages {
     public static final String OAUTH2_GOOGLE_ID_TOKEN_VERIFICATION_FAILED_MESSAGE =
         "Google Id Token 검증 실패";
 
+    public static final String EMAIL_VERIFICATION_NOT_FOUND_MESSAGE =
+        "이메일 인증 정보를 찾을 수 없습니다.(잘못된 이메일 혹은 잘못된 인증 코드)";
+    public static final String EMAIL_NOT_VERIFIED_MESSAGE = "인증되지 않은 이메일로는 회원가입 할 수 없습니다.";
+    public static final String EMAIL_SEND_FAILED_MESSAGE = "인증코드 이메일 발송에 실패했습니다.";
+
     public static final String REVIEW_ALREADY_EXISTS_MESSAGE = "이미 리뷰를 작성하였습니다.";
     public static final String REVIEW_NOT_FOUND_MESSAGE = "작성된 리뷰가 없습니다.";
     public static final String REVIEW_OWNER_MISMATCH_MESSAGE = "본인이 작성한 리뷰만 삭제할 수 있습니다.";
