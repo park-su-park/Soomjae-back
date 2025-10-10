@@ -2,6 +2,7 @@ package com.parksupark.soomjae.server.community.review.controller;
 
 import com.parksupark.soomjae.server.auth.username.dto.UsernamePasswordUserDetails;
 import com.parksupark.soomjae.server.community.review.dto.CreateReviewRequest;
+import com.parksupark.soomjae.server.community.review.dto.ReviewExistenceResponse;
 import com.parksupark.soomjae.server.community.review.dto.ReviewResponse;
 import com.parksupark.soomjae.server.community.review.dto.UpdateReviewRequest;
 import com.parksupark.soomjae.server.community.review.service.ReviewService;
@@ -25,7 +26,6 @@ public class ReviewController {
 
     private final ReviewService reviewService;
 
-    // TODO: UserDetails OAuth 도 가능하게끔 수정 (MemberController도 마찬가지)
     @PostMapping("/boards/meeting/posts/{postId}/reviews")
     public ResponseEntity<ReviewResponse> postReview(@PathVariable Long postId,
         @RequestBody @Valid CreateReviewRequest request,
@@ -37,28 +37,44 @@ public class ReviewController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/reviews/{reviewId}")
-    public ResponseEntity<ReviewResponse> getReview(@PathVariable Long reviewId) {
+    @GetMapping("/boards/meeting/posts/{postId}/reviews/{reviewId}")
+    public ResponseEntity<ReviewResponse> getReview(@PathVariable Long postId,
+        @PathVariable Long reviewId) {
+
         ReviewResponse response = reviewService.readReview(reviewId);
 
         return ResponseEntity.ok(response);
     }
 
-    @PutMapping("/reviews/{reviewId}")
-    public ResponseEntity<ReviewResponse> putReview(@PathVariable Long reviewId,
+    @PutMapping("/boards/meeting/posts/{postId}/reviews/{reviewId}")
+    public ResponseEntity<ReviewResponse> putReview(@PathVariable Long postId,
+        @PathVariable Long reviewId,
         @RequestBody @Valid UpdateReviewRequest request,
         @AuthenticationPrincipal UsernamePasswordUserDetails userDetails) {
+
         ReviewResponse response = reviewService.updateReview(reviewId, request,
             userDetails.getMember());
 
         return ResponseEntity.ok(response);
     }
 
-    @DeleteMapping("/reviews/{reviewId}")
-    public ResponseEntity<Void> deleteReview(@PathVariable Long reviewId,
+    @DeleteMapping("/boards/meeting/posts/{postId}/reviews/{reviewId}")
+    public ResponseEntity<Void> deleteReview(@PathVariable Long postId,
+        @PathVariable Long reviewId,
         @AuthenticationPrincipal UsernamePasswordUserDetails userDetails) {
+
         reviewService.deleteReview(reviewId, userDetails.getMember());
 
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/boards/meeting/posts/{postId}/reviews/me")
+    public ResponseEntity<ReviewExistenceResponse> checkReviewExistence(@PathVariable Long postId,
+        @AuthenticationPrincipal UsernamePasswordUserDetails userDetails) {
+
+        ReviewExistenceResponse response = reviewService.checkReviewExistence(postId,
+            userDetails.getMember());
+
+        return ResponseEntity.ok(response);
     }
 }
