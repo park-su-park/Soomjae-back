@@ -4,12 +4,15 @@ import com.parksupark.soomjae.server.common.exception.ErrorMessages;
 import com.parksupark.soomjae.server.common.exception.ResourceNotFoundException;
 import com.parksupark.soomjae.server.community.participation.entity.Participation;
 import com.parksupark.soomjae.server.community.participation.repository.ParticipationRepository;
+import com.parksupark.soomjae.server.community.post.meetingpost.repository.MeetingPostRepository;
 import com.parksupark.soomjae.server.community.review.dto.CreateReviewRequest;
+import com.parksupark.soomjae.server.community.review.dto.ReviewExistenceResponse;
 import com.parksupark.soomjae.server.community.review.dto.ReviewResponse;
 import com.parksupark.soomjae.server.community.review.dto.UpdateReviewRequest;
 import com.parksupark.soomjae.server.community.review.entity.Review;
 import com.parksupark.soomjae.server.community.review.repository.ReviewRepository;
 import com.parksupark.soomjae.server.member.entity.Member;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +23,7 @@ public class DefaultReviewService implements ReviewService {
 
     private final ParticipationRepository participationRepository;
     private final ReviewRepository reviewRepository;
+    private final MeetingPostRepository meetingPostRepository;
 
     @Override
     @Transactional
@@ -37,8 +41,8 @@ public class DefaultReviewService implements ReviewService {
         Review review = Review.create(participation, request.getStar(), request.getContent());
         reviewRepository.save(review);
 
-        return new ReviewResponse(review.getId(), participation.getId(), review.getStar(),
-            review.getContent());
+        return new ReviewResponse(review.getId(), participation.getMeetingPost().getId(), review.getStar(),
+            review.getContent(), review.getCreatedTime());
     }
 
     // 조회 메서드는 필요에 따라 더 추가 
@@ -52,7 +56,7 @@ public class DefaultReviewService implements ReviewService {
 
         return new ReviewResponse(review.getId(),
             review.getParticipation().getParticipant().getId(), review.getStar(),
-            review.getContent());
+            review.getContent(), review.getCreatedTime());
     }
 
     @Override
@@ -69,7 +73,7 @@ public class DefaultReviewService implements ReviewService {
 
         review.updateReview(request);
         return new ReviewResponse(review.getId(), review.getParticipation().getId(),
-            review.getStar(), review.getContent());
+            review.getStar(), review.getContent(), review.getCreatedTime());
     }
 
     @Override
@@ -84,5 +88,20 @@ public class DefaultReviewService implements ReviewService {
         }
 
         reviewRepository.delete(review);
+    }
+
+    @Override
+    public ReviewExistenceResponse checkReviewExistence(Long postId, Member member) {
+        Participation participation = participationRepository.findByMeetingPostIdAndParticipantId(
+                postId, member.getId())
+            .orElseThrow(
+                () -> new ResourceNotFoundException(ErrorMessages.NOT_PARTICIPANT_OF_POST));
+
+        Optional<Long> reviewIdOptional = reviewRepository.findReviewIdByParticipationId(
+            participation.getId());
+
+        return reviewIdOptional
+            .map(reviewId -> new ReviewExistenceResponse(true, reviewId))
+            .orElse(new ReviewExistenceResponse(false, null));
     }
 }
