@@ -40,6 +40,8 @@ public class ErrorMessages {
     public static final String REVIEW_NOT_FOUND_MESSAGE = "작성된 리뷰가 없습니다.";
     public static final String REVIEW_OWNER_MISMATCH_MESSAGE = "본인이 작성한 리뷰만 삭제할 수 있습니다.";
 
+    public static final String STAR_VALUE_INVALID_MESSAGE = "값은 0.5 단위여야 합니다.";
+
     private ErrorMessages() {
     }
 }
