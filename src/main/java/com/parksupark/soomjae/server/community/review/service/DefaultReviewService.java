@@ -41,7 +41,8 @@ public class DefaultReviewService implements ReviewService {
         Review review = Review.create(participation, request.getStar(), request.getContent());
         reviewRepository.save(review);
 
-        return new ReviewResponse(review.getId(), participation.getMeetingPost().getId(), review.getStar(),
+        return new ReviewResponse(review.getId(), participation.getMeetingPost().getId(),
+            review.getStar(),
             review.getContent(), review.getCreatedTime());
     }
 
