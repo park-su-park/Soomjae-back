@@ -17,5 +17,4 @@ public interface MemberService {
     MemberResponse updateNickname(Long id, String nickname);
 
     CheckDuplicateEmailResponse checkDuplicateEmail(String email);
-
 }
