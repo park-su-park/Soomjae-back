@@ -109,7 +109,7 @@ public class InMemoryMemberRepository implements MemberRepository {
     }
 
     @Override
-    public boolean exitsById(Long id) {
+    public boolean existsById(Long id) {
         return false;
     }
 }

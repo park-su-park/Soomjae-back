@@ -80,7 +80,7 @@ public class DefaultMemberPostService implements MemberPostService {
     @Override
     @Transactional(readOnly = true)
     public Page<MemberPostGridProjection> readGridMemberPosts(Long memberId, Pageable pageable) {
-        if (!memberRepository.exitsById(memberId)) {
+        if (!memberRepository.existsById(memberId)) {
             throw new MemberNotFoundException(ErrorMessages.MEMBER_NOT_FOUND_EXCEPTION_MESSAGE);
         }
 
