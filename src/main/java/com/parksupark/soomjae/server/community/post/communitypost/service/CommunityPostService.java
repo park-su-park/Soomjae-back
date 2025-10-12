@@ -57,8 +57,9 @@ public class CommunityPostService {
     public PostListResponse readCommunityPostList(Pageable pageable,
         UsernamePasswordUserDetails userDetails) {
         List<CommunityPost> posts = communityPostRepository.findAll(pageable).getContent();
+        Long memberId = (userDetails != null) ? userDetails.getMember().getId() : null;
         List<CommunityPostResponse> response = getCommunityPostResponses(posts,
-            userDetails.getMember().getId());
+            memberId);
         return PostListResponse.of(response);
     }
 
@@ -99,7 +100,6 @@ public class CommunityPostService {
 
     private void updateCommunityPost(CommunityPostRequest communityPostRequest,
         CommunityPost communityPost) {
-
         Category category = getCategory(communityPostRequest);
         Location location = getLocation(communityPostRequest);
         communityPost.setTitle(communityPostRequest.getTitle());
@@ -137,7 +137,7 @@ public class CommunityPostService {
 
         for (CommunityPostStatsResponse postStat : postStats) {
             Optional<CommunityPost> postOptional = contents.stream()
-                .filter(p -> postStat.getPostId() == p.getId()).findFirst();
+                .filter(p -> postStat.getPostId().equals(p.getId())).findFirst();
 
             postOptional.ifPresent(
                 meetingPost -> response.add(CommunityPostResponse.of(meetingPost, postStat)));
