@@ -10,11 +10,11 @@ import com.parksupark.soomjae.server.community.comment.repository.CommentReposit
 import com.parksupark.soomjae.server.community.common.constant.PostConstant;
 import com.parksupark.soomjae.server.community.like.dto.LikeStatusResponse;
 import com.parksupark.soomjae.server.community.like.service.LikeService;
+import com.parksupark.soomjae.server.community.post.memberpost.dto.MemberPostDetailResponse;
 import com.parksupark.soomjae.server.community.post.memberpost.dto.MemberPostFeedResponse;
 import com.parksupark.soomjae.server.community.post.memberpost.dto.MemberPostGridProjection;
-import com.parksupark.soomjae.server.community.post.memberpost.dto.SaveMemberPostRequest;
 import com.parksupark.soomjae.server.community.post.memberpost.dto.MemberPostIdResponse;
-import com.parksupark.soomjae.server.community.post.memberpost.dto.MemberPostDetailResponse;
+import com.parksupark.soomjae.server.community.post.memberpost.dto.SaveMemberPostRequest;
 import com.parksupark.soomjae.server.community.post.memberpost.entity.MemberPost;
 import com.parksupark.soomjae.server.community.post.memberpost.entity.MemberPostImage;
 import com.parksupark.soomjae.server.community.post.memberpost.repository.MemberPostRepository;
@@ -64,7 +64,8 @@ public class DefaultMemberPostService implements MemberPostService {
         MemberPost memberPost = memberPostRepository.findByIdWithMember(memberPostId)
             .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.MEMBER_POST_NOT_FOUND));
 
-        LikeStatusResponse likeStatusResponse = likeService.readLikeStatus(PostConstant.MEMBER_POST_TYPE,
+        LikeStatusResponse likeStatusResponse = likeService.readLikeStatus(
+            PostConstant.MEMBER_POST_TYPE,
             memberPostId, userDetails);
 
         List<Comment> comments = commentRepository.findByPostTypeAndPostIdAndDeletedTimeIsNull(
@@ -95,7 +96,8 @@ public class DefaultMemberPostService implements MemberPostService {
             long commentCount = commentRepository.countByPostTypeAndPostIdAndDeletedTimeIsNull(
                 PostConstant.MEMBER_POST_TYPE, post.getId());
 
-            return new MemberPostFeedResponse(post, post.getMember(), likeStatusResponse, commentCount);
+            return new MemberPostFeedResponse(post, post.getMember(), likeStatusResponse,
+                commentCount);
         });
     }
 
@@ -112,11 +114,12 @@ public class DefaultMemberPostService implements MemberPostService {
 
     @Override
     @Transactional
-    public MemberPostIdResponse updateMemberPost(SaveMemberPostRequest request, Long memberPostId, Member member) {
+    public MemberPostIdResponse updateMemberPost(SaveMemberPostRequest request, Long memberPostId,
+        Member member) {
         MemberPost memberPost = memberPostRepository.findByIdWithMember(memberPostId)
             .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.MEMBER_POST_NOT_FOUND));
 
-        if(!memberPost.getMember().getId().equals(member.getId())){
+        if (!memberPost.getMember().getId().equals(member.getId())) {
             throw new ResourceOwnershipException(ErrorMessages.POST_OWNER_MISMATCH_MESSAGE);
         }
 

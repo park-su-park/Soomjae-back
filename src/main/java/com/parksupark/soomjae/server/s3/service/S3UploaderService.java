@@ -5,6 +5,8 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.parksupark.soomjae.server.common.exception.ErrorMessages;
 import jakarta.annotation.PostConstruct;
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.FileAttribute;
@@ -12,17 +14,14 @@ import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Optional;
-import java.util.UUID;
 
 @Slf4j
 @Service
@@ -51,7 +50,7 @@ public class S3UploaderService {
         List<String> imageUrls = new ArrayList<>();
 
         for (MultipartFile multipartFile : multipartFiles) {
-            try{
+            try {
                 String imageUrl = upload(multipartFile, dirName);
                 imageUrls.add(imageUrl);
             } catch (IOException e) {
@@ -64,7 +63,8 @@ public class S3UploaderService {
     private String upload(MultipartFile multipartFile, String dirName) throws IOException {
         // 1. 안전한 임시 파일 생성 (사용자 파일 이름 사용 안 함)
         File uploadFile = convert(multipartFile)
-            .orElseThrow(() -> new IllegalArgumentException(ErrorMessages.MULTIPART_FILE_CONVERT_ERROR));
+            .orElseThrow(
+                () -> new IllegalArgumentException(ErrorMessages.MULTIPART_FILE_CONVERT_ERROR));
 
         // 2. S3에 저장할 파일 이름 생성 (여기서는 원본 파일 이름 사용)
         String originalFileName = multipartFile.getOriginalFilename();
@@ -83,8 +83,8 @@ public class S3UploaderService {
     private String putS3(File uploadFile, String fileName) {
         amazonS3Client.putObject(
             new PutObjectRequest(bucket, fileName, uploadFile)
-                .withCannedAcl(CannedAccessControlList.PublicRead)	// PublicRead 권한으로 업로드
-        );
+                .withCannedAcl(CannedAccessControlList.PublicRead));
+
         return amazonS3Client.getUrl(bucket, fileName).toString();
     }
 

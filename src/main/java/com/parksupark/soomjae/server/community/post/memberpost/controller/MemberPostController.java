@@ -1,11 +1,11 @@
 package com.parksupark.soomjae.server.community.post.memberpost.controller;
 
 import com.parksupark.soomjae.server.auth.username.dto.UsernamePasswordUserDetails;
+import com.parksupark.soomjae.server.community.post.memberpost.dto.MemberPostDetailResponse;
 import com.parksupark.soomjae.server.community.post.memberpost.dto.MemberPostFeedResponse;
 import com.parksupark.soomjae.server.community.post.memberpost.dto.MemberPostGridProjection;
-import com.parksupark.soomjae.server.community.post.memberpost.dto.SaveMemberPostRequest;
 import com.parksupark.soomjae.server.community.post.memberpost.dto.MemberPostIdResponse;
-import com.parksupark.soomjae.server.community.post.memberpost.dto.MemberPostDetailResponse;
+import com.parksupark.soomjae.server.community.post.memberpost.dto.SaveMemberPostRequest;
 import com.parksupark.soomjae.server.community.post.memberpost.service.MemberPostService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
