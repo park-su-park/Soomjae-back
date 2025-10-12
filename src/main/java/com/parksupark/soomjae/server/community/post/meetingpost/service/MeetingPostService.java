@@ -67,8 +67,9 @@ public class MeetingPostService {
     public PostListResponse readMeetingPostList(Pageable pageable,
         UsernamePasswordUserDetails userDetails) {
         List<MeetingPost> posts = meetingPostRepository.findAll(pageable).getContent();
+        Long memberId = (userDetails != null) ? userDetails.getMember().getId() : null;
         List<MeetingPostResponse> response = getMeetingPostStats(posts,
-            userDetails.getMember().getId());
+            memberId);
         return PostListResponse.of(response);
     }
 
@@ -88,7 +89,7 @@ public class MeetingPostService {
 
         for (MeetingPostStatsResponse postStat : postStats) {
             Optional<MeetingPost> postOptional = contents.stream()
-                .filter(p -> postStat.getPostId() == p.getId()).findFirst();
+                .filter(p -> postStat.getPostId().equals(p.getId())).findFirst();
 
             postOptional.ifPresent(
                 meetingPost -> response.add(MeetingPostResponse.of(meetingPost, postStat)));
