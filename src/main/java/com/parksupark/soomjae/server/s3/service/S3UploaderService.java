@@ -4,6 +4,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.parksupark.soomjae.server.common.exception.ErrorMessages;
+import jakarta.annotation.PostConstruct;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -15,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.UUID;
@@ -30,7 +30,14 @@ public class S3UploaderService {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-    private static final String TMP_DIR = "java.io.tmpdir";
+    private Path tempDir; // 애플리케이션 전용 임시 디렉터리 경로
+
+    @PostConstruct
+    public void init() throws IOException {
+        // 서비스가 시작될 때, 시스템 임시 디렉터리 안에 우리만 사용할 하위 디렉터리를 생성합니다.
+        // 이 디렉터리는 기본적으로 소유자만 접근 가능한 권한으로 생성됩니다.
+        this.tempDir = Files.createTempDirectory("soomjae-s3-temp-");
+    }
 
     public List<String> uploadImages(List<MultipartFile> multipartFiles, String dirName) {
         List<String> imageUrls = new ArrayList<>();
@@ -83,8 +90,8 @@ public class S3UploaderService {
     }
 
     private Optional<File> convert(MultipartFile file) throws IOException {
-        // 1. 안전한 임시 파일 생성 (prefix: "upload_", suffix: ".tmp")
-        Path tempFilePath = Files.createTempFile("upload_", ".tmp");
+        // 1. 애플리케이션 전용 임시 디렉터리 안에 안전한 임시 파일 생성
+        Path tempFilePath = Files.createTempFile(this.tempDir, "upload_", ".tmp");
 
         // 2. MultipartFile의 내용을 임시 파일에 씁니다.
         file.transferTo(tempFilePath);
