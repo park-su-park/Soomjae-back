@@ -152,9 +152,6 @@ jwt:
 
 cloud:
   aws:
-    credentials:
-      access-key: ${aws.access-key}
-      secret-key: ${aws.secret-key}
     s3:
       bucket: ${aws.s3-bucket}
     region:
