@@ -7,8 +7,12 @@ import com.parksupark.soomjae.server.common.exception.ErrorMessages;
 import jakarta.annotation.PostConstruct;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.attribute.FileAttribute;
+import java.nio.file.attribute.PosixFilePermission;
+import java.nio.file.attribute.PosixFilePermissions;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,9 +38,13 @@ public class S3UploaderService {
 
     @PostConstruct
     public void init() throws IOException {
-        // 서비스가 시작될 때, 시스템 임시 디렉터리 안에 우리만 사용할 하위 디렉터리를 생성합니다.
-        // 이 디렉터리는 기본적으로 소유자만 접근 가능한 권한으로 생성됩니다.
-        this.tempDir = Files.createTempDirectory("soomjae-s3-temp-");
+        // 1. 파일 권한 설정: 소유자만 읽기, 쓰기, 실행 가능 (rwx------)
+        Set<PosixFilePermission> perms = PosixFilePermissions.fromString("rwx------");
+        FileAttribute<Set<PosixFilePermission>> attr = PosixFilePermissions.asFileAttribute(perms);
+
+        // 2. 위에서 정의한 권한으로 전용 임시 디렉터리를 생성합니다.
+        //    이제 이 디렉터리는 생성 시점부터 다른 사용자의 접근이 원천적으로 차단됩니다.
+        this.tempDir = Files.createTempDirectory("soomjae-s3-temp-", attr);
     }
 
     public List<String> uploadImages(List<MultipartFile> multipartFiles, String dirName) {
