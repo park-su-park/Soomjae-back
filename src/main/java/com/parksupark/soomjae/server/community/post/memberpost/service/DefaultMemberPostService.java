@@ -10,6 +10,7 @@ import com.parksupark.soomjae.server.community.comment.repository.CommentReposit
 import com.parksupark.soomjae.server.community.common.constant.PostConstant;
 import com.parksupark.soomjae.server.community.like.dto.LikeStatusResponse;
 import com.parksupark.soomjae.server.community.like.service.LikeService;
+import com.parksupark.soomjae.server.community.post.memberpost.dto.MemberPostGridProjection;
 import com.parksupark.soomjae.server.community.post.memberpost.dto.SaveMemberPostRequest;
 import com.parksupark.soomjae.server.community.post.memberpost.dto.MemberPostIdResponse;
 import com.parksupark.soomjae.server.community.post.memberpost.dto.MemberPostDetailResponse;
@@ -17,10 +18,14 @@ import com.parksupark.soomjae.server.community.post.memberpost.entity.MemberPost
 import com.parksupark.soomjae.server.community.post.memberpost.entity.MemberPostImage;
 import com.parksupark.soomjae.server.community.post.memberpost.repository.MemberPostRepository;
 import com.parksupark.soomjae.server.member.entity.Member;
+import com.parksupark.soomjae.server.member.exception.MemberNotFoundException;
+import com.parksupark.soomjae.server.member.repository.MemberRepository;
 import jakarta.annotation.Nullable;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class DefaultMemberPostService implements MemberPostService {
 
+    private final MemberRepository memberRepository;
     private final MemberPostRepository memberPostRepository;
     private final LikeService likeService;
     private final CommentRepository commentRepository;
@@ -69,6 +75,17 @@ public class DefaultMemberPostService implements MemberPostService {
 
         return new MemberPostDetailResponse(memberPost, memberPost.getMember(), likeStatusResponse,
             (long) comments.size(), commentResponses);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<MemberPostGridProjection> readGridMemberPosts(Long memberId, Pageable pageable) {
+        if (!memberRepository.exitsById(memberId)) {
+            throw new MemberNotFoundException(ErrorMessages.MEMBER_NOT_FOUND_EXCEPTION_MESSAGE);
+        }
+
+        return memberPostRepository.findMemberPostGridByMemberId(
+            memberId, pageable);
     }
 
     @Override

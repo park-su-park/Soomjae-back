@@ -21,6 +21,8 @@ public interface MemberRepository {
 
     void flush();
 
+    boolean exitsById(Long id);
+
     boolean existsByEmailAndProvider(String email, AuthProvider provider);
 
     Optional<Member> findByProviderAndProviderId(AuthProvider provider, String providerId);

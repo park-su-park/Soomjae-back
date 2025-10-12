@@ -1,12 +1,15 @@
 package com.parksupark.soomjae.server.community.post.memberpost.controller;
 
 import com.parksupark.soomjae.server.auth.username.dto.UsernamePasswordUserDetails;
+import com.parksupark.soomjae.server.community.post.memberpost.dto.MemberPostGridProjection;
 import com.parksupark.soomjae.server.community.post.memberpost.dto.SaveMemberPostRequest;
 import com.parksupark.soomjae.server.community.post.memberpost.dto.MemberPostIdResponse;
 import com.parksupark.soomjae.server.community.post.memberpost.dto.MemberPostDetailResponse;
 import com.parksupark.soomjae.server.community.post.memberpost.service.MemberPostService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -45,6 +48,17 @@ public class MemberPostController {
 
         MemberPostDetailResponse response = memberPostService.readMemberPost(postId,
             userDetails);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{memberId}/grid")
+    public ResponseEntity<Page<MemberPostGridProjection>> getMemberPostGrid(
+        @PathVariable Long memberId,
+        Pageable pageable
+    ) {
+        Page<MemberPostGridProjection> response = memberPostService.readGridMemberPosts(
+            memberId, pageable);
 
         return ResponseEntity.ok(response);
     }

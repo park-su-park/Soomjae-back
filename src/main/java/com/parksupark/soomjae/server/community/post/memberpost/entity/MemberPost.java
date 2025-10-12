@@ -12,6 +12,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
@@ -33,6 +34,7 @@ public class MemberPost extends BaseEntity {
     private Member member;
 
     @OneToMany(mappedBy = "memberPost", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("id ASC")
     private final List<MemberPostImage> images = new ArrayList<>();
 
     @Column(columnDefinition = "TEXT")
