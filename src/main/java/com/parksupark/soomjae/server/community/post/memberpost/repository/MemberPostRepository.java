@@ -31,4 +31,6 @@ public interface MemberPostRepository extends JpaRepository<MemberPost, Long> {
         """)
     Page<MemberPostGridProjection> findMemberPostGridByMemberId(@Param("memberId") Long memberId,
         Pageable pageable);
+
+    Page<MemberPost> findAllByOrderByCreatedTimeDesc(Pageable pageable);
 }

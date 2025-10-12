@@ -10,6 +10,7 @@ import com.parksupark.soomjae.server.community.comment.repository.CommentReposit
 import com.parksupark.soomjae.server.community.common.constant.PostConstant;
 import com.parksupark.soomjae.server.community.like.dto.LikeStatusResponse;
 import com.parksupark.soomjae.server.community.like.service.LikeService;
+import com.parksupark.soomjae.server.community.post.memberpost.dto.MemberPostFeedResponse;
 import com.parksupark.soomjae.server.community.post.memberpost.dto.MemberPostGridProjection;
 import com.parksupark.soomjae.server.community.post.memberpost.dto.SaveMemberPostRequest;
 import com.parksupark.soomjae.server.community.post.memberpost.dto.MemberPostIdResponse;
@@ -75,6 +76,27 @@ public class DefaultMemberPostService implements MemberPostService {
 
         return new MemberPostDetailResponse(memberPost, memberPost.getMember(), likeStatusResponse,
             (long) comments.size(), commentResponses);
+    }
+
+    @Override
+    @Transactional
+    public Page<MemberPostFeedResponse> readFeedMemberPosts(Pageable pageable,
+        @Nullable UsernamePasswordUserDetails userDetails) {
+
+        Page<MemberPost> feedsPage = memberPostRepository.findAllByOrderByCreatedTimeDesc(
+            pageable);
+
+        return feedsPage.map((post) -> {
+
+            LikeStatusResponse likeStatusResponse = likeService.readLikeStatus(
+                PostConstant.MEMBER_POST_TYPE,
+                post.getId(), userDetails);
+
+            long commentCount = commentRepository.countByPostTypeAndPostIdAndDeletedTimeIsNull(
+                PostConstant.MEMBER_POST_TYPE, post.getId());
+
+            return new MemberPostFeedResponse(post, post.getMember(), likeStatusResponse, commentCount);
+        });
     }
 
     @Override

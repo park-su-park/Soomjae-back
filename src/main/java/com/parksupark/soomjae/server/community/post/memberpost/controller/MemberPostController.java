@@ -1,6 +1,7 @@
 package com.parksupark.soomjae.server.community.post.memberpost.controller;
 
 import com.parksupark.soomjae.server.auth.username.dto.UsernamePasswordUserDetails;
+import com.parksupark.soomjae.server.community.post.memberpost.dto.MemberPostFeedResponse;
 import com.parksupark.soomjae.server.community.post.memberpost.dto.MemberPostGridProjection;
 import com.parksupark.soomjae.server.community.post.memberpost.dto.SaveMemberPostRequest;
 import com.parksupark.soomjae.server.community.post.memberpost.dto.MemberPostIdResponse;
@@ -48,6 +49,17 @@ public class MemberPostController {
 
         MemberPostDetailResponse response = memberPostService.readMemberPost(postId,
             userDetails);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/feed")
+    public ResponseEntity<Page<MemberPostFeedResponse>> getMemberPostFeed(
+        @AuthenticationPrincipal UsernamePasswordUserDetails userDetails,
+        Pageable pageable
+    ) {
+        Page<MemberPostFeedResponse> response = memberPostService.readFeedMemberPosts(
+            pageable, userDetails);
 
         return ResponseEntity.ok(response);
     }
