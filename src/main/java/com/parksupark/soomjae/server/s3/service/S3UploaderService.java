@@ -4,6 +4,8 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.parksupark.soomjae.server.common.exception.ErrorMessages;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -44,20 +46,22 @@ public class S3UploaderService {
         return imageUrls;
     }
 
-    // MultipartFile을 전달받아 File로 전환한 후 S3에 업로드
     private String upload(MultipartFile multipartFile, String dirName) throws IOException {
+        // 1. 안전한 임시 파일 생성 (사용자 파일 이름 사용 안 함)
         File uploadFile = convert(multipartFile)
             .orElseThrow(() -> new IllegalArgumentException(ErrorMessages.MULTIPART_FILE_CONVERT_ERROR));
-        return upload(uploadFile, dirName);
-    }
 
-    private String upload(File uploadFile, String dirName) {
-        String fileName = dirName + "/" + UUID.randomUUID() + "_" + uploadFile.getName();
-        String uploadImageUrl = putS3(uploadFile, fileName);
+        // 2. S3에 저장할 파일 이름 생성 (여기서는 원본 파일 이름 사용)
+        String originalFileName = multipartFile.getOriginalFilename();
+        String uniqueFileName = dirName + "/" + UUID.randomUUID() + "_" + originalFileName;
 
-        removeNewFile(uploadFile);  // 로컬에 생성된 File 삭제
+        // 3. S3에 업로드
+        String uploadImageUrl = putS3(uploadFile, uniqueFileName);
 
-        return uploadImageUrl;      // 업로드된 파일의 S3 URL 주소 반환
+        // 4. 로컬 임시 파일 삭제
+        removeNewFile(uploadFile);
+
+        return uploadImageUrl;
     }
 
     // S3에 파일을 업로드하고 URL을 반환하는 메서드
@@ -78,15 +82,14 @@ public class S3UploaderService {
         }
     }
 
-    // MultipartFile을 File 객체로 변환하는 메서드
     private Optional<File> convert(MultipartFile file) throws IOException {
-        // 임시 파일 경로를 사용하므로 파일 이름이 중복되어도 안전합니다.
-        File convertFile = new File(System.getProperty(TMP_DIR) + "/" + file.getOriginalFilename());
+        // 1. 안전한 임시 파일 생성 (prefix: "upload_", suffix: ".tmp")
+        Path tempFilePath = Files.createTempFile("upload_", ".tmp");
 
-        // 동일한 이름의 파일이 존재하는 경우, 덮어쓰기 위해 바로 FileOutputStream을 사용합니다.
-        try (FileOutputStream fos = new FileOutputStream(convertFile)) {
-            fos.write(file.getBytes());
-        }
-        return Optional.of(convertFile);
+        // 2. MultipartFile의 내용을 임시 파일에 씁니다.
+        file.transferTo(tempFilePath);
+
+        // 3. File 객체로 변환하여 반환
+        return Optional.of(tempFilePath.toFile());
     }
 }
