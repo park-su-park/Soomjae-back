@@ -40,6 +40,8 @@ dependencies {
     implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
     implementation 'com.google.api-client:google-api-client:2.6.0'
     implementation 'com.google.auth:google-auth-library-oauth2-http:1.19.0'
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 
 
     compileOnly 'org.projectlombok:lombok'

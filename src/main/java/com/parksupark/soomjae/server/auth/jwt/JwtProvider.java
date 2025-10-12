@@ -29,7 +29,6 @@ public class JwtProvider {
     private final AccessTokenParser accessTokenParser;
     private final RefreshTokenParser refreshTokenParser;
 
-
     public String generateAccessToken(String subject, Map<String, Object> claims) {
         return accessTokenGenerator.generate(subject, claims);
     }

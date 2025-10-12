@@ -44,7 +44,6 @@ public class MeetingPost extends BaseEntity {
     @JoinColumn(name = "location_id")
     private Location location;
 
-
     private String title;
     private String content;
 
@@ -53,5 +52,4 @@ public class MeetingPost extends BaseEntity {
     private Instant startTime;
 
     private Instant endTime;
-
 }

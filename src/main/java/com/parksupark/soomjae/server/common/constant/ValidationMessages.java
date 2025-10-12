@@ -11,6 +11,14 @@ public class ValidationMessages {
     // 이메일
     public static final String EMAIL_INVALID_FORMAT = "올바른 이메일 형식이 아닙니다.";
 
+    // 이메일 인증 코드
+    public static final String VERIFICATION_CODE_INVALID_FORMAT = "인증코드는 6자리 영문자와 숫자로만 구성되어야 합니다";
+
+
+    // 리뷰
+    public static final String REVIEW_STAR_MIN_VALUE = "별점은 0.0 이상이어야 합니다.";
+    public static final String REVIEW_STAR_MAX_VALUE = "별점은 5.0 이하여야 합니다.";
+
     private ValidationMessages() {
 
     }
