@@ -8,6 +8,7 @@ import com.parksupark.soomjae.server.community.post.memberpost.dto.MemberPostIdR
 import com.parksupark.soomjae.server.community.post.memberpost.dto.SaveMemberPostRequest;
 import com.parksupark.soomjae.server.community.post.memberpost.service.MemberPostService;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -55,25 +56,31 @@ public class MemberPostController {
 
     // 최신순 리스트 조회
     @GetMapping("/list")
-    public ResponseEntity<Page<MemberPostFeedResponse>> getMemberPostFeed(
+    public ResponseEntity<List<MemberPostFeedResponse>> getMemberPostFeed(
         @AuthenticationPrincipal UsernamePasswordUserDetails userDetails,
         Pageable pageable
     ) {
-        Page<MemberPostFeedResponse> response = memberPostService.readFeedMemberPosts(
-            pageable, userDetails);
+        Pageable zeroBasedPageable = Pageable.ofSize(pageable.getPageSize())
+            .withPage(Math.max(pageable.getPageNumber() - 1, 0));
 
-        return ResponseEntity.ok(response);
+        Page<MemberPostFeedResponse> response = memberPostService.readFeedMemberPosts(
+            zeroBasedPageable, userDetails);
+
+        return ResponseEntity.ok(response.getContent());
     }
 
     @GetMapping("/{memberId}/grid")
-    public ResponseEntity<Page<MemberPostGridProjection>> getMemberPostGrid(
+    public ResponseEntity<List<MemberPostGridProjection>> getMemberPostGrid(
         @PathVariable Long memberId,
         Pageable pageable
     ) {
-        Page<MemberPostGridProjection> response = memberPostService.readGridMemberPosts(
-            memberId, pageable);
+        Pageable zeroBasedPageable = Pageable.ofSize(pageable.getPageSize())
+            .withPage(Math.max(pageable.getPageNumber() - 1, 0));
 
-        return ResponseEntity.ok(response);
+        Page<MemberPostGridProjection> response = memberPostService.readGridMemberPosts(
+            memberId, zeroBasedPageable);
+
+        return ResponseEntity.ok(response.getContent());
     }
 
     @PutMapping("/{postId}")
