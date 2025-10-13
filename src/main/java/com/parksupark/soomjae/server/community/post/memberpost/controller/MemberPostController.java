@@ -53,7 +53,8 @@ public class MemberPostController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/feed")
+    // 최신순 리스트 조회
+    @GetMapping("/list")
     public ResponseEntity<Page<MemberPostFeedResponse>> getMemberPostFeed(
         @AuthenticationPrincipal UsernamePasswordUserDetails userDetails,
         Pageable pageable
