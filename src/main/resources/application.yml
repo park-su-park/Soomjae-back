@@ -149,3 +149,12 @@ jwt:
   secret: ${JWT_SECRET}
   refresh:
     secret: ${JWT_REFRESH_SECRET}
+
+cloud:
+  aws:
+    s3:
+      bucket: ${aws.s3-bucket}
+    region:
+      static: ${aws.s3-bucket-region}
+    stack:
+      auto: false

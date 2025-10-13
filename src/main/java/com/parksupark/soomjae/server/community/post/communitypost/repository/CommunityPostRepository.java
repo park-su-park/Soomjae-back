@@ -25,7 +25,7 @@ public interface CommunityPostRepository extends JpaRepository<CommunityPost, Lo
         )
         FROM CommunityPost cp
         LEFT JOIN Comment c ON c.postId = cp.id
-        LEFT JOIN likes l ON l.postId = cp.id AND l.postType = 'meeting'
+        LEFT JOIN likes l ON l.postId = cp.id AND l.postType = 'community'
         LEFT JOIN likes lm ON lm.postId = cp.id AND lm.postType = 'community' 
         AND lm.member.id = :memberId
         WHERE cp.id IN :postIds
