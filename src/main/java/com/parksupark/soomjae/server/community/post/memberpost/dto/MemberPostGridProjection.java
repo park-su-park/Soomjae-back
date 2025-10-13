@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 public class MemberPostGridProjection {
 
-    private final Long postId;
+    private final Long memberPostId;
 
-    private final String imageUrl;
+    private final String image;
 }
