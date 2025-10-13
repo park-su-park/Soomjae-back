@@ -82,8 +82,7 @@ public class S3UploaderService {
     // S3에 파일을 업로드하고 URL을 반환하는 메서드
     private String putS3(File uploadFile, String fileName) {
         amazonS3Client.putObject(
-            new PutObjectRequest(bucket, fileName, uploadFile)
-                .withCannedAcl(CannedAccessControlList.PublicRead));
+            new PutObjectRequest(bucket, fileName, uploadFile));
 
         return amazonS3Client.getUrl(bucket, fileName).toString();
     }
