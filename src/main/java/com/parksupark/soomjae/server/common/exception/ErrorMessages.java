@@ -20,6 +20,9 @@ public class ErrorMessages {
 
     public static final String CLOSED_MEETING = "이미 모집종료된 모임입니다";
 
+
+    public static final String ACCESS_TOKEN_EXPIRED_MESSAGE = "access token이 만료되었습니다.";
+    public static final String INVALID_ACCESS_TOKEN_MESSAGE = "잘못된 access token입니다.";
     public static final String REFRESH_TOKEN_NOT_FOUND_FROM_COOKIE_MESSAGE =
         "Refresh Token을 쿠키에서 찾을 수 없습니다.";
     public static final String REFRESH_TOKEN_VALIDATION_FAILED_MESSAGE =
