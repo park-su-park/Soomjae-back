@@ -54,7 +54,6 @@ public class MeetingPostController {
         return ResponseEntity.ok(meetingPostService.readByMemberId(memberId, zeroBasedPageable));
     }
 
-
     //postId로 상세 조회
     @GetMapping("/v1/boards/meeting/posts/{postId}")
     ResponseEntity<MeetingPostDetailResponse> getByPostId(@PathVariable Long postId,

@@ -2,6 +2,7 @@ package com.parksupark.soomjae.server.community.review.service;
 
 import com.parksupark.soomjae.server.common.exception.ErrorMessages;
 import com.parksupark.soomjae.server.common.exception.ResourceNotFoundException;
+import com.parksupark.soomjae.server.common.exception.ResourceOwnershipException;
 import com.parksupark.soomjae.server.community.participation.entity.Participation;
 import com.parksupark.soomjae.server.community.participation.repository.ParticipationRepository;
 import com.parksupark.soomjae.server.community.post.meetingpost.repository.MeetingPostRepository;
@@ -69,7 +70,7 @@ public class DefaultReviewService implements ReviewService {
                 () -> new ResourceNotFoundException(ErrorMessages.REVIEW_NOT_FOUND_MESSAGE));
 
         if (!review.getParticipation().getParticipant().getId().equals(member.getId())) {
-            throw new IllegalStateException(ErrorMessages.REVIEW_OWNER_MISMATCH_MESSAGE);
+            throw new ResourceOwnershipException(ErrorMessages.REVIEW_OWNER_MISMATCH_MESSAGE);
         }
 
         review.updateReview(request);
@@ -85,7 +86,7 @@ public class DefaultReviewService implements ReviewService {
                 () -> new ResourceNotFoundException(ErrorMessages.REVIEW_NOT_FOUND_MESSAGE));
 
         if (!review.getParticipation().getParticipant().getId().equals(member.getId())) {
-            throw new IllegalStateException(ErrorMessages.REVIEW_OWNER_MISMATCH_MESSAGE);
+            throw new ResourceOwnershipException(ErrorMessages.REVIEW_OWNER_MISMATCH_MESSAGE);
         }
 
         reviewRepository.delete(review);
