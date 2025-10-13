@@ -9,7 +9,6 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
 import jakarta.persistence.OneToOne;
 import java.math.BigDecimal;
 import lombok.AccessLevel;
@@ -33,7 +32,7 @@ public class Review extends BaseEntity {
     @Column(precision = 2, scale = 1)
     private BigDecimal star;
 
-    @Lob
+    @Column(columnDefinition = "TEXT")
     private String content;
 
     private Review(Participation participation, BigDecimal star, String content) {

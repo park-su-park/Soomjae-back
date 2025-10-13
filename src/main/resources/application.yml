@@ -87,8 +87,8 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: ${mail.username}
-    password: ${mail.password}
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
     properties:
       mail:
         smtp:
@@ -149,3 +149,12 @@ jwt:
   secret: ${JWT_SECRET}
   refresh:
     secret: ${JWT_REFRESH_SECRET}
+
+cloud:
+  aws:
+    s3:
+      bucket: ${AWS_S3_BUCKET}
+    region:
+      static: ${AWS_S3_BUCKET_REGION}
+    stack:
+      auto: false

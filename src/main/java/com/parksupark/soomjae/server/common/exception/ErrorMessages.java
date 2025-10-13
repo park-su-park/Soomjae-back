@@ -4,6 +4,7 @@ public class ErrorMessages {
 
     public static final String COMMUNITY_POST_NOT_FOUND = "게시글을 찾을 수 없습니다.";
     public static final String MEETING_POST_NOT_FOUND = "모임 게시글을 찾을 수 없습니다.";
+    public static final String MEMBER_POST_NOT_FOUND = "멤버 게시글을 찾을 수 없습니다.";
     public static final String INVALID_POST_TYPE_EXCEPTION_MESSAGE = "잘못된 요청입니다.";
     public static final String NOT_PARTICIPANT_OF_POST = "이 모임에 참여 중이지 않습니다.";
     public static final String MEETING_PARTICIPANTS_FULL_EXCEPTION_MESSAGE = "참여 인원이 모두 찼습니다.";
@@ -19,6 +20,9 @@ public class ErrorMessages {
 
     public static final String CLOSED_MEETING = "이미 모집종료된 모임입니다";
 
+
+    public static final String ACCESS_TOKEN_EXPIRED_MESSAGE = "access token이 만료되었습니다.";
+    public static final String INVALID_ACCESS_TOKEN_MESSAGE = "잘못된 access token입니다.";
     public static final String REFRESH_TOKEN_NOT_FOUND_FROM_COOKIE_MESSAGE =
         "Refresh Token을 쿠키에서 찾을 수 없습니다.";
     public static final String REFRESH_TOKEN_VALIDATION_FAILED_MESSAGE =
@@ -40,7 +44,11 @@ public class ErrorMessages {
     public static final String REVIEW_NOT_FOUND_MESSAGE = "작성된 리뷰가 없습니다.";
     public static final String REVIEW_OWNER_MISMATCH_MESSAGE = "본인이 작성한 리뷰만 삭제할 수 있습니다.";
 
+    public static final String POST_OWNER_MISMATCH_MESSAGE = "본인이 작성한 게시글이 아닙니다.";
+
     public static final String STAR_VALUE_INVALID_MESSAGE = "값은 0.5 단위여야 합니다.";
+
+    public static final String MULTIPART_FILE_CONVERT_ERROR = "MultipartFile -> File 전환 실패";
 
     private ErrorMessages() {
     }
