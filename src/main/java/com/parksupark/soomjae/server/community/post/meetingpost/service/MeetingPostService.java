@@ -4,6 +4,7 @@ import static com.parksupark.soomjae.server.common.exception.ErrorMessages.ALREA
 import static com.parksupark.soomjae.server.common.exception.ErrorMessages.CLOSED_MEETING;
 import static com.parksupark.soomjae.server.common.exception.ErrorMessages.MEETING_PARTICIPANTS_FULL_EXCEPTION_MESSAGE;
 import static com.parksupark.soomjae.server.common.exception.ErrorMessages.MEETING_POST_NOT_FOUND;
+import static com.parksupark.soomjae.server.common.exception.ErrorMessages.NOT_AUTHOR_OF_POST;
 import static com.parksupark.soomjae.server.common.exception.ErrorMessages.NOT_PARTICIPANT_OF_POST;
 import static com.parksupark.soomjae.server.community.category.constant.CategoryConstant.CATEGORY_NOT_FOUND;
 import static com.parksupark.soomjae.server.community.common.constant.PostConstant.MEETING_POST_TYPE;
@@ -27,6 +28,7 @@ import com.parksupark.soomjae.server.community.post.meetingpost.dto.MeetingPostR
 import com.parksupark.soomjae.server.community.post.meetingpost.dto.MeetingPostResponse;
 import com.parksupark.soomjae.server.community.post.meetingpost.dto.MeetingPostStatsResponse;
 import com.parksupark.soomjae.server.community.post.meetingpost.entity.MeetingPost;
+import com.parksupark.soomjae.server.community.post.meetingpost.entity.MeetingStatus;
 import com.parksupark.soomjae.server.community.post.meetingpost.repository.MeetingPostRepository;
 import com.parksupark.soomjae.server.member.dto.MemberResponse;
 import com.parksupark.soomjae.server.member.entity.Member;
@@ -212,5 +214,28 @@ public class MeetingPostService {
             participationRepository.findByMeetingPostId(postId).stream()
                 .map(participation -> MemberResponse.create(participation.getParticipant()))
                 .toList());
+    }
+
+    @Transactional
+    public Long close(Long postId, UsernamePasswordUserDetails userDetails) {
+        // 1) 게시글 조회
+        MeetingPost meetingPost = meetingPostRepository.findById(postId)
+            .orElseThrow(() -> new IllegalStateException(MEETING_POST_NOT_FOUND));
+
+        // 2) 권한 체크: 작성자만 마감 가능
+        Member requester = userDetails.getMember();
+        if (!meetingPost.getMember().getId().equals(requester.getId())) {
+            throw new IllegalStateException(NOT_AUTHOR_OF_POST);
+        }
+
+        // 3) 이미 마감된 경우 방지
+        if (meetingPost.getStatus() == MeetingStatus.CLOSED) {
+            throw new IllegalStateException(CLOSED_MEETING);
+        }
+
+        // 4) 상태 전이: OPEN -> CLOSED
+        meetingPost.setStatus(MeetingStatus.CLOSED);
+
+        return meetingPost.getId();
     }
 }

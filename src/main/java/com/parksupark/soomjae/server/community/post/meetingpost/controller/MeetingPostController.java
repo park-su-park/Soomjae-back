@@ -80,6 +80,12 @@ public class MeetingPostController {
         return ResponseEntity.ok(meetingPostService.update(postId, request));
     }
 
+    @PutMapping("/v1/boards/meeting/posts/{postId}/status/closed")
+    ResponseEntity<Long> closeMeetingPost(@PathVariable Long postId,
+        @AuthenticationPrincipal UsernamePasswordUserDetails userDetails) {
+        return ResponseEntity.ok(meetingPostService.close(postId, userDetails));
+    }
+
     //삭제
     @DeleteMapping("/v1/boards/meeting/posts/{postId}")
     ResponseEntity<Void> deleteMeetingPost(@PathVariable Long postId) {
@@ -103,4 +109,6 @@ public class MeetingPostController {
     ResponseEntity<ParticipantListResponse> readParticipants(@PathVariable Long postId) {
         return ResponseEntity.ok(meetingPostService.findAllParticipantsByPostId(postId));
     }
+
+
 }
