@@ -8,6 +8,7 @@ import com.parksupark.soomjae.server.auth.oauth.userinfo.OAuth2UserInfoFactory;
 import com.parksupark.soomjae.server.common.exception.ErrorMessages;
 import com.parksupark.soomjae.server.member.entity.Member;
 import com.parksupark.soomjae.server.member.repository.MemberRepository;
+import com.parksupark.soomjae.server.member.util.RandomNicknameCreator;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -98,9 +99,15 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             return member;
         }
 
+        String randomNickname;
+        do {
+            randomNickname = RandomNicknameCreator.createRandomNickname();
+        } while (memberRepository.existsByNickname(randomNickname));
+
         Member newMember = Member.createOAuthMember(
             userInfo.getEmail(),
             provider,
+            randomNickname,
             userInfo.getProviderId());
 
         Member member = memberRepository.save(newMember);

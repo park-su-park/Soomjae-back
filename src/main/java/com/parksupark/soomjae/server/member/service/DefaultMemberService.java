@@ -11,6 +11,7 @@ import com.parksupark.soomjae.server.member.entity.Member;
 import com.parksupark.soomjae.server.member.exception.DuplicateEmailException;
 import com.parksupark.soomjae.server.member.exception.MemberNotFoundException;
 import com.parksupark.soomjae.server.member.repository.MemberRepository;
+import com.parksupark.soomjae.server.member.util.RandomNicknameCreator;
 import java.time.Instant;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,9 +42,12 @@ public class DefaultMemberService implements MemberService {
         }
 
         final String encodedPassword = passwordEncoder.encode(request.getPassword());
-        final String nickname = request.getNickname();
+        String randomNickname;
+        do {
+            randomNickname = RandomNicknameCreator.createRandomNickname();
+        } while (memberRepository.existsByNickname(randomNickname));
 
-        Member member = Member.create(email, encodedPassword, nickname);
+        Member member = Member.create(email, encodedPassword, randomNickname);
         memberRepository.save(member);
         emailVerificationRepository.deleteByEmail(email);
         return createMemberResponse(member);
