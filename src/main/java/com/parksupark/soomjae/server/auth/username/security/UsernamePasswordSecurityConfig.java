@@ -18,6 +18,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -49,44 +50,61 @@ public class UsernamePasswordSecurityConfig {
      */
     @Bean
     @Order(3)
-    public SecurityFilterChain securityFilterChain(HttpSecurity http,
-        AuthenticationManager authenticationManager,
-        AuthenticationProvider authenticationProvider)
-        throws Exception {
+    public SecurityFilterChain publicEndPointFilterChain(HttpSecurity http,
+            AuthenticationManager authenticationManager,
+            AuthenticationProvider authenticationProvider)
+            throws Exception {
 
         UsernamePasswordLoginFilter usernamePasswordLoginFilter = new UsernamePasswordLoginFilter(
-            authenticationManager, objectMapper, jwtProvider, refreshTokenService, cookieSecure);
+            authenticationManager, objectMapper, jwtProvider,
+            refreshTokenService, cookieSecure);
+
+        http
+            .securityMatcher("/v1/auth/login")
+            .csrf(AbstractHttpConfigurer::disable)
+            .formLogin(AbstractHttpConfigurer::disable)
+            .sessionManagement(
+                session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
+            .addFilterAt(usernamePasswordLoginFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
+    }
+
+    @Bean
+    @Order(4)
+    public SecurityFilterChain publicEndpointsFilterChain(HttpSecurity http) throws Exception {
+        http
+            .securityMatcher("/v1/members/create-member", "/v1/auth/refresh")
+            .csrf(AbstractHttpConfigurer::disable)
+            .formLogin(AbstractHttpConfigurer::disable)
+            .sessionManagement(
+                session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
+        return http.build();
+    }
+
+    @Bean
+    @Order(5)
+    public SecurityFilterChain securityFilterChain(HttpSecurity http,
+        AuthenticationProvider authenticationProvider) throws Exception {
 
         http
             .securityMatcher("/**")
-            .csrf(csrf -> csrf.disable())
-
-            .formLogin(form -> form.disable())
-
-            .sessionManagement(session ->
-                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/auth/login", "/v1/members/create-member").permitAll()
-                .requestMatchers("/hc", "/env").permitAll()
-                .anyRequest().permitAll()
-            )
-
+            .csrf(AbstractHttpConfigurer::disable)
+            .formLogin(AbstractHttpConfigurer::disable)
+            .sessionManagement(
+                session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
             .authenticationProvider(authenticationProvider)
-
-            .authenticationManager(authenticationManager)
-
-            .addFilterBefore(jwtAuthenticationFilter(),
-                UsernamePasswordAuthenticationFilter.class)
-            .addFilterAt(usernamePasswordLoginFilter,
-                UsernamePasswordAuthenticationFilter.class);
+            .addFilterAt(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration)
-        throws Exception {
+            throws Exception {
 
         return configuration.getAuthenticationManager();
     }
