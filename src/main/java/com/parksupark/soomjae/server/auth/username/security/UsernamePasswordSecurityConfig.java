@@ -50,7 +50,7 @@ public class UsernamePasswordSecurityConfig {
      */
     @Bean
     @Order(3)
-    public SecurityFilterChain securityFilterChain(HttpSecurity http,
+    public SecurityFilterChain publicEndPointFilterChain(HttpSecurity http,
             AuthenticationManager authenticationManager,
             AuthenticationProvider authenticationProvider)
             throws Exception {
