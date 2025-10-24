@@ -22,9 +22,9 @@ import com.parksupark.soomjae.server.community.participation.dto.ParticipationRe
 import com.parksupark.soomjae.server.community.participation.entity.Participation;
 import com.parksupark.soomjae.server.community.participation.repository.ParticipationRepository;
 import com.parksupark.soomjae.server.community.post.common.dto.PostListResponse;
-import com.parksupark.soomjae.server.community.post.meetingpost.dto.MeetingPostDetailResponse;
 import com.parksupark.soomjae.server.community.post.meetingpost.dto.MeetingPostRequest;
 import com.parksupark.soomjae.server.community.post.meetingpost.dto.MeetingPostResponse;
+import com.parksupark.soomjae.server.community.post.meetingpost.dto.MeetingPostResponseWithComments;
 import com.parksupark.soomjae.server.community.post.meetingpost.dto.MeetingPostStatsResponse;
 import com.parksupark.soomjae.server.community.post.meetingpost.entity.MeetingPost;
 import com.parksupark.soomjae.server.community.post.meetingpost.repository.MeetingPostRepository;
@@ -97,7 +97,7 @@ public class MeetingPostService {
         return response;
     }
 
-    public MeetingPostDetailResponse readByPostId(Long postId,
+    public MeetingPostResponseWithComments readByPostId(Long postId,
         UsernamePasswordUserDetails userDetails) {
         MeetingPost meetingPost = meetingPostRepository.findById(postId)
             .orElseThrow(() -> new IllegalStateException(MEETING_POST_NOT_FOUND));
@@ -118,7 +118,7 @@ public class MeetingPostService {
         boolean isParticipatedByMe = participationRepository.existsByMeetingPostIdAndParticipantId(
             postId, userDetails.getMember().getId());
 
-        return MeetingPostDetailResponse.of(meetingPost, likeNum, isLikedByMe, comments,
+        return MeetingPostResponseWithComments.of(meetingPost, likeNum, isLikedByMe, comments,
             (int) currentParticipantCount, isParticipatedByMe);
     }
 
