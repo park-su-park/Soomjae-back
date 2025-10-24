@@ -14,9 +14,9 @@ import com.parksupark.soomjae.server.community.location.constant.LocationConstan
 import com.parksupark.soomjae.server.community.location.entity.Location;
 import com.parksupark.soomjae.server.community.location.repository.LocationRepository;
 import com.parksupark.soomjae.server.community.post.common.dto.PostListResponse;
-import com.parksupark.soomjae.server.community.post.communitypost.dto.CommunityPostDetailResponse;
 import com.parksupark.soomjae.server.community.post.communitypost.dto.CommunityPostRequest;
 import com.parksupark.soomjae.server.community.post.communitypost.dto.CommunityPostResponse;
+import com.parksupark.soomjae.server.community.post.communitypost.dto.CommunityPostResponseWithComments;
 import com.parksupark.soomjae.server.community.post.communitypost.dto.CommunityPostStatsResponse;
 import com.parksupark.soomjae.server.community.post.communitypost.entity.CommunityPost;
 import com.parksupark.soomjae.server.community.post.communitypost.repository.CommunityPostRepository;
@@ -63,6 +63,23 @@ public class CommunityPostService {
         return PostListResponse.of(response);
     }
 
+    private List<CommunityPostResponse> getCommunityPostResponses(List<CommunityPost> contents,
+        Long memberId) {
+        List<CommunityPostStatsResponse> postStats = communityPostRepository.findPostStats(
+            contents.stream().map(CommunityPost::getId).toList(), memberId);
+
+        List<CommunityPostResponse> response = new ArrayList<>();
+
+        for (CommunityPostStatsResponse postStat : postStats) {
+            Optional<CommunityPost> postOptional = contents.stream()
+                .filter(p -> postStat.getPostId().equals(p.getId())).findFirst();
+
+            postOptional.ifPresent(
+                meetingPost -> response.add(CommunityPostResponse.of(meetingPost, postStat)));
+        }
+        return response;
+    }
+
     public PostListResponse readByMemberId(Long memberId, Pageable pageable) {
         List<CommunityPost> posts = communityPostRepository.findByMemberId(memberId, pageable)
             .getContent();
@@ -70,7 +87,7 @@ public class CommunityPostService {
         return PostListResponse.of(response);
     }
 
-    public CommunityPostDetailResponse readByPostId(Long postId,
+    public CommunityPostResponseWithComments readByPostId(Long postId,
         UsernamePasswordUserDetails userDetails) {
         CommunityPost communityPost = communityPostRepository.findById(postId)
             .orElseThrow(() -> new IllegalStateException(COMMUNITY_POST_NOT_FOUND));
@@ -86,7 +103,7 @@ public class CommunityPostService {
         Long likeNum = likeRepository.countByPostTypeAndPostId(COMMUNITY_POST_TYPE,
             communityPost.getId());
 
-        return CommunityPostDetailResponse.of(communityPost, likeNum, isLikedByMe, comments);
+        return CommunityPostResponseWithComments.of(communityPost, likeNum, isLikedByMe, comments);
     }
 
 
@@ -126,23 +143,6 @@ public class CommunityPostService {
                 Long.parseLong(communityPostRequest.getLocation()))
             .orElseThrow(() -> new IllegalStateException(LocationConstant.LOCATION_NOT_FOUND))
             : null;
-    }
-
-    private List<CommunityPostResponse> getCommunityPostResponses(List<CommunityPost> contents,
-        Long memberId) {
-        List<CommunityPostStatsResponse> postStats = communityPostRepository.findPostStats(
-            contents.stream().map(CommunityPost::getId).toList(), memberId);
-
-        List<CommunityPostResponse> response = new ArrayList<>();
-
-        for (CommunityPostStatsResponse postStat : postStats) {
-            Optional<CommunityPost> postOptional = contents.stream()
-                .filter(p -> postStat.getPostId().equals(p.getId())).findFirst();
-
-            postOptional.ifPresent(
-                meetingPost -> response.add(CommunityPostResponse.of(meetingPost, postStat)));
-        }
-        return response;
     }
 
 }

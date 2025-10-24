@@ -35,7 +35,7 @@ public abstract class MeetingPostBaseResponse {
     protected MeetingPostBaseResponse(MeetingPost meetingPost, Long likeNum,
         Boolean isLikedByMe, int currentParticipantCount) {
         this.postId = meetingPost.getId();
-        this.postType = "community";
+        this.postType = "meeting";
         this.title = meetingPost.getTitle();
         this.content = meetingPost.getContent();
         this.author = MemberResponse.create(meetingPost.getMember());
