@@ -41,8 +41,7 @@ class DefaultMemberServiceUnitTest {
     @Test
     void createMemberWithValidInformation_shouldCreateMemberAndEncodePassword() {
         // given
-        CreateMemberRequest createMemberRequest = new CreateMemberRequest(email, password,
-            nickname);
+        CreateMemberRequest createMemberRequest = new CreateMemberRequest(email, password);
 
         // when
         MemberResponse response = memberService.createMember(createMemberRequest);
@@ -58,8 +57,7 @@ class DefaultMemberServiceUnitTest {
     @Test
     void createMemberWithDuplicateEmail_shouldThrowDuplicateEmailException() {
         // given
-        CreateMemberRequest createMemberRequest = new CreateMemberRequest(email, password,
-            nickname);
+        CreateMemberRequest createMemberRequest = new CreateMemberRequest(email, password);
 
         saveMember();
         memberRepository.flush();
