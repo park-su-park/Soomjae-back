@@ -13,6 +13,9 @@ import com.parksupark.soomjae.server.member.exception.DuplicateEmailException;
 import com.parksupark.soomjae.server.member.exception.MemberNotFoundException;
 import com.parksupark.soomjae.server.member.repository.JpaLikeInMemoryMemberRepository;
 import com.parksupark.soomjae.server.member.repository.MemberRepository;
+import com.parksupark.soomjae.server.member.util.MemberCreator;
+import com.parksupark.soomjae.server.member.util.RandomNicknameCreator;
+import java.security.SecureRandom;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,12 +29,14 @@ class DefaultMemberServiceUnitTest {
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     private final EmailVerificationRepository emailVerificationRepository =
         new NoOpEmailVerificationRepository();
+    private final MemberCreator memberCreator = new MemberCreator(memberRepository,
+        new RandomNicknameCreator(new SecureRandom()));
     private final String email = "test@example.com";
     private final String password = "test";
     private final String nickname = "test";
 
     private final MemberService memberService = new DefaultMemberService(passwordEncoder,
-        memberRepository, emailVerificationRepository);
+        memberRepository, emailVerificationRepository, memberCreator);
 
     @BeforeEach
     void setUp() {

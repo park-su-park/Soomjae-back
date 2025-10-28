@@ -11,10 +11,14 @@ import com.parksupark.soomjae.server.member.entity.Member;
 import com.parksupark.soomjae.server.member.exception.DuplicateEmailException;
 import com.parksupark.soomjae.server.member.exception.MemberNotFoundException;
 import com.parksupark.soomjae.server.member.repository.MemberRepository;
+import com.parksupark.soomjae.server.member.util.MemberCreator;
 import com.parksupark.soomjae.server.member.util.RandomNicknameCreator;
 import java.time.Instant;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,10 +31,15 @@ public class DefaultMemberService implements MemberService {
     private final PasswordEncoder passwordEncoder;
     private final MemberRepository memberRepository;
     private final EmailVerificationRepository emailVerificationRepository;
+    private final MemberCreator memberCreator;
 
-    // nickname 필드에 대한 중복 체크는 추후에 자세한 nickname 초기화 정책이 나오면 구현
     @Transactional
     @Override
+    @Retryable(
+        retryFor = {DataIntegrityViolationException.class},
+        maxAttempts = 3,
+        backoff = @Backoff(delay = 50)
+    )
     public MemberResponse createMember(CreateMemberRequest request) {
         final String email = request.getEmail();
 
@@ -42,13 +51,9 @@ public class DefaultMemberService implements MemberService {
         }
 
         final String encodedPassword = passwordEncoder.encode(request.getPassword());
-        String randomNickname;
-        do {
-            randomNickname = RandomNicknameCreator.createRandomNickname();
-        } while (memberRepository.existsByNickname(randomNickname));
 
-        Member member = Member.create(email, encodedPassword, randomNickname);
-        memberRepository.save(member);
+        Member member = memberCreator.createLocalMember(email, encodedPassword);
+
         emailVerificationRepository.deleteByEmail(email);
         return createMemberResponse(member);
     }
