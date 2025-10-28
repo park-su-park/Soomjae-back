@@ -38,8 +38,8 @@ public class MemberCreator {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public Member createOAuthMember(String email, AuthProvider provider, String providerId) {
         String nickname = generateUniqueNickname();
-        Member oAuthMember = Member.createOAuthMember(email, provider, nickname, providerId);
-        return memberRepository.save(oAuthMember);
+        Member member = Member.createOAuthMember(email, provider, nickname, providerId);
+        return memberRepository.save(member);
     }
 
     // 닉네임 중복을 피하는 1차 방어 로직
