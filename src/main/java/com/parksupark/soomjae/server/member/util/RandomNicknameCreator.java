@@ -1,16 +1,18 @@
 package com.parksupark.soomjae.server.member.util;
 
 import java.security.SecureRandom;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
+@Component
+@RequiredArgsConstructor
 public class RandomNicknameCreator {
 
-    // SecureRandom 인스턴스는 생성 비용이 비싸므로 재사용
-    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
+    private final SecureRandom secureRandom;
 
-    public static String createRandomNickname() {
-        int randomSuffix = SECURE_RANDOM.nextInt(900000) + 100000;
+    public String createRandomNickname() {
+        int randomSuffix = secureRandom.nextInt(100_000, 1_000_000);
 
         return "soomjae_user_" + randomSuffix;
     }
-
 }
