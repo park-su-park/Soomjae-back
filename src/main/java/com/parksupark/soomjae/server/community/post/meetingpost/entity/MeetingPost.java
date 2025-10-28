@@ -1,5 +1,7 @@
 package com.parksupark.soomjae.server.community.post.meetingpost.entity;
 
+import static com.parksupark.soomjae.server.community.post.meetingpost.entity.RecruitmentStatus.모집중;
+
 import com.parksupark.soomjae.server.common.entity.BaseEntity;
 import com.parksupark.soomjae.server.community.category.entity.Category;
 import com.parksupark.soomjae.server.community.location.entity.Location;
@@ -52,4 +54,7 @@ public class MeetingPost extends BaseEntity {
     private Instant startTime;
 
     private Instant endTime;
+
+    @Builder.Default
+    private RecruitmentStatus recruitmentStatus = 모집중;
 }
