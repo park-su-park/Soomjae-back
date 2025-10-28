@@ -9,6 +9,7 @@ import static com.parksupark.soomjae.server.community.category.constant.Category
 import static com.parksupark.soomjae.server.community.common.constant.PostConstant.MEETING_POST_TYPE;
 
 import com.parksupark.soomjae.server.auth.username.dto.UsernamePasswordUserDetails;
+import com.parksupark.soomjae.server.common.exception.ErrorMessages;
 import com.parksupark.soomjae.server.community.category.entity.Category;
 import com.parksupark.soomjae.server.community.category.repository.CategoryRepository;
 import com.parksupark.soomjae.server.community.comment.dto.CommentResponse;
@@ -27,6 +28,7 @@ import com.parksupark.soomjae.server.community.post.meetingpost.dto.MeetingPostR
 import com.parksupark.soomjae.server.community.post.meetingpost.dto.MeetingPostResponseWithComments;
 import com.parksupark.soomjae.server.community.post.meetingpost.dto.MeetingPostStatsResponse;
 import com.parksupark.soomjae.server.community.post.meetingpost.entity.MeetingPost;
+import com.parksupark.soomjae.server.community.post.meetingpost.entity.RecruitmentStatus;
 import com.parksupark.soomjae.server.community.post.meetingpost.repository.MeetingPostRepository;
 import com.parksupark.soomjae.server.member.dto.MemberResponse;
 import com.parksupark.soomjae.server.member.entity.Member;
@@ -212,5 +214,19 @@ public class MeetingPostService {
             participationRepository.findByMeetingPostId(postId).stream()
                 .map(participation -> MemberResponse.create(participation.getParticipant()))
                 .toList());
+    }
+
+    public void endMeeting(Long postId, UsernamePasswordUserDetails userDetails) {
+        MeetingPost meetingPost = meetingPostRepository.findById(postId)
+            .orElseThrow(() -> new IllegalStateException(MEETING_POST_NOT_FOUND));
+        Member loginUser = userDetails.getMember();
+        validatePostOwner(loginUser, meetingPost);
+        meetingPost.setRecruitmentStatus(RecruitmentStatus.모집종료);
+    }
+
+    private void validatePostOwner(Member loginUser, MeetingPost meetingPost) {
+        if (loginUser != meetingPost.getMember()) {
+            throw new IllegalStateException(ErrorMessages.OWNER_MISMATCH_EXCEPTION);
+        }
     }
 }

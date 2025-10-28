@@ -103,4 +103,11 @@ public class MeetingPostController {
     ResponseEntity<ParticipantListResponse> readParticipants(@PathVariable Long postId) {
         return ResponseEntity.ok(meetingPostService.findAllParticipantsByPostId(postId));
     }
+
+    @PutMapping("/v1/boards/meeting/post/{postId}/end")
+    ResponseEntity<Void> endMeeting(@PathVariable Long postId,
+        @AuthenticationPrincipal UsernamePasswordUserDetails userDetails) {
+        meetingPostService.endMeeting(postId, userDetails);
+        return ResponseEntity.ok().build();
+    }
 }
