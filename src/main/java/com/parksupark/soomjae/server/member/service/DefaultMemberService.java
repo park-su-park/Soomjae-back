@@ -12,13 +12,9 @@ import com.parksupark.soomjae.server.member.exception.DuplicateEmailException;
 import com.parksupark.soomjae.server.member.exception.MemberNotFoundException;
 import com.parksupark.soomjae.server.member.repository.MemberRepository;
 import com.parksupark.soomjae.server.member.util.MemberCreator;
-import com.parksupark.soomjae.server.member.util.RandomNicknameCreator;
 import java.time.Instant;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.retry.annotation.Backoff;
-import org.springframework.retry.annotation.Retryable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,11 +31,6 @@ public class DefaultMemberService implements MemberService {
 
     @Transactional
     @Override
-    @Retryable(
-        retryFor = {DataIntegrityViolationException.class},
-        maxAttempts = 3,
-        backoff = @Backoff(delay = 50)
-    )
     public MemberResponse createMember(CreateMemberRequest request) {
         final String email = request.getEmail();
 

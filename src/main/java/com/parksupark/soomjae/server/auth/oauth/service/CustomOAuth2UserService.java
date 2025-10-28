@@ -9,7 +9,6 @@ import com.parksupark.soomjae.server.common.exception.ErrorMessages;
 import com.parksupark.soomjae.server.member.entity.Member;
 import com.parksupark.soomjae.server.member.repository.MemberRepository;
 import com.parksupark.soomjae.server.member.util.MemberCreator;
-import com.parksupark.soomjae.server.member.util.RandomNicknameCreator;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
