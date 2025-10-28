@@ -33,5 +33,19 @@ public interface CommunityPostRepository extends JpaRepository<CommunityPost, Lo
         """)
     List<CommunityPostStatsResponse> findPostStats(@Param("postIds") List<Long> postIds,
         @Param("memberId") Long memberId);
+
+    @Query("""
+            SELECT p FROM CommunityPost p
+            WHERE (:categoryIds IS NULL OR p.category.id IN :categoryIds)
+              AND (:locationIds IS NULL OR p.location.code IN :locationIds)
+              AND (:keyword IS NULL OR LOWER(p.title) LIKE LOWER(CONCAT('%', :keyword, '%'))
+                   OR LOWER(p.content) LIKE LOWER(CONCAT('%', :keyword, '%')))
+        """)
+    Page<CommunityPost> searchByCategoriesAndLocationsAndKeyword(
+        @Param("categoryIds") List<Long> categoryIds,
+        @Param("locationIds") List<Long> locationIds,
+        @Param("keyword") String keyword,
+        Pageable pageable
+    );
 }
 
