@@ -1,6 +1,7 @@
 package com.parksupark.soomjae.server.auth.username.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.parksupark.soomjae.server.auth.common.handler.CustomAuthenticationEntryPoint;
 import com.parksupark.soomjae.server.auth.jwt.JwtProvider;
 import com.parksupark.soomjae.server.auth.jwt.filter.JwtAuthenticationFilter;
 import com.parksupark.soomjae.server.auth.jwt.service.RefreshTokenService;
@@ -38,6 +39,7 @@ public class UsernamePasswordSecurityConfig {
     private final PasswordEncoder passwordEncoder;
     private final UserDetailsService userDetailsService;
     private final RefreshTokenService refreshTokenService;
+    private final CustomAuthenticationEntryPoint authenticationEntryPoint;
 
     @Value("${app.cookie.secure}")
     private boolean cookieSecure;
@@ -95,7 +97,9 @@ public class UsernamePasswordSecurityConfig {
                 session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
             .authenticationProvider(authenticationProvider)
-            .addFilterAt(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+            .addFilterAt(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+            .exceptionHandling(
+                exception -> exception.authenticationEntryPoint(authenticationEntryPoint));
 
         return http.build();
     }
