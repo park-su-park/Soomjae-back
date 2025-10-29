@@ -9,6 +9,8 @@ import static com.parksupark.soomjae.server.community.category.constant.Category
 import static com.parksupark.soomjae.server.community.common.constant.PostConstant.MEETING_POST_TYPE;
 
 import com.parksupark.soomjae.server.auth.username.dto.UsernamePasswordUserDetails;
+import com.parksupark.soomjae.server.common.exception.ErrorMessages;
+import com.parksupark.soomjae.server.common.exception.ResourceOwnershipException;
 import com.parksupark.soomjae.server.community.category.entity.Category;
 import com.parksupark.soomjae.server.community.category.repository.CategoryRepository;
 import com.parksupark.soomjae.server.community.comment.dto.CommentResponse;
@@ -107,16 +109,23 @@ public class MeetingPostService {
                 MEETING_POST_TYPE, meetingPost.getId()).stream().map(CommentResponse::of)
             .toList();
 
-        Boolean isLikedByMe = likeRepository.existsByPostTypeAndPostIdAndMemberId(
-            MEETING_POST_TYPE, meetingPost.getId(), userDetails.getMember().getId());
+        boolean isLikedByMe;
+        boolean isParticipatedByMe;
+        if (userDetails == null) {
+            isLikedByMe = false;
+            isParticipatedByMe = false;
+        } else {
+            isLikedByMe = likeRepository.existsByPostTypeAndPostIdAndMemberId(
+                MEETING_POST_TYPE, meetingPost.getId(), userDetails.getMember().getId());
+
+            isParticipatedByMe =  participationRepository.existsByMeetingPostIdAndParticipantId(
+                postId, userDetails.getMember().getId());
+        }
 
         Long likeNum = likeRepository.countByPostTypeAndPostId(MEETING_POST_TYPE,
             meetingPost.getId());
 
         long currentParticipantCount = participationRepository.countByMeetingPostId(postId);
-
-        boolean isParticipatedByMe = participationRepository.existsByMeetingPostIdAndParticipantId(
-            postId, userDetails.getMember().getId());
 
         return MeetingPostDetailResponse.of(meetingPost, likeNum, isLikedByMe, comments,
             (int) currentParticipantCount, isParticipatedByMe);
@@ -124,9 +133,16 @@ public class MeetingPostService {
 
 
     @Transactional
-    public Long update(Long meetingPostId, MeetingPostRequest meetingPostRequest) {
+    public Long update(Long meetingPostId, MeetingPostRequest meetingPostRequest,
+        UsernamePasswordUserDetails userDetails) {
+
         MeetingPost meetingPost = meetingPostRepository.findById(meetingPostId)
             .orElseThrow(() -> new IllegalStateException(MEETING_POST_NOT_FOUND));
+
+        if (!meetingPost.getMember().getId().equals(userDetails.getMember().getId())) {
+            throw new ResourceOwnershipException(ErrorMessages.POST_OWNER_MISMATCH_MESSAGE);
+        }
+
         updateCommunityPost(meetingPostRequest, meetingPost);
         return meetingPost.getId();
     }
@@ -143,9 +159,15 @@ public class MeetingPostService {
     }
 
     @Transactional
-    public void delete(Long postId) {
+    public void delete(Long postId, UsernamePasswordUserDetails userDetails) {
+
         MeetingPost meetingPost = meetingPostRepository.findById(postId)
             .orElseThrow(() -> new IllegalStateException(MEETING_POST_NOT_FOUND));
+
+        if (!meetingPost.getMember().getId().equals(userDetails.getMember().getId())) {
+            throw new ResourceOwnershipException(ErrorMessages.POST_OWNER_MISMATCH_MESSAGE);
+        }
+
         meetingPostRepository.delete(meetingPost);
     }
 
@@ -189,7 +211,6 @@ public class MeetingPostService {
 
     @Transactional
     public String cancelParticipation(Long postId, UsernamePasswordUserDetails userDetails) {
-        Member participant = userDetails.getMember();
 
         MeetingPost meetingPost = meetingPostRepository.findById(postId)
             .orElseThrow(() -> new IllegalStateException(
@@ -200,7 +221,7 @@ public class MeetingPostService {
         }
 
         Participation participation = participationRepository.findByMeetingPostIdAndParticipantId(
-                postId, participant.getId())
+                postId, userDetails.getMember().getId())
             .orElseThrow(() -> new IllegalStateException(NOT_PARTICIPANT_OF_POST));
 
         participationRepository.delete(participation);

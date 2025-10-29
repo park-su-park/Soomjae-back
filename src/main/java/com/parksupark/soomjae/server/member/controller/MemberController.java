@@ -58,7 +58,7 @@ public class MemberController {
 
     // 비밀번호 변경은 현재 비밀번호 검증이 필요하므로 추후에 구현
     // nickname 중복 검증 필요?
-    @PatchMapping("/me/update-nickname")
+    @PatchMapping("/me/nickname")
     @PreAuthorize(value = "isAuthenticated()")
     public ResponseEntity<MemberResponse> patchMemberNickname(
         @AuthenticationPrincipal UsernamePasswordUserDetails userDetails,

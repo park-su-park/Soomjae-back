@@ -20,18 +20,12 @@ public class CreateMemberRequest {
     @NotBlank(message = NOT_BLANK)
     private final String password;
 
-    // 닉네임 패턴 정책 확립후 Validation 적용
-    @NotBlank(message = NOT_BLANK)
-    private final String nickname;
-
     @JsonCreator
     public CreateMemberRequest(
         @JsonProperty("email") String email,
-        @JsonProperty("password") String password,
-        @JsonProperty("nickname") String nickname
+        @JsonProperty("password") String password
     ) {
         this.email = email;
         this.password = password;
-        this.nickname = nickname;
     }
 }

@@ -43,7 +43,6 @@ class MemberControllerValidationTest {
     // === 유효한 값들 ===
     private static final String VALID_EMAIL = "test@example.com";
     private static final String VALID_PASSWORD = "validPassword123";
-    private static final String VALID_NICKNAME = "validNickname";
 
     // === 유효하지 않은 값들 ===
     private static final String EMPTY_VALUE = "";
@@ -57,8 +56,7 @@ class MemberControllerValidationTest {
     @DisplayName("유효한 형식으로 postMember 호출시")
     void postMemberWithValidData_shouldReturnOk() throws Exception {
         // given
-        CreateMemberRequest request = new CreateMemberRequest(VALID_EMAIL, VALID_PASSWORD,
-            VALID_NICKNAME);
+        CreateMemberRequest request = new CreateMemberRequest(VALID_EMAIL, VALID_PASSWORD);
 
         // when + then
         mockMvc.perform(post(POST_MEMBER_URI)
@@ -74,8 +72,7 @@ class MemberControllerValidationTest {
         // given
         CreateMemberRequest invalidEmailFormatRequest = new CreateMemberRequest(
             INVALID_EMAIL_FORMAT,
-            VALID_PASSWORD,
-            VALID_NICKNAME);
+            VALID_PASSWORD);
 
         // when + then
         mockMvc.perform(post(POST_MEMBER_URI)
@@ -90,7 +87,6 @@ class MemberControllerValidationTest {
     void postMemberWithWhitespaceField_shouldReturnBadRequest() throws Exception {
         // given
         CreateMemberRequest blankSpaceRequest = new CreateMemberRequest(WHITESPACE_VALUE,
-            WHITESPACE_VALUE,
             WHITESPACE_VALUE);
 
         // when + then
@@ -105,8 +101,7 @@ class MemberControllerValidationTest {
     @DisplayName("빈 필드값으로 postMember 호출시")
     void postMemberWithEmptyField_shouldReturnBadRequest() throws Exception {
         // given
-        CreateMemberRequest request = new CreateMemberRequest(EMPTY_VALUE, EMPTY_VALUE,
-            EMPTY_VALUE);
+        CreateMemberRequest request = new CreateMemberRequest(EMPTY_VALUE, EMPTY_VALUE);
 
         // when + then
         mockMvc.perform(post(POST_MEMBER_URI)
