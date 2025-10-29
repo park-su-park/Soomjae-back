@@ -91,7 +91,8 @@ public class UsernamePasswordSecurityConfig {
             .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
             .authenticationProvider(authenticationProvider)
             .addFilterAt(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
-            .exceptionHandling(exception -> exception.authenticationEntryPoint(authenticationEntryPoint));
+            .exceptionHandling(
+                exception -> exception.authenticationEntryPoint(authenticationEntryPoint));
 
         return http.build();
     }
