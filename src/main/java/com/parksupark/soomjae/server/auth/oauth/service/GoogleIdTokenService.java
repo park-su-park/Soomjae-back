@@ -16,6 +16,7 @@ import com.parksupark.soomjae.server.auth.oauth.userinfo.OAuth2UserInfo;
 import com.parksupark.soomjae.server.common.exception.ErrorMessages;
 import com.parksupark.soomjae.server.member.entity.Member;
 import com.parksupark.soomjae.server.member.repository.MemberRepository;
+import com.parksupark.soomjae.server.member.util.MemberCreator;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.Collections;
@@ -38,12 +39,14 @@ public class GoogleIdTokenService {
     private final MemberRepository memberRepository;
     private final JwtProvider jwtProvider;
     private final RefreshTokenService refreshTokenService;
+    private final MemberCreator memberCreator;
 
     public GoogleIdTokenService(MemberRepository memberRepository, JwtProvider jwtProvider,
-        RefreshTokenService refreshTokenService) {
+        RefreshTokenService refreshTokenService, MemberCreator memberCreator) {
         this.memberRepository = memberRepository;
         this.jwtProvider = jwtProvider;
         this.refreshTokenService = refreshTokenService;
+        this.memberCreator = memberCreator;
     }
 
     @Transactional
@@ -127,8 +130,7 @@ public class GoogleIdTokenService {
             return member;
         }
 
-        Member newMember = Member.createOAuthMember(
-            userInfo.getEmail(),
+        Member newMember = memberCreator.createOAuthMember(userInfo.getEmail(),
             AuthProvider.GOOGLE,
             userInfo.getProviderId());
 

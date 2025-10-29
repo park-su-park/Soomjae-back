@@ -11,6 +11,7 @@ import com.parksupark.soomjae.server.member.entity.Member;
 import com.parksupark.soomjae.server.member.exception.DuplicateEmailException;
 import com.parksupark.soomjae.server.member.exception.MemberNotFoundException;
 import com.parksupark.soomjae.server.member.repository.MemberRepository;
+import com.parksupark.soomjae.server.member.util.MemberCreator;
 import java.time.Instant;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,8 +27,8 @@ public class DefaultMemberService implements MemberService {
     private final PasswordEncoder passwordEncoder;
     private final MemberRepository memberRepository;
     private final EmailVerificationRepository emailVerificationRepository;
+    private final MemberCreator memberCreator;
 
-    // nickname 필드에 대한 중복 체크는 추후에 자세한 nickname 초기화 정책이 나오면 구현
     @Transactional
     @Override
     public MemberResponse createMember(CreateMemberRequest request) {
@@ -41,10 +42,9 @@ public class DefaultMemberService implements MemberService {
         }
 
         final String encodedPassword = passwordEncoder.encode(request.getPassword());
-        final String nickname = request.getNickname();
 
-        Member member = Member.create(email, encodedPassword, nickname);
-        memberRepository.save(member);
+        Member member = memberCreator.createLocalMember(email, encodedPassword);
+
         emailVerificationRepository.deleteByEmail(email);
         return createMemberResponse(member);
     }

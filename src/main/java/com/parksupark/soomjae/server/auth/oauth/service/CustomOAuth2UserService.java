@@ -8,6 +8,7 @@ import com.parksupark.soomjae.server.auth.oauth.userinfo.OAuth2UserInfoFactory;
 import com.parksupark.soomjae.server.common.exception.ErrorMessages;
 import com.parksupark.soomjae.server.member.entity.Member;
 import com.parksupark.soomjae.server.member.repository.MemberRepository;
+import com.parksupark.soomjae.server.member.util.MemberCreator;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private final MemberRepository memberRepository;
+    private final MemberCreator memberCreator;
 
     @Override
     @Transactional
@@ -98,9 +100,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             return member;
         }
 
-        Member newMember = Member.createOAuthMember(
-            userInfo.getEmail(),
-            provider,
+        Member newMember = memberCreator.createOAuthMember(userInfo.getEmail(), provider,
             userInfo.getProviderId());
 
         Member member = memberRepository.save(newMember);
