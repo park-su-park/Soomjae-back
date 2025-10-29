@@ -5,6 +5,7 @@ import com.parksupark.soomjae.server.auth.jwt.JwtProvider;
 import com.parksupark.soomjae.server.auth.jwt.filter.JwtAuthenticationFilter;
 import com.parksupark.soomjae.server.auth.jwt.service.RefreshTokenService;
 import com.parksupark.soomjae.server.auth.username.filter.UsernamePasswordLoginFilter;
+import com.parksupark.soomjae.server.common.filter.RequestLoggingFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -42,7 +43,7 @@ public class UsernamePasswordSecurityConfig {
     private boolean cookieSecure;
 
     @Bean
-    @Order(3)
+    @Order(2)
     public SecurityFilterChain publicEndPointFilterChain(HttpSecurity http,
         AuthenticationManager authenticationManager) throws Exception {
 
@@ -52,6 +53,8 @@ public class UsernamePasswordSecurityConfig {
 
         http
             .securityMatcher("/v1/auth/login")
+            .addFilterBefore(new RequestLoggingFilter(objectMapper),
+                UsernamePasswordAuthenticationFilter.class)
             .csrf(AbstractHttpConfigurer::disable)
             .formLogin(AbstractHttpConfigurer::disable)
             .sessionManagement(
@@ -63,10 +66,12 @@ public class UsernamePasswordSecurityConfig {
     }
 
     @Bean
-    @Order(4)
+    @Order(3)
     public SecurityFilterChain publicEndpointsFilterChain(HttpSecurity http) throws Exception {
         http
             .securityMatcher("/v1/members/create-member", "/v1/auth/refresh")
+            .addFilterBefore(new RequestLoggingFilter(objectMapper),
+                UsernamePasswordAuthenticationFilter.class)
             .csrf(AbstractHttpConfigurer::disable)
             .formLogin(AbstractHttpConfigurer::disable)
             .sessionManagement(
@@ -76,12 +81,14 @@ public class UsernamePasswordSecurityConfig {
     }
 
     @Bean
-    @Order(5)
+    @Order(4)
     public SecurityFilterChain securityFilterChain(HttpSecurity http,
         AuthenticationProvider authenticationProvider) throws Exception {
 
         http
             .securityMatcher("/**")
+            .addFilterBefore(new RequestLoggingFilter(objectMapper),
+                UsernamePasswordAuthenticationFilter.class)
             .csrf(AbstractHttpConfigurer::disable)
             .formLogin(AbstractHttpConfigurer::disable)
             .sessionManagement(

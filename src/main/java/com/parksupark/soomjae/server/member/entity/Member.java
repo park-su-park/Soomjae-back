@@ -36,7 +36,7 @@ public class Member extends BaseEntity {
     @Column(nullable = true)
     private String password;
 
-    @Column(nullable = true)
+    @Column(nullable = false, unique = true)
     private String nickname;
 
     @Enumerated(EnumType.STRING)
@@ -49,8 +49,8 @@ public class Member extends BaseEntity {
     @Column(nullable = false)
     private Role role;
 
-    private Member(String email, String password, Role role, String nickname, AuthProvider provider,
-        String providerId) {
+    private Member(String email, String password, Role role, AuthProvider provider,
+        String nickname, String providerId) {
         this.email = email;
         this.password = password;
         this.role = role;
@@ -60,12 +60,12 @@ public class Member extends BaseEntity {
     }
 
     public static Member create(String email, String password, String nickname) {
-        return new Member(email, password, Role.USER, nickname, AuthProvider.LOCAL, null);
+        return new Member(email, password, Role.USER, AuthProvider.LOCAL, nickname, null);
     }
 
     public static Member createOAuthMember(String email, AuthProvider provider,
-        String providerId) {
-        return new Member(email, null, Role.USER, null, provider, providerId);
+        String nickname, String providerId) {
+        return new Member(email, null, Role.USER, provider, nickname, providerId);
     }
 
     public void updateNickname(String nickname) {
