@@ -9,6 +9,7 @@ import com.parksupark.soomjae.server.auth.username.filter.UsernamePasswordLoginF
 import com.parksupark.soomjae.server.common.filter.RequestLoggingFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -122,6 +123,16 @@ public class UsernamePasswordSecurityConfig {
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() {
         return new JwtAuthenticationFilter(jwtProvider);
+    }
+
+    // 글로벌 필터 체인에 미포함
+    @Bean
+    public FilterRegistrationBean<JwtAuthenticationFilter> jwtAuthenticationFilterRegistration(
+        JwtAuthenticationFilter filter) {
+        FilterRegistrationBean<JwtAuthenticationFilter> registrationBean = new FilterRegistrationBean<>(
+            filter);
+        registrationBean.setEnabled(false);
+        return registrationBean;
     }
 
 }
