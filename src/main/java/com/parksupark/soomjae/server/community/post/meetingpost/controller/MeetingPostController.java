@@ -10,6 +10,7 @@ import com.parksupark.soomjae.server.community.post.meetingpost.dto.MeetingPostR
 import com.parksupark.soomjae.server.community.post.meetingpost.dto.MeetingPostResponseWithComments;
 import com.parksupark.soomjae.server.community.post.meetingpost.service.MeetingPostService;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 
@@ -66,11 +68,16 @@ public class MeetingPostController {
     @GetMapping("/v1/boards/meeting/posts/list")
     ResponseEntity<PostListResponse> getMeetingPostList(
         @PageableDefault(size = 10, page = 0) Pageable pageable,
+        @RequestParam(value = "categoryId", required = false) List<Long> categoryIds,
+        @RequestParam(value = "locationCodes", required = false) List<Long> locationCodes,
+        @RequestParam(value = "keyword", required = false) String keyword,
+        @RequestParam(value = "recruitment", required = false) Boolean recruitment,
         @AuthenticationPrincipal UsernamePasswordUserDetails userDetails) {
         Pageable zeroBasedPageable = Pageable.ofSize(pageable.getPageSize())
             .withPage(Math.max(pageable.getPageNumber() - 1, 0));
         return ResponseEntity.ok(
-            meetingPostService.readMeetingPostList(zeroBasedPageable, userDetails));
+            meetingPostService.readMeetingPostList(zeroBasedPageable, categoryIds, locationCodes,
+                keyword, recruitment, userDetails));
     }
 
     //수정
