@@ -37,13 +37,13 @@ public interface CommunityPostRepository extends JpaRepository<CommunityPost, Lo
     @Query("""
             SELECT p FROM CommunityPost p
             WHERE (:categoryIds IS NULL OR p.category.id IN :categoryIds)
-              AND (:locationIds IS NULL OR p.location.code IN :locationIds)
+              AND (:locationIds IS NULL OR p.location.code IN :locationCodes)
               AND (:keyword IS NULL OR LOWER(p.title) LIKE LOWER(CONCAT('%', :keyword, '%'))
                    OR LOWER(p.content) LIKE LOWER(CONCAT('%', :keyword, '%')))
         """)
     Page<CommunityPost> searchByCategoriesAndLocationsAndKeyword(
         @Param("categoryIds") List<Long> categoryIds,
-        @Param("locationIds") List<Long> locationIds,
+        @Param("locationIds") List<Long> locationCodes,
         @Param("keyword") String keyword,
         Pageable pageable
     );

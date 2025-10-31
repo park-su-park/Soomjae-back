@@ -65,7 +65,7 @@ public class CommunityPostController {
     ResponseEntity<PostListResponse> getCommunityList(
         @PageableDefault(size = 10, page = 0) Pageable pageable,
         @RequestParam(value = "categoryId", required = false) List<Long> categoryIds,
-        @RequestParam(value = "locationId", required = false) List<Long> locationIds,
+        @RequestParam(value = "locationCodes", required = false) List<Long> locationCodes,
         @RequestParam(value = "keyword", required = false) String keyword,
         @AuthenticationPrincipal UsernamePasswordUserDetails userDetails
     ) {
@@ -74,7 +74,7 @@ public class CommunityPostController {
 
         return ResponseEntity.ok(
             communityPostService.readCommunityPostList(
-                zeroBasedPageable, categoryIds, locationIds, keyword, userDetails
+                zeroBasedPageable, categoryIds, locationCodes, keyword, userDetails
             )
         );
     }

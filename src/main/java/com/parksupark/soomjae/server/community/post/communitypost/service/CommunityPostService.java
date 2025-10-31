@@ -58,14 +58,14 @@ public class CommunityPostService {
     public PostListResponse readCommunityPostList(
         Pageable pageable,
         List<Long> categoryIds,
-        List<Long> locationIds,
+        List<Long> locationCodes,
         String keyword,
         UsernamePasswordUserDetails userDetails
     ) {
         List<Long> normalizedCategoryIds =
             (categoryIds == null || categoryIds.isEmpty()) ? null : categoryIds;
         List<Long> normalizedLocationIds =
-            (locationIds == null || locationIds.isEmpty()) ? null : locationIds;
+            (locationCodes == null || locationCodes.isEmpty()) ? null : locationCodes;
         String normalizedKeyword =
             (keyword == null || keyword.isBlank()) ? null : keyword.trim();
 
