@@ -9,6 +9,7 @@ import static com.parksupark.soomjae.server.community.category.constant.Category
 import static com.parksupark.soomjae.server.community.common.constant.PostConstant.MEETING_POST_TYPE;
 
 import com.parksupark.soomjae.server.auth.username.dto.UsernamePasswordUserDetails;
+import com.parksupark.soomjae.server.common.exception.ErrorMessages;
 import com.parksupark.soomjae.server.community.category.entity.Category;
 import com.parksupark.soomjae.server.community.category.repository.CategoryRepository;
 import com.parksupark.soomjae.server.community.comment.dto.CommentResponse;
@@ -27,6 +28,7 @@ import com.parksupark.soomjae.server.community.post.meetingpost.dto.MeetingPostR
 import com.parksupark.soomjae.server.community.post.meetingpost.dto.MeetingPostResponseWithComments;
 import com.parksupark.soomjae.server.community.post.meetingpost.dto.MeetingPostStatsResponse;
 import com.parksupark.soomjae.server.community.post.meetingpost.entity.MeetingPost;
+import com.parksupark.soomjae.server.community.post.meetingpost.entity.RecruitmentStatus;
 import com.parksupark.soomjae.server.community.post.meetingpost.repository.MeetingPostRepository;
 import com.parksupark.soomjae.server.member.dto.MemberResponse;
 import com.parksupark.soomjae.server.member.entity.Member;
@@ -35,6 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -64,13 +67,53 @@ public class MeetingPostService {
         return meetingPostRepository.save(entity).getId();
     }
 
-    public PostListResponse readMeetingPostList(Pageable pageable,
-        UsernamePasswordUserDetails userDetails) {
-        List<MeetingPost> posts = meetingPostRepository.findAll(pageable).getContent();
+    public PostListResponse readMeetingPostList(
+        Pageable pageable,
+        List<Long> categoryIds,
+        List<Long> locationCodes,
+        String keyword,
+        Boolean recruitment,
+        UsernamePasswordUserDetails userDetails
+    ) {
+        List<Long> cat = normalizeList(categoryIds);
+        List<Long> loc = normalizeList(locationCodes);
+
+        String kw = normalizeKeyword(keyword);
+
+        RecruitmentStatus status = mapRecruitment(recruitment);
+
+        Page<MeetingPost> page = meetingPostRepository.searchByFilters(cat, loc, kw, status,
+            pageable);
+        List<MeetingPost> posts = page.getContent();
+
         Long memberId = (userDetails != null) ? userDetails.getMember().getId() : null;
-        List<MeetingPostResponse> response = getMeetingPostStats(posts,
-            memberId);
+
+        List<MeetingPostResponse> response = getMeetingPostStats(posts, memberId);
+
         return PostListResponse.of(response);
+    }
+
+    private List<Long> normalizeList(List<Long> ids) {
+        return (ids == null || ids.isEmpty()) ? null : ids;
+    }
+
+    private String normalizeKeyword(String keyword) {
+        if (keyword == null) {
+            return null;
+        }
+        String trimmed = keyword.trim();
+        if (trimmed.isEmpty()) {
+            return null;
+        }
+        String lowered = trimmed.toLowerCase();
+        return "%" + lowered + "%";
+    }
+
+    private RecruitmentStatus mapRecruitment(Boolean recruitment) {
+        if (recruitment == null) {
+            return null;
+        }
+        return recruitment ? RecruitmentStatus.모집중 : RecruitmentStatus.모집종료;
     }
 
     public PostListResponse readByMemberId(Long memberId, Pageable pageable) {
@@ -212,5 +255,19 @@ public class MeetingPostService {
             participationRepository.findByMeetingPostId(postId).stream()
                 .map(participation -> MemberResponse.create(participation.getParticipant()))
                 .toList());
+    }
+
+    public void endMeeting(Long postId, UsernamePasswordUserDetails userDetails) {
+        MeetingPost meetingPost = meetingPostRepository.findById(postId)
+            .orElseThrow(() -> new IllegalStateException(MEETING_POST_NOT_FOUND));
+        Member loginUser = userDetails.getMember();
+        validatePostOwner(loginUser, meetingPost);
+        meetingPost.setRecruitmentStatus(RecruitmentStatus.모집종료);
+    }
+
+    private void validatePostOwner(Member loginUser, MeetingPost meetingPost) {
+        if (loginUser != meetingPost.getMember()) {
+            throw new IllegalStateException(ErrorMessages.OWNER_MISMATCH_EXCEPTION);
+        }
     }
 }

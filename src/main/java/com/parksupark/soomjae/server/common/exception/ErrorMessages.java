@@ -3,6 +3,8 @@ package com.parksupark.soomjae.server.common.exception;
 public class ErrorMessages {
 
     public static final String COMMUNITY_POST_NOT_FOUND = "게시글을 찾을 수 없습니다.";
+
+    public static final String OWNER_MISMATCH_EXCEPTION = "본인이 작성한 글은 상태를 변경할 수 없습니다.";
     public static final String MEETING_POST_NOT_FOUND = "모임 게시글을 찾을 수 없습니다.";
     public static final String INVALID_POST_TYPE_EXCEPTION_MESSAGE = "잘못된 요청입니다.";
     public static final String NOT_PARTICIPANT_OF_POST = "이 모임에 참여 중이지 않습니다.";

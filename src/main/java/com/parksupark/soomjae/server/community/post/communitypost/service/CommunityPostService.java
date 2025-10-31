@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,12 +55,28 @@ public class CommunityPostService {
     }
 
 
-    public PostListResponse readCommunityPostList(Pageable pageable,
-        UsernamePasswordUserDetails userDetails) {
-        List<CommunityPost> posts = communityPostRepository.findAll(pageable).getContent();
+    public PostListResponse readCommunityPostList(
+        Pageable pageable,
+        List<Long> categoryIds,
+        List<Long> locationCodes,
+        String keyword,
+        UsernamePasswordUserDetails userDetails
+    ) {
+        List<Long> normalizedCategoryIds =
+            (categoryIds == null || categoryIds.isEmpty()) ? null : categoryIds;
+        List<Long> normalizedLocationIds =
+            (locationCodes == null || locationCodes.isEmpty()) ? null : locationCodes;
+        String normalizedKeyword =
+            (keyword == null || keyword.isBlank()) ? null : keyword.trim();
+
+        Page<CommunityPost> filteredList = communityPostRepository
+            .searchByCategoriesAndLocationsAndKeyword(
+                normalizedCategoryIds, normalizedLocationIds, normalizedKeyword, pageable
+            );
+
+        List<CommunityPost> posts = filteredList.getContent();
         Long memberId = (userDetails != null) ? userDetails.getMember().getId() : null;
-        List<CommunityPostResponse> response = getCommunityPostResponses(posts,
-            memberId);
+        List<CommunityPostResponse> response = getCommunityPostResponses(posts, memberId);
         return PostListResponse.of(response);
     }
 

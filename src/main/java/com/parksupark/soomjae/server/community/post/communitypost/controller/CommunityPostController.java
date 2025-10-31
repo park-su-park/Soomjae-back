@@ -6,6 +6,7 @@ import com.parksupark.soomjae.server.community.post.communitypost.dto.CommunityP
 import com.parksupark.soomjae.server.community.post.communitypost.dto.CommunityPostResponseWithComments;
 import com.parksupark.soomjae.server.community.post.communitypost.service.CommunityPostService;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 
@@ -62,11 +64,19 @@ public class CommunityPostController {
     @GetMapping("/v1/boards/community/posts/list")
     ResponseEntity<PostListResponse> getCommunityList(
         @PageableDefault(size = 10, page = 0) Pageable pageable,
-        @AuthenticationPrincipal UsernamePasswordUserDetails userDetails) {
+        @RequestParam(value = "categoryId", required = false) List<Long> categoryIds,
+        @RequestParam(value = "locationCodes", required = false) List<Long> locationCodes,
+        @RequestParam(value = "keyword", required = false) String keyword,
+        @AuthenticationPrincipal UsernamePasswordUserDetails userDetails
+    ) {
         Pageable zeroBasedPageable = Pageable.ofSize(pageable.getPageSize())
             .withPage(Math.max(pageable.getPageNumber() - 1, 0));
+
         return ResponseEntity.ok(
-            communityPostService.readCommunityPostList(zeroBasedPageable, userDetails));
+            communityPostService.readCommunityPostList(
+                zeroBasedPageable, categoryIds, locationCodes, keyword, userDetails
+            )
+        );
     }
 
     //수정
