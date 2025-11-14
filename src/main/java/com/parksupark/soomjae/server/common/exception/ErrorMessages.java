@@ -2,6 +2,8 @@ package com.parksupark.soomjae.server.common.exception;
 
 public class ErrorMessages {
 
+    public static final String RESOURCE_NOT_FOUND = "리소스를 찾을 수 없습니다.";
+
     public static final String COMMUNITY_POST_NOT_FOUND = "게시글을 찾을 수 없습니다.";
     public static final String MEETING_POST_NOT_FOUND = "모임 게시글을 찾을 수 없습니다.";
     public static final String MEMBER_POST_NOT_FOUND = "멤버 게시글을 찾을 수 없습니다.";
@@ -20,6 +22,7 @@ public class ErrorMessages {
 
     public static final String CLOSED_MEETING = "이미 모집종료된 모임입니다";
 
+    public static final String PROFILE_ALREADY_EXISTS_MESSAGE = "프로필이 이미 존재 하는 계정입니다.";
 
     public static final String ACCESS_TOKEN_EXPIRED_MESSAGE = "access token이 만료되었습니다.";
     public static final String INVALID_ACCESS_TOKEN_MESSAGE = "잘못된 access token입니다.";
