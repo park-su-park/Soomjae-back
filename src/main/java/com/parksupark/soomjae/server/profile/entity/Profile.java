@@ -27,25 +27,20 @@ public class Profile {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT", nullable = true)
     private String bio;
 
     @OneToOne(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true,
         fetch = FetchType.LAZY)
     private ProfileImage profileImage;
 
-    @Column(nullable = false, unique = true)
-    private String nickname;
-
-    private Profile(String bio, Member member, String nickname) {
-        this.bio = bio;
+    private Profile(Member member) {
         this.member = member;
-        this.nickname = nickname;
     }
 
-    public static Profile create(String bio, Member member, String nickname) {
+    public static Profile create(Member member) {
 
-        return new Profile(bio, member, nickname);
+        return new Profile(member);
     }
 
     public void setProfileImage(ProfileImage profileImage) {
@@ -56,6 +51,5 @@ public class Profile {
     public void updateProfile(UpdateProfileRequest request) {
         this.profileImage.updateImageUrl(request.getProfileImageUrl());
         this.bio = request.getBio();
-        this.nickname = request.getNickname();
     }
 }
