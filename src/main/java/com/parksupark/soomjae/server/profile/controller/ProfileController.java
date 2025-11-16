@@ -1,7 +1,6 @@
 package com.parksupark.soomjae.server.profile.controller;
 
 import com.parksupark.soomjae.server.auth.username.dto.UsernamePasswordUserDetails;
-import com.parksupark.soomjae.server.profile.dto.CreateProfileRequest;
 import com.parksupark.soomjae.server.profile.dto.ProfileResponse;
 import com.parksupark.soomjae.server.profile.dto.UpdateProfileRequest;
 import com.parksupark.soomjae.server.profile.service.ProfileService;
@@ -17,16 +16,6 @@ import org.springframework.web.bind.annotation.*;
 public class ProfileController {
 
     private final ProfileService profileService;
-
-    @PostMapping
-    @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<ProfileResponse> postProfile(@RequestBody CreateProfileRequest request,
-        @AuthenticationPrincipal UsernamePasswordUserDetails userDetails) {
-
-        ProfileResponse response = profileService.createProfile(request, userDetails);
-
-        return ResponseEntity.ok(response);
-    }
 
     @GetMapping("/{profileId}")
     public ResponseEntity<ProfileResponse> getProfileByProfileId(@PathVariable Long profileId) {

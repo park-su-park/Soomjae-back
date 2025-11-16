@@ -3,6 +3,7 @@ package com.parksupark.soomjae.server.member.util;
 import com.parksupark.soomjae.server.auth.oauth.AuthProvider;
 import com.parksupark.soomjae.server.member.entity.Member;
 import com.parksupark.soomjae.server.member.repository.MemberRepository;
+import com.parksupark.soomjae.server.profile.service.ProfileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.retry.annotation.Backoff;
@@ -17,6 +18,7 @@ public class MemberCreator {
 
     private final MemberRepository memberRepository;
     private final RandomNicknameCreator randomNicknameCreator;
+    private final ProfileService profileService;
 
     @Retryable(
         retryFor = {DataIntegrityViolationException.class},
@@ -27,6 +29,7 @@ public class MemberCreator {
     public Member createLocalMember(String email, String encodedPassword) {
         String nickname = generateUniqueNickname();
         Member member = Member.create(email, encodedPassword, nickname);
+        Long profile = profileService.createProfile(member);
         return memberRepository.save(member);
     }
 
@@ -39,6 +42,7 @@ public class MemberCreator {
     public Member createOAuthMember(String email, AuthProvider provider, String providerId) {
         String nickname = generateUniqueNickname();
         Member member = Member.createOAuthMember(email, provider, nickname, providerId);
+        Long profile = profileService.createProfile(member);
         return memberRepository.save(member);
     }
 

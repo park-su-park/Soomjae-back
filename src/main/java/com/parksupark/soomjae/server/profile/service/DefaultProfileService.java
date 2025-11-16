@@ -5,7 +5,6 @@ import com.parksupark.soomjae.server.common.exception.ErrorMessages;
 import com.parksupark.soomjae.server.common.exception.ResourceAlreadyExistsException;
 import com.parksupark.soomjae.server.common.exception.ResourceNotFoundException;
 import com.parksupark.soomjae.server.member.entity.Member;
-import com.parksupark.soomjae.server.profile.dto.CreateProfileRequest;
 import com.parksupark.soomjae.server.profile.dto.ProfileResponse;
 import com.parksupark.soomjae.server.profile.dto.UpdateProfileRequest;
 import com.parksupark.soomjae.server.profile.entity.Profile;
@@ -21,26 +20,21 @@ public class DefaultProfileService implements ProfileService {
 
     private final ProfileRepository profileRepository;
 
-    @Transactional
+    private static final String DEFAULT_PROFILE_IMAGE_URL = "";
+
     @Override
-    public ProfileResponse createProfile(CreateProfileRequest request,
-        UsernamePasswordUserDetails userDetails) {
-
-        Member member = userDetails.getMember();
-        Long memberId = member.getId();
-
-        if (profileRepository.existsByMemberId(memberId)) {
+    @Transactional
+    public Long createProfile(Member member) {
+        if (profileRepository.existsByMemberId(member.getId())) {
             throw new ResourceAlreadyExistsException(ErrorMessages.PROFILE_ALREADY_EXISTS_MESSAGE);
         }
 
-        Profile profile = Profile.create(request.getBio(), member, request.getNickname());
-        ProfileImage profileImage = ProfileImage.create(request.getProfileImageUrl());
+        Profile profile = Profile.create(member);
+        ProfileImage profileImage = ProfileImage.create(DEFAULT_PROFILE_IMAGE_URL);
+
         profile.setProfileImage(profileImage);
-
-        profileRepository.save(profile);
-
-        return new ProfileResponse(memberId, profile.getId(), profile.getBio(),
-            profile.getProfileImage().getImageUrl(), profile.getNickname());
+        Profile savedProfile = profileRepository.save(profile);
+        return savedProfile.getId();
     }
 
     @Override
@@ -50,7 +44,7 @@ public class DefaultProfileService implements ProfileService {
             .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.RESOURCE_NOT_FOUND));
 
         return new ProfileResponse(profile.getMember().getId(), profile.getId(), profile.getBio(),
-            profile.getProfileImage().getImageUrl(), profile.getNickname());
+            profile.getProfileImage().getImageUrl());
     }
 
     @Override
@@ -60,7 +54,7 @@ public class DefaultProfileService implements ProfileService {
             .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.RESOURCE_NOT_FOUND));
 
         return new ProfileResponse(profile.getMember().getId(), profile.getId(), profile.getBio(),
-            profile.getProfileImage().getImageUrl(), profile.getNickname());
+            profile.getProfileImage().getImageUrl());
     }
 
     @Override
@@ -76,6 +70,6 @@ public class DefaultProfileService implements ProfileService {
 
         profile.updateProfile(request);
         return new ProfileResponse(memberId, profile.getId(), profile.getBio(),
-            profile.getProfileImage().getImageUrl(), profile.getNickname());
+            profile.getProfileImage().getImageUrl());
     }
 }
