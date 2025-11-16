@@ -9,13 +9,16 @@ public class UpdateProfileRequest {
 
     private final String bio;
     private final String profileImageUrl;
+    private final String nickname;
 
     @JsonCreator
     public UpdateProfileRequest(
         @JsonProperty String bio,
-        @JsonProperty String profileImageUrl
+        @JsonProperty String profileImageUrl,
+        @JsonProperty String nickname
     ){
         this.bio = bio;
         this.profileImageUrl = profileImageUrl;
+        this.nickname = nickname;
     }
 }

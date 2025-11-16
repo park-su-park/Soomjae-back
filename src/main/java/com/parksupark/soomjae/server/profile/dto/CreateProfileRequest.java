@@ -9,13 +9,16 @@ public class CreateProfileRequest {
 
     private final String bio;
     private final String profileImageUrl;
+    private final String nickname;
 
     @JsonCreator
     public CreateProfileRequest(
-        @JsonProperty("bio") String bio,
-        @JsonProperty("profileImageUrl") String profileImageUrl
+        @JsonProperty String bio,
+        @JsonProperty String profileImageUrl,
+        @JsonProperty String nickname
     ) {
         this.bio = bio;
         this.profileImageUrl = profileImageUrl;
+        this.nickname = nickname;
     }
 }

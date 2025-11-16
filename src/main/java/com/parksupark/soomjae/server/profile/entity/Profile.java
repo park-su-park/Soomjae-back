@@ -34,13 +34,18 @@ public class Profile {
         fetch = FetchType.LAZY)
     private ProfileImage profileImage;
 
-    private Profile(String bio, Member member) {
+    @Column(nullable = false, unique = true)
+    private String nickname;
+
+    private Profile(String bio, Member member, String nickname) {
         this.bio = bio;
         this.member = member;
+        this.nickname = nickname;
     }
 
-    public static Profile create(String bio, Member member) {
-        return new Profile(bio, member);
+    public static Profile create(String bio, Member member, String nickname) {
+
+        return new Profile(bio, member, nickname);
     }
 
     public void setProfileImage(ProfileImage profileImage) {
@@ -48,8 +53,9 @@ public class Profile {
         profileImage.setProfile(this);
     }
 
-    public void updateProfile(UpdateProfileRequest request){
+    public void updateProfile(UpdateProfileRequest request) {
         this.profileImage.updateImageUrl(request.getProfileImageUrl());
         this.bio = request.getBio();
+        this.nickname = request.getNickname();
     }
 }
