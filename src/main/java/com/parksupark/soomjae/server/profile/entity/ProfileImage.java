@@ -33,7 +33,11 @@ public class ProfileImage extends Image {
         return new ProfileImage(imageUrl);
     }
 
-    public void setProfile(Profile profile){
+    public void setProfile(Profile profile) {
         this.profile = profile;
+    }
+
+    public void updateImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }

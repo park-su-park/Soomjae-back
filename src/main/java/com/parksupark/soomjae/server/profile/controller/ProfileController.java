@@ -3,18 +3,13 @@ package com.parksupark.soomjae.server.profile.controller;
 import com.parksupark.soomjae.server.auth.username.dto.UsernamePasswordUserDetails;
 import com.parksupark.soomjae.server.profile.dto.CreateProfileRequest;
 import com.parksupark.soomjae.server.profile.dto.ProfileResponse;
+import com.parksupark.soomjae.server.profile.dto.UpdateProfileRequest;
 import com.parksupark.soomjae.server.profile.service.ProfileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -44,6 +39,16 @@ public class ProfileController {
     public ResponseEntity<ProfileResponse> getProfileByMemberId(
         @RequestParam(name = "member_id") Long memberId) {
         ProfileResponse response = profileService.readProfileByMemberId(memberId);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<ProfileResponse> putProfile(@RequestBody UpdateProfileRequest request,
+        @AuthenticationPrincipal UsernamePasswordUserDetails userDetails) {
+
+        ProfileResponse response = profileService.updateProfile(request, userDetails);
 
         return ResponseEntity.ok(response);
     }

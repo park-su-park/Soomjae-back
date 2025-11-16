@@ -1,6 +1,7 @@
 package com.parksupark.soomjae.server.profile.entity;
 
 import com.parksupark.soomjae.server.member.entity.Member;
+import com.parksupark.soomjae.server.profile.dto.UpdateProfileRequest;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -45,5 +46,10 @@ public class Profile {
     public void setProfileImage(ProfileImage profileImage) {
         this.profileImage = profileImage;
         profileImage.setProfile(this);
+    }
+
+    public void updateProfile(UpdateProfileRequest request){
+        this.profileImage.updateImageUrl(request.getProfileImageUrl());
+        this.bio = request.getBio();
     }
 }
