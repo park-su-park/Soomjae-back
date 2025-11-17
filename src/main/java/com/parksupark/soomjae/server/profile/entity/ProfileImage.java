@@ -22,7 +22,7 @@ public class ProfileImage extends Image {
     private Long id;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "profile_id")
+    @JoinColumn(name = "profile_id", unique = true)
     private Profile profile;
 
     private ProfileImage(String imageUrl) {
