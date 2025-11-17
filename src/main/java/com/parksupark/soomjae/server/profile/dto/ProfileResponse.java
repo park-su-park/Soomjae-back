@@ -11,4 +11,5 @@ public class ProfileResponse {
     private final Long profileId;
     private final String bio;
     private final String profileImageUrl;
+    private final String nickname;
 }
