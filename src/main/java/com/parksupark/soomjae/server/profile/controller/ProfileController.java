@@ -12,21 +12,14 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/v1/profile")
+@RequestMapping("/v1/member")
 public class ProfileController {
 
     private final ProfileService profileService;
 
-    @GetMapping("/{profileId}")
-    public ResponseEntity<ProfileResponse> getProfileByProfileId(@PathVariable Long profileId) {
-        ProfileResponse response = profileService.readProfileById(profileId);
-
-        return ResponseEntity.ok(response);
-    }
-
-    @GetMapping
+    @GetMapping("/{memberId}/profiles")
     public ResponseEntity<ProfileResponse> getProfileByMemberId(
-        @RequestParam(name = "member_id") Long memberId) {
+        @PathVariable Long memberId) {
         ProfileResponse response = profileService.readProfileByMemberId(memberId);
 
         return ResponseEntity.ok(response);
