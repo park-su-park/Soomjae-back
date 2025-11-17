@@ -16,7 +16,7 @@ public class ErrorMessages {
     public static final String ALREADY_LIKED_EXCEPTION_MESSAGE = "이미 좋아요를 누른 게시글입니다.";
     public static final String MEMBER_NOT_FOUND_EXCEPTION_MESSAGE = "회원 정보를 찾을 수 없습니다.";
     public static final String DUPLICATE_EMAIL_EXCEPTION_MESSAGE = "이미 사용 중인 이메일입니다.";
-    public static final String DATA_INTEGRITY_VIOLATION_EXCEPTION_MESSAGE = "엔티티 레벨 unique 검증 실패";
+    public static final String DATA_INTEGRITY_VIOLATION_EXCEPTION_MESSAGE = "DB 제약조건 위배";
     public static final String COMMENT_OWNER_MISMATCH_EXCEPTION_MESSAGE = "본인의 댓글만 삭제할 수 있습니다.";
     public static final String VALIDATION_FAILED_MESSAGE = "요청 바디 값 검증에 실패했습니다.";
 
