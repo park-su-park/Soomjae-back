@@ -9,8 +9,6 @@ public interface ProfileService {
 
     Long createProfile(Member member);
 
-    ProfileResponse readProfileById(Long profileId);
-
     ProfileResponse readProfileByMemberId(Long memberId);
 
     ProfileResponse updateProfile(UpdateProfileRequest request,
