@@ -13,7 +13,8 @@ public interface ProfileService {
 
     ProfileResponse readProfileByMemberId(Long memberId);
 
-    ProfileResponse updateProfile(UpdateProfileRequest request, UsernamePasswordUserDetails userDetails);
+    ProfileResponse updateProfile(UpdateProfileRequest request,
+        UsernamePasswordUserDetails userDetails);
 
 
 }

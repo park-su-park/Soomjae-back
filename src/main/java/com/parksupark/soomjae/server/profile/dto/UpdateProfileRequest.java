@@ -14,7 +14,7 @@ public class UpdateProfileRequest {
     public UpdateProfileRequest(
         @JsonProperty String bio,
         @JsonProperty String profileImageUrl
-    ){
+    ) {
         this.bio = bio;
         this.profileImageUrl = profileImageUrl;
     }
