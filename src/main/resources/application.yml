@@ -149,3 +149,6 @@ jwt:
   secret: ${JWT_SECRET}
   refresh:
     secret: ${JWT_REFRESH_SECRET}
+
+fcm:
+  firebase_config_path: ${FIREBASE_CONFIG_PATH}
