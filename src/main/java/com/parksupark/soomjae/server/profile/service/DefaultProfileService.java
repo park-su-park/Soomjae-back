@@ -21,7 +21,7 @@ public class DefaultProfileService implements ProfileService {
 
     private final ProfileRepository profileRepository;
 
-    @Value("${app.default.profile-image-url}")
+    @Value("${app.profile.default-image-url}")
     private String defaultProfileImageUrl;
 
     @Override
@@ -46,17 +46,7 @@ public class DefaultProfileService implements ProfileService {
             .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.RESOURCE_NOT_FOUND));
 
         return new ProfileResponse(profile.getMember().getId(), profile.getId(), profile.getBio(),
-            profile.getProfileImage().getImageUrl());
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public ProfileResponse readProfileById(Long profileId) {
-        Profile profile = profileRepository.findById(profileId)
-            .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.RESOURCE_NOT_FOUND));
-
-        return new ProfileResponse(profile.getMember().getId(), profile.getId(), profile.getBio(),
-            profile.getProfileImage().getImageUrl());
+            profile.getProfileImage().getImageUrl(), profile.getMember().getNickname());
     }
 
     @Override
@@ -72,6 +62,6 @@ public class DefaultProfileService implements ProfileService {
 
         profile.updateProfile(request);
         return new ProfileResponse(memberId, profile.getId(), profile.getBio(),
-            profile.getProfileImage().getImageUrl());
+            profile.getProfileImage().getImageUrl(), profile.getMember().getNickname());
     }
 }
