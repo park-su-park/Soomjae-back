@@ -24,7 +24,7 @@ public class Profile {
     private Long id;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
+    @JoinColumn(name = "member_id", nullable = false, unique = true)
     private Member member;
 
     @Column(columnDefinition = "TEXT", nullable = true)
