@@ -38,12 +38,12 @@ public class S3UploaderService {
     @PostConstruct
     public void init() throws IOException {
         // 1. 파일 권한 설정: 소유자만 읽기, 쓰기, 실행 가능 (rwx------)
-//        Set<PosixFilePermission> perms = PosixFilePermissions.fromString("rwx------");
-//        FileAttribute<Set<PosixFilePermission>> attr = PosixFilePermissions.asFileAttribute(perms);
+        Set<PosixFilePermission> perms = PosixFilePermissions.fromString("rwx------");
+        FileAttribute<Set<PosixFilePermission>> attr = PosixFilePermissions.asFileAttribute(perms);
 
         // 2. 위에서 정의한 권한으로 전용 임시 디렉터리를 생성합니다.
         //    이제 이 디렉터리는 생성 시점부터 다른 사용자의 접근이 원천적으로 차단됩니다.
-        this.tempDir = Files.createTempDirectory("soomjae-s3-temp-"); //, attr
+        this.tempDir = Files.createTempDirectory("soomjae-s3-temp-", attr);
     }
 
     public List<String> uploadImages(List<MultipartFile> multipartFiles, String dirName) {
