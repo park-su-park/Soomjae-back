@@ -28,6 +28,7 @@ import com.parksupark.soomjae.server.community.post.meetingpost.dto.MeetingPostR
 import com.parksupark.soomjae.server.community.post.meetingpost.dto.MeetingPostStatsResponse;
 import com.parksupark.soomjae.server.community.post.meetingpost.entity.MeetingPost;
 import com.parksupark.soomjae.server.community.post.meetingpost.repository.MeetingPostRepository;
+import com.parksupark.soomjae.server.fcm.service.AlarmNotificationService;
 import com.parksupark.soomjae.server.member.dto.MemberResponse;
 import com.parksupark.soomjae.server.member.entity.Member;
 import java.time.Instant;
@@ -50,6 +51,7 @@ public class MeetingPostService {
     private final CommentRepository commentRepository;
     private final LikeRepository likeRepository;
     private final ParticipationRepository participationRepository;
+    private final AlarmNotificationService alarmNotificationService;
 
     @Transactional
     public Long create(
@@ -180,9 +182,10 @@ public class MeetingPostService {
             participant.getId())) {
             throw new IllegalStateException(ALREADY_PARTICIPATE_IN_POST);
         }
+        Participation participation = new Participation(participant, meetingPost);
+        participationRepository.save(participation);
 
-        participationRepository.save(new Participation(participant, meetingPost));
-
+        alarmNotificationService.sendParticipationAlarm(participation);
         return ParticipationResponse.of(meetingPost.getId(), participantsNum + 1,
             meetingPost.getMaximumParticipants());
     }
