@@ -29,8 +29,9 @@ public class MemberCreator {
     public Member createLocalMember(String email, String encodedPassword) {
         String nickname = generateUniqueNickname();
         Member member = Member.create(email, encodedPassword, nickname);
+        Member saved = memberRepository.save(member);
         Long profile = profileService.createProfile(member);
-        return memberRepository.save(member);
+        return saved;
     }
 
     @Retryable(
@@ -42,8 +43,9 @@ public class MemberCreator {
     public Member createOAuthMember(String email, AuthProvider provider, String providerId) {
         String nickname = generateUniqueNickname();
         Member member = Member.createOAuthMember(email, provider, nickname, providerId);
+        Member saved = memberRepository.save(member);
         Long profile = profileService.createProfile(member);
-        return memberRepository.save(member);
+        return saved;
     }
 
     // 닉네임 중복을 피하는 1차 방어 로직
