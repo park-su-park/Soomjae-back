@@ -143,6 +143,8 @@ spring:
 app:
   cookie:
     secure: false
+  default:
+    profile-image-url: ${DEFAULT_PROFILE_IMAGE_URL}
 
 server:
   ssl:

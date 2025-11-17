@@ -11,6 +11,7 @@ import com.parksupark.soomjae.server.profile.entity.Profile;
 import com.parksupark.soomjae.server.profile.entity.ProfileImage;
 import com.parksupark.soomjae.server.profile.repository.ProfileRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,7 +21,8 @@ public class DefaultProfileService implements ProfileService {
 
     private final ProfileRepository profileRepository;
 
-    private static final String DEFAULT_PROFILE_IMAGE_URL = "";
+    @Value("${app.default.profile-image-url}")
+    private String defaultProfileImageUrl;
 
     @Override
     @Transactional
@@ -30,7 +32,7 @@ public class DefaultProfileService implements ProfileService {
         }
 
         Profile profile = Profile.create(member);
-        ProfileImage profileImage = ProfileImage.create(DEFAULT_PROFILE_IMAGE_URL);
+        ProfileImage profileImage = ProfileImage.create(defaultProfileImageUrl);
 
         profile.setProfileImage(profileImage);
         Profile savedProfile = profileRepository.save(profile);
