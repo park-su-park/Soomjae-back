@@ -16,6 +16,7 @@ import com.parksupark.soomjae.server.community.like.service.validator.AlwaysVali
 import com.parksupark.soomjae.server.community.like.service.validator.StubPostValidatorFactory;
 import com.parksupark.soomjae.server.community.validator.PostValidator;
 import com.parksupark.soomjae.server.community.validator.PostValidatorFactory;
+import com.parksupark.soomjae.server.fcm.service.AlarmNotificationService;
 import com.parksupark.soomjae.server.member.entity.Member;
 import com.parksupark.soomjae.server.member.repository.JpaLikeInMemoryMemberRepository;
 import com.parksupark.soomjae.server.member.repository.MemberRepository;
@@ -23,6 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 
 class DefaultLikeServiceTest {
 
@@ -32,6 +34,9 @@ class DefaultLikeServiceTest {
     private final String postType = "community";
     private final Long postId = 1L;
     private UsernamePasswordUserDetails userDetails;
+
+    @Mock
+    private AlarmNotificationService alarmNotificationService;
 
     @BeforeEach
     void setUp() {
@@ -44,7 +49,8 @@ class DefaultLikeServiceTest {
         Map<String, PostValidator> validatorMap = new HashMap<>();
         validatorMap.put("community", new AlwaysValidCommunityPostValidatorStub());
         PostValidatorFactory postValidatorFactory = new StubPostValidatorFactory(validatorMap);
-        this.likeService = new DefaultLikeService(likeRepository, postValidatorFactory);
+        this.likeService = new DefaultLikeService(likeRepository, postValidatorFactory,
+            alarmNotificationService);
     }
 
     @Test
@@ -54,12 +60,12 @@ class DefaultLikeServiceTest {
         validatorMap.put("community", new AlwaysInvalidCommunityPostValidatorStub());
 
         final PostValidatorFactory postValidatorFactory = new StubPostValidatorFactory(
-                validatorMap);
+            validatorMap);
         likeService = new DefaultLikeService(likeRepository, postValidatorFactory);
 
         // when + then
         assertThrows(InvalidPostIdException.class,
-                () -> likeService.createLike(postType, postId, userDetails));
+            () -> likeService.createLike(postType, postId, userDetails));
     }
 
     @Test
@@ -81,7 +87,7 @@ class DefaultLikeServiceTest {
 
         // then
         assertThrows(AlreadyLikedException.class,
-                () -> likeService.createLike(postType, postId, userDetails));
+            () -> likeService.createLike(postType, postId, userDetails));
     }
 
     @Test
@@ -103,7 +109,7 @@ class DefaultLikeServiceTest {
     void shouldThrowLikeNotFoundException_whenUserHasNotLikedPostBefore() {
         // when + then
         assertThrows(LikeNotFoundException.class,
-                () -> likeService.deleteLike(postType, postId, userDetails));
+            () -> likeService.deleteLike(postType, postId, userDetails));
     }
 
     @Test
