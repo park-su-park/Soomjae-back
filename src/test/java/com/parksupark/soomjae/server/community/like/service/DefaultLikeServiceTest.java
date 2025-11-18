@@ -61,7 +61,8 @@ class DefaultLikeServiceTest {
 
         final PostValidatorFactory postValidatorFactory = new StubPostValidatorFactory(
             validatorMap);
-        likeService = new DefaultLikeService(likeRepository, postValidatorFactory);
+        likeService = new DefaultLikeService(likeRepository, postValidatorFactory,
+            alarmNotificationService);
 
         // when + then
         assertThrows(InvalidPostIdException.class,
