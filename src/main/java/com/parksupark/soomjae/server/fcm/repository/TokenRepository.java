@@ -2,6 +2,7 @@ package com.parksupark.soomjae.server.fcm.repository;
 
 import com.parksupark.soomjae.server.fcm.domain.Token;
 import com.parksupark.soomjae.server.member.entity.Member;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -14,6 +15,9 @@ public interface TokenRepository extends JpaRepository<Token, Long> {
 
     Optional<Token> findByTokenValueAndMember(String value, Member member);
 
+
+    List<Token> findByMemberInAndLastUsedAfter(List<Member> members, Instant lastUsedAfter);
+
     List<Token> findByMemberInAndExpirationDateAfter(List<Member> members, LocalDate date);
 
     @Modifying
@@ -24,5 +28,5 @@ public interface TokenRepository extends JpaRepository<Token, Long> {
     @Query("DELETE FROM Token t WHERE t.tokenValue IN :failedTokens")
     void deleteByTokenValueIn(@Param("failedTokens") List<String> failedTokens);
 
-    List<Token> findByExpirationDate(LocalDate now);
+    List<Token> findByLastUsedBefore(Instant lastUsedBefore);
 }

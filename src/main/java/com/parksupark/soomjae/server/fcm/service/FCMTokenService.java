@@ -3,7 +3,9 @@ package com.parksupark.soomjae.server.fcm.service;
 import com.parksupark.soomjae.server.fcm.domain.Token;
 import com.parksupark.soomjae.server.fcm.repository.TokenRepository;
 import com.parksupark.soomjae.server.member.entity.Member;
-import java.time.LocalDate;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +22,7 @@ public class FCMTokenService {
     private final TokenRepository tokenRepository;
 
     // 토큰 만료 기간 상수 정의
-    final int TOKEN_EXPIRATION_MONTHS = 2;
+    final int TOKEN_EXPIRATION_PERIOD = 2;
 
     // 토픽 구독 - 토픽 하나씩
 
@@ -34,14 +36,14 @@ public class FCMTokenService {
         if (existingToken.isPresent()) {
             Token token = existingToken.get();
             log.info("이미 존재하는 토큰: " + existingToken.get().getTokenValue());
-            token.setExpirationDate(LocalDate.now().plusMonths(TOKEN_EXPIRATION_MONTHS));
+            token.setLastUsed(Instant.now());
             tokenRepository.save(token);
         } else {
             // Only create and save a new token if it does not exist
             Token token = Token.builder()
                 .tokenValue(fcmToken)
                 .member(member)
-                .expirationDate(LocalDate.now().plusMonths(TOKEN_EXPIRATION_MONTHS))
+                .lastUsed(Instant.now())
                 .build();
             log.info("DB에 저장하는 token : " + token.getTokenValue());
             tokenRepository.save(token);
@@ -53,11 +55,14 @@ public class FCMTokenService {
     @Scheduled(cron = "0 0 0 * * ?")
     @Transactional
     public void deleteExpiredTokens() {
-        LocalDate now = LocalDate.now();
-        log.info("오늘의 날짜 : " + now);
+        Instant deletePoint = ZonedDateTime.now(ZoneId.of("Asia/Seoul"))
+            .minusMonths(TOKEN_EXPIRATION_PERIOD)
+            .toInstant();
+
+        log.info("두달 동안 사용하지 않은 토큰을 모두 삭제합니다 : " + Instant.now());
 
         // 만료된 토큰을 가져옵니다.
-        List<Token> expiredTokens = tokenRepository.findByExpirationDate(now);
+        List<Token> expiredTokens = tokenRepository.findByLastUsedBefore(deletePoint);
 
         tokenRepository.deleteAll(expiredTokens);
     }

@@ -9,6 +9,7 @@ import com.google.firebase.messaging.SendResponse;
 import com.parksupark.soomjae.server.fcm.domain.Token;
 import com.parksupark.soomjae.server.fcm.dto.AlarmDto;
 import com.parksupark.soomjae.server.fcm.repository.TokenRepository;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -67,6 +68,9 @@ public class FCMService {
                                 fme.getMessagingErrorCode(), fme.getMessage());
                         }
                     }
+                } else {
+                    Token successToken = tokens.get(i);
+                    successToken.setLastUsed(Instant.now());
                 }
             }
 
