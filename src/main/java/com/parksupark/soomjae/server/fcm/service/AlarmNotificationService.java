@@ -15,7 +15,6 @@ import com.parksupark.soomjae.server.fcm.domain.Token;
 import com.parksupark.soomjae.server.fcm.dto.AlarmDto;
 import com.parksupark.soomjae.server.fcm.repository.TokenRepository;
 import com.parksupark.soomjae.server.member.entity.Member;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -45,6 +44,8 @@ public class AlarmNotificationService {
         List<Member> commenters = commentRepository.findMembersByPost(comment.getPostType(),
             comment.getPostId());
 
+        Member postOwner = getPostOwner(comment.getPostType(), comment.getPostId());
+        receivers.add(postOwner);
         receivers.addAll(commenters);
 
         // 2) 중복 제거 + 이번에 댓글 쓴 사람 제외
@@ -57,10 +58,8 @@ public class AlarmNotificationService {
             return;
         }
 
-        // 3) 멤버들의 유효 토큰 조회
-        LocalDate today = LocalDate.now();
+        List<Token> tokens = tokenRepository.findByMemberIn(receivers);
 
-        List<Token> tokens = tokenRepository.findByMemberInAndExpirationDateAfter(receivers, today);
         if (tokens.isEmpty()) {
             return;
         }
@@ -68,7 +67,6 @@ public class AlarmNotificationService {
         validatePost(comment.getPostType(), comment.getPostId());
         String postTitle = getPostTitle(comment.getPostType(), comment.getPostId());
 
-        // 4) AlarmDto 생성 (타이틀/내용/이미지/URL은 서비스 정책에 맞게)
         AlarmDto alarmDto = AlarmDto.builder()
             .title("새 댓글이 달렸어요")
             .content(postTitle + " 글에 새로운 댓글이 달렸어요.")
@@ -82,13 +80,10 @@ public class AlarmNotificationService {
 
     @Transactional
     public void sendNewLikeAlarm(Like like) {
-        LocalDate today = LocalDate.now();
-
         validatePost(like.getPostType(), like.getPostId());
-        Member postOwner = getPostOwner(like);
+        Member postOwner = getPostOwner(like.getPostType(), like.getPostId());
 
-        List<Token> tokens = tokenRepository.findByMemberInAndExpirationDateAfter(
-            List.of(postOwner), today);
+        List<Token> tokens = tokenRepository.findByMemberIn(List.of(postOwner));
         if (tokens.isEmpty()) {
             return;
         }
@@ -134,17 +129,16 @@ public class AlarmNotificationService {
         }
     }
 
-    private Member getPostOwner(Like like) {
-        String postType = like.getPostType();
+    private Member getPostOwner(String postType, Long postId) {
         switch (postType) {
             case PostConstant.COMMUNITY_POST_TYPE:
-                return communityPostRepository.findById(like.getPostId())
+                return communityPostRepository.findById(postId)
                     .orElseThrow(
                         () -> new IllegalArgumentException(ErrorMessages.COMMUNITY_POST_NOT_FOUND))
                     .getMember();
 
             case PostConstant.MEETING_POST_TYPE:
-                return meetingPostRepository.findById(like.getPostId())
+                return meetingPostRepository.findById(postId)
                     .orElseThrow(
                         () -> new IllegalArgumentException(ErrorMessages.MEETING_POST_NOT_FOUND))
                     .getMember();
@@ -155,13 +149,9 @@ public class AlarmNotificationService {
     }
 
     public void sendParticipationAlarm(Participation participation) {
-
-        LocalDate today = LocalDate.now();
-
         Member postOwner = participation.getMeetingPost().getMember();
 
-        List<Token> tokens = tokenRepository.findByMemberInAndExpirationDateAfter(
-            List.of(postOwner), today);
+        List<Token> tokens = tokenRepository.findByMemberIn(List.of(postOwner));
         if (tokens.isEmpty()) {
             return;
         }

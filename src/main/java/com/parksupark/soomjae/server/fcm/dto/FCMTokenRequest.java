@@ -5,7 +5,8 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class RegisterFCMTokenRequest {
+public class FCMTokenRequest {
 
     private final String fcmToken;
+    private final String device;
 }

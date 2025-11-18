@@ -1,6 +1,7 @@
 package com.parksupark.soomjae.server.fcm.service;
 
 import com.parksupark.soomjae.server.fcm.domain.Token;
+import com.parksupark.soomjae.server.fcm.dto.FCMTokenRequest;
 import com.parksupark.soomjae.server.fcm.repository.TokenRepository;
 import com.parksupark.soomjae.server.member.entity.Member;
 import java.time.Instant;
@@ -27,27 +28,36 @@ public class FCMTokenService {
     // 토픽 구독 - 토픽 하나씩
 
     @Transactional
-    public void saveFCMToken(Member member, String fcmToken) {
+    public void saveFCMToken(Member member, FCMTokenRequest request) {
         log.info("saveFCMToken 메서드 호출");
 
         // token이 이미 있는지 체크
-        Optional<Token> existingToken = tokenRepository.findByTokenValueAndMember(
-            fcmToken, member);
+        Optional<Token> existingToken = tokenRepository.findByDeviceAndMember(request.getDevice(),
+            member);
         if (existingToken.isPresent()) {
             Token token = existingToken.get();
             log.info("이미 존재하는 토큰: " + existingToken.get().getTokenValue());
             token.setLastUsed(Instant.now());
+            token.setTokenValue(request.getFcmToken());
             tokenRepository.save(token);
         } else {
             // Only create and save a new token if it does not exist
             Token token = Token.builder()
-                .tokenValue(fcmToken)
+                .tokenValue(request.getFcmToken())
+                .device(request.getDevice())
                 .member(member)
                 .lastUsed(Instant.now())
                 .build();
             log.info("DB에 저장하는 token : " + token.getTokenValue());
             tokenRepository.save(token);
         }
+    }
+
+    @Transactional
+    public void delete(Member member, FCMTokenRequest request) {
+        Optional<Token> byDeviceAndMemberAndTokenValue = tokenRepository.findByDeviceAndMemberAndTokenValue(
+            request.getDevice(), member, request.getFcmToken());
+        byDeviceAndMemberAndTokenValue.ifPresent(tokenRepository::delete);
     }
 
     // 매일 00:00(자정)에 트리거됩니다(0 0 0 * * ?). 따라서 하루에 한 번 작업이 실행됩니다.
