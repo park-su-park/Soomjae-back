@@ -44,7 +44,9 @@ dependencies {
     implementation 'com.google.auth:google-auth-library-oauth2-http:1.19.0'
     implementation 'org.springframework.boot:spring-boot-starter-mail'
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    implementation 'com.google.firebase:firebase-admin:9.7.0'
     implementation 'com.amazonaws:aws-java-sdk-s3:1.12.791'
+
 
 
     compileOnly 'org.projectlombok:lombok'
@@ -53,7 +55,8 @@ dependencies {
 
     runtimeOnly 'org.postgresql:postgresql'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.6'
-    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.6' // or 'io.jsonwebtoken:jjwt-gson:0.12.6' for gson
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.6'
+    // or 'io.jsonwebtoken:jjwt-gson:0.12.6' for gson
 
     annotationProcessor 'org.projectlombok:lombok'
 
