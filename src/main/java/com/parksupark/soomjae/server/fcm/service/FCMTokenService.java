@@ -23,7 +23,7 @@ public class FCMTokenService {
     private final TokenRepository tokenRepository;
 
     // 토큰 만료 기간 상수 정의
-    final int TOKEN_EXPIRATION_PERIOD = 2;
+    private static final int TOKEN_EXPIRATION_PERIOD = 2;
 
     // 토픽 구독 - 토픽 하나씩
 
@@ -42,12 +42,8 @@ public class FCMTokenService {
             tokenRepository.save(token);
         } else {
             // Only create and save a new token if it does not exist
-            Token token = Token.builder()
-                .tokenValue(request.getFcmToken())
-                .device(request.getDevice())
-                .member(member)
-                .lastUsed(Instant.now())
-                .build();
+            Token token = Token.builder().tokenValue(request.getFcmToken())
+                .device(request.getDevice()).member(member).lastUsed(Instant.now()).build();
             log.info("DB에 저장하는 token : " + token.getTokenValue());
             tokenRepository.save(token);
         }
@@ -55,8 +51,8 @@ public class FCMTokenService {
 
     @Transactional
     public void delete(Member member, FCMTokenRequest request) {
-        Optional<Token> byDeviceAndMemberAndTokenValue = tokenRepository.findByDeviceAndMemberAndTokenValue(
-            request.getDevice(), member, request.getFcmToken());
+        Optional<Token> byDeviceAndMemberAndTokenValue = tokenRepository
+            .findByDeviceAndMemberAndTokenValue(request.getDevice(), member, request.getFcmToken());
         byDeviceAndMemberAndTokenValue.ifPresent(tokenRepository::delete);
     }
 
@@ -66,8 +62,7 @@ public class FCMTokenService {
     @Transactional
     public void deleteExpiredTokens() {
         Instant deletePoint = ZonedDateTime.now(ZoneId.of("Asia/Seoul"))
-            .minusMonths(TOKEN_EXPIRATION_PERIOD)
-            .toInstant();
+            .minusMonths(TOKEN_EXPIRATION_PERIOD).toInstant();
 
         log.info("두달 동안 사용하지 않은 토큰을 모두 삭제합니다 : " + Instant.now());
 
