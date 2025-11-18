@@ -74,8 +74,7 @@ public class DefaultLikeService implements LikeService {
     @Override
     @Transactional(readOnly = true)
     public LikeStatusResponse readLikeStatus(String postType, Long postId,
-        UsernamePasswordUserDetails userDetails) {
-            @Nullable UsernamePasswordUserDetails userDetails) {
+        @Nullable UsernamePasswordUserDetails userDetails) {
 
         validatePost(postType, postId);
 
