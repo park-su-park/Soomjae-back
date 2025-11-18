@@ -33,7 +33,7 @@ public class Token {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true)
+    @Column
     private String tokenValue;
 
     @Column(nullable = false)
