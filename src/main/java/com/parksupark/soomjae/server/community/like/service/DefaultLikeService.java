@@ -11,6 +11,7 @@ import com.parksupark.soomjae.server.community.like.repository.LikeRepository;
 import com.parksupark.soomjae.server.community.validator.PostValidator;
 import com.parksupark.soomjae.server.community.validator.PostValidatorFactory;
 import com.parksupark.soomjae.server.fcm.service.AlarmNotificationService;
+import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -74,6 +75,7 @@ public class DefaultLikeService implements LikeService {
     @Transactional(readOnly = true)
     public LikeStatusResponse readLikeStatus(String postType, Long postId,
         UsernamePasswordUserDetails userDetails) {
+            @Nullable UsernamePasswordUserDetails userDetails) {
 
         validatePost(postType, postId);
 

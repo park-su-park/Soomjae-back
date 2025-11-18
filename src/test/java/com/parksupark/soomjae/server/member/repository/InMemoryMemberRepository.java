@@ -107,4 +107,9 @@ public class InMemoryMemberRepository implements MemberRepository {
                 "Duplicate entry '" + member.getEmail() + "' for key 'email'");
         }
     }
+
+    @Override
+    public boolean existsById(Long id) {
+        return false;
+    }
 }
