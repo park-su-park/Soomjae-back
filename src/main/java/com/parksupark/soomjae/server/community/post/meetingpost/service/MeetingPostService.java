@@ -28,6 +28,7 @@ import com.parksupark.soomjae.server.community.post.meetingpost.dto.MeetingPostD
 import com.parksupark.soomjae.server.community.post.meetingpost.dto.MeetingPostRequest;
 import com.parksupark.soomjae.server.community.post.meetingpost.dto.MeetingPostResponse;
 import com.parksupark.soomjae.server.community.post.meetingpost.dto.MeetingPostStatsResponse;
+import com.parksupark.soomjae.server.community.post.meetingpost.dto.ParticipationCreatedEvent;
 import com.parksupark.soomjae.server.community.post.meetingpost.entity.MeetingPost;
 import com.parksupark.soomjae.server.community.post.meetingpost.repository.MeetingPostRepository;
 import com.parksupark.soomjae.server.member.dto.MemberResponse;
@@ -37,6 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,6 +54,7 @@ public class MeetingPostService {
     private final CommentRepository commentRepository;
     private final LikeRepository likeRepository;
     private final ParticipationRepository participationRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Transactional
     public Long create(
@@ -202,8 +205,10 @@ public class MeetingPostService {
             participant.getId())) {
             throw new IllegalStateException(ALREADY_PARTICIPATE_IN_POST);
         }
+        Participation participation = new Participation(participant, meetingPost);
+        participationRepository.save(participation);
 
-        participationRepository.save(new Participation(participant, meetingPost));
+        eventPublisher.publishEvent(new ParticipationCreatedEvent(participation.getId()));
 
         return ParticipationResponse.of(meetingPost.getId(), participantsNum + 1,
             meetingPost.getMaximumParticipants());
