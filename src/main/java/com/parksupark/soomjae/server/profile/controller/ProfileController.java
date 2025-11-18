@@ -1,6 +1,8 @@
 package com.parksupark.soomjae.server.profile.controller;
 
 import com.parksupark.soomjae.server.auth.username.dto.UsernamePasswordUserDetails;
+import com.parksupark.soomjae.server.profile.dto.CheckDuplicateNicknameRequest;
+import com.parksupark.soomjae.server.profile.dto.CheckDuplicateNicknameResponse;
 import com.parksupark.soomjae.server.profile.dto.ProfileResponse;
 import com.parksupark.soomjae.server.profile.dto.UpdateProfileRequest;
 import com.parksupark.soomjae.server.profile.service.ProfileService;
@@ -33,5 +35,12 @@ public class ProfileController {
         ProfileResponse response = profileService.updateProfile(request, userDetails);
 
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/profiles/check-duplicate-nickname")
+    public ResponseEntity<CheckDuplicateNicknameResponse> checkNicknameAvailability(
+        @RequestBody CheckDuplicateNicknameRequest request) {
+
+        return ResponseEntity.ok(profileService.checkDuplicateNickname(request));
     }
 }

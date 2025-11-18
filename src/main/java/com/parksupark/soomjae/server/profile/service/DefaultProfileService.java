@@ -5,6 +5,9 @@ import com.parksupark.soomjae.server.common.exception.ErrorMessages;
 import com.parksupark.soomjae.server.common.exception.ResourceAlreadyExistsException;
 import com.parksupark.soomjae.server.common.exception.ResourceNotFoundException;
 import com.parksupark.soomjae.server.member.entity.Member;
+import com.parksupark.soomjae.server.member.repository.MemberRepository;
+import com.parksupark.soomjae.server.profile.dto.CheckDuplicateNicknameRequest;
+import com.parksupark.soomjae.server.profile.dto.CheckDuplicateNicknameResponse;
 import com.parksupark.soomjae.server.profile.dto.ProfileResponse;
 import com.parksupark.soomjae.server.profile.dto.UpdateProfileRequest;
 import com.parksupark.soomjae.server.profile.entity.Profile;
@@ -20,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class DefaultProfileService implements ProfileService {
 
     private final ProfileRepository profileRepository;
+    private final MemberRepository memberRepository;
 
     @Value("${app.profile.default-image-url}")
     private String defaultProfileImageUrl;
@@ -56,12 +60,27 @@ public class DefaultProfileService implements ProfileService {
 
         Member member = userDetails.getMember();
         Long memberId = member.getId();
+        String newNickname = request.getNickname();
 
         Profile profile = profileRepository.findByMemberId(memberId)
             .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.RESOURCE_NOT_FOUND));
 
+        if (memberRepository.existsByNickname(newNickname)) {
+            throw new ResourceAlreadyExistsException(ErrorMessages.NICKNAME_ALREADY_USED_MESSAGE);
+        }
+
         profile.updateProfile(request);
+        member.updateNickname(request.getNickname());
         return new ProfileResponse(memberId, profile.getId(), profile.getBio(),
             profile.getProfileImage().getImageUrl(), profile.getMember().getNickname());
+    }
+
+    @Override
+    public CheckDuplicateNicknameResponse checkDuplicateNickname(
+        CheckDuplicateNicknameRequest request) {
+
+        boolean duplicate = memberRepository.existsByNickname(request.getNickname());
+
+        return new CheckDuplicateNicknameResponse(duplicate);
     }
 }
