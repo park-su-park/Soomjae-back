@@ -3,12 +3,15 @@ package com.parksupark.soomjae.server.member.entity;
 import com.parksupark.soomjae.server.auth.oauth.AuthProvider;
 import com.parksupark.soomjae.server.common.entity.BaseEntity;
 import com.parksupark.soomjae.server.member.Role;
+import com.parksupark.soomjae.server.profile.entity.Profile;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import lombok.Getter;
@@ -49,6 +52,9 @@ public class Member extends BaseEntity {
     @Column(nullable = false)
     private Role role;
 
+    @OneToOne(mappedBy = "member", cascade = CascadeType.ALL)
+    private Profile profile;
+
     private Member(String email, String password, Role role, AuthProvider provider,
         String nickname, String providerId) {
         this.email = email;
@@ -78,5 +84,9 @@ public class Member extends BaseEntity {
 
     public void updatePassword(String password) {
         this.password = password;
+    }
+
+    public void setProfile(Profile profile) {
+        this.profile = profile;
     }
 }
