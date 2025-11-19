@@ -121,7 +121,7 @@ public class MeetingPostService {
             isLikedByMe = likeRepository.existsByPostTypeAndPostIdAndMemberId(
                 MEETING_POST_TYPE, meetingPost.getId(), userDetails.getMember().getId());
 
-            isParticipatedByMe =  participationRepository.existsByMeetingPostIdAndParticipantId(
+            isParticipatedByMe = participationRepository.existsByMeetingPostIdAndParticipantId(
                 postId, userDetails.getMember().getId());
         }
 
@@ -129,9 +129,6 @@ public class MeetingPostService {
             meetingPost.getId());
 
         long currentParticipantCount = participationRepository.countByMeetingPostId(postId);
-
-        boolean isParticipatedByMe = participationRepository.existsByMeetingPostIdAndParticipantId(
-            postId, userDetails.getMember().getId());
 
         return MeetingPostResponseWithComments.of(meetingPost, likeNum, isLikedByMe, comments,
             (int) currentParticipantCount, isParticipatedByMe);
