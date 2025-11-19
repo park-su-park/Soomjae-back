@@ -33,7 +33,7 @@ public class Token {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
+    @Column(unique = true)
     private String tokenValue;
 
     @Column(nullable = false)
@@ -44,4 +44,8 @@ public class Token {
     private Member member;
 
     private String device;
+
+    public void updateMember(Member member) {
+        this.member = member;
+    }
 }
