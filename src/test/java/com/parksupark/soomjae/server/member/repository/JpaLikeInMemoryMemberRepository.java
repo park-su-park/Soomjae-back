@@ -356,4 +356,9 @@ public class JpaLikeInMemoryMemberRepository implements MemberRepository {
         persistenceContext.clear();
         entitySnapshots.clear();
     }
+
+    @Override
+    public boolean existsById(Long id) {
+        return false;
+    }
 }

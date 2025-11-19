@@ -14,9 +14,10 @@ public class MemberResponse {
     private final Instant createdTime;
     private final Instant modifiedTime;
     private final Role role;
+    private final String profileImageUrl;
 
     public MemberResponse(Long memberId, String email, String nickname, Role role,
-                          Instant createdTime, Instant modifiedTime) {
+        Instant createdTime, Instant modifiedTime, String profileImageUrl) {
 
         this.memberId = memberId;
         this.email = email;
@@ -24,22 +25,25 @@ public class MemberResponse {
         this.role = role;
         this.createdTime = createdTime;
         this.modifiedTime = modifiedTime;
+        this.profileImageUrl = profileImageUrl;
     }
 
-    public static MemberResponse create(MemberBasicInfo memberBasicInfo) {
+    public static MemberResponse create(MemberBasicInfo memberBasicInfo, String profileImageUrl) {
         return new MemberResponse(
             memberBasicInfo.getId(),
             memberBasicInfo.getEmail(),
             memberBasicInfo.getNickname(),
             memberBasicInfo.getRole(),
             memberBasicInfo.getCreatedTime(),
-            memberBasicInfo.getModifiedTime()
+            memberBasicInfo.getModifiedTime(),
+            profileImageUrl
         );
     }
 
     public static MemberResponse create(Member member) {
         return new MemberResponse(member.getId(), member.getEmail(), member.getNickname(),
-            member.getRole(), member.getCreatedTime(), member.getModifiedTime());
+            member.getRole(), member.getCreatedTime(), member.getModifiedTime(),
+            member.getProfile().getProfileImage().getImageUrl());
     }
 
 }

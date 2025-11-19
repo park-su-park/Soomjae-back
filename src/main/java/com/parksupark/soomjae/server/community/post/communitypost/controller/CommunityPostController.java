@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,6 +29,7 @@ public class CommunityPostController {
     private final CommunityPostService communityPostService;
 
     @PostMapping("/v1/boards/community/posts")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Map<String, Object>> postCommunityPost(
         @RequestBody CommunityPostRequest communityPostRequest,
         @AuthenticationPrincipal
@@ -71,15 +73,19 @@ public class CommunityPostController {
 
     //수정
     @PutMapping("/v1/boards/community/posts/{postId}")
+    @PreAuthorize("isAuthenticated()")
     ResponseEntity<Long> putCommunityPost(@PathVariable Long postId,
-        @RequestBody CommunityPostRequest request) {
-        return ResponseEntity.ok(communityPostService.update(postId, request));
+        @RequestBody CommunityPostRequest request,
+        @AuthenticationPrincipal UsernamePasswordUserDetails userDetails) {
+        return ResponseEntity.ok(communityPostService.update(postId, request, userDetails));
     }
 
     //삭제
     @DeleteMapping("/v1/boards/community/posts/{postId}")
-    ResponseEntity<Void> deleteCommunityPost(@PathVariable Long postId) {
-        communityPostService.delete(postId);
+    @PreAuthorize("isAuthenticated()")
+    ResponseEntity<Void> deleteCommunityPost(@PathVariable Long postId,
+        @AuthenticationPrincipal UsernamePasswordUserDetails userDetails) {
+        communityPostService.delete(postId, userDetails);
         return ResponseEntity.ok().build();
     }
 

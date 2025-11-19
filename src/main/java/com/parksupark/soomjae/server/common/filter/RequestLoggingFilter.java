@@ -30,6 +30,7 @@ public class RequestLoggingFilter extends OncePerRequestFilter {
         ContentCachingRequestWrapper wrappedRequest = new ContentCachingRequestWrapper(request);
         ContentCachingResponseWrapper wrappedResponse = new ContentCachingResponseWrapper(response);
 
+        logRequestDetails(request);
         logRequestHeader(request);
 
         // 다음 filter 실행
@@ -42,6 +43,18 @@ public class RequestLoggingFilter extends OncePerRequestFilter {
 
         // 실제 응답 전송 -> doFilter에 wrappedResponse를 넘겼으므로 response는 비어있음
         wrappedResponse.copyBodyToResponse();
+    }
+
+    private void logRequestDetails(HttpServletRequest request) {
+        String method = request.getMethod();
+        String uri = request.getRequestURI();
+        String queryString = request.getQueryString();
+
+        if (queryString == null) {
+            log.info("Request: {} {}", method, uri);
+        } else {
+            log.info("Request: {} {}?{}", method, uri, queryString);
+        }
     }
 
     private void logRequestHeader(HttpServletRequest request) {

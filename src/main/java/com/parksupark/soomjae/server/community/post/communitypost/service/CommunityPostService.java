@@ -5,6 +5,8 @@ import static com.parksupark.soomjae.server.community.category.constant.Category
 import static com.parksupark.soomjae.server.community.common.constant.PostConstant.COMMUNITY_POST_TYPE;
 
 import com.parksupark.soomjae.server.auth.username.dto.UsernamePasswordUserDetails;
+import com.parksupark.soomjae.server.common.exception.ErrorMessages;
+import com.parksupark.soomjae.server.common.exception.ResourceOwnershipException;
 import com.parksupark.soomjae.server.community.category.entity.Category;
 import com.parksupark.soomjae.server.community.category.repository.CategoryRepository;
 import com.parksupark.soomjae.server.community.comment.dto.CommentResponse;
@@ -97,8 +99,13 @@ public class CommunityPostService {
                 COMMUNITY_POST_TYPE, communityPost.getId()).stream().map(CommentResponse::of)
             .toList();
 
-        Boolean isLikedByMe = likeRepository.existsByPostTypeAndPostIdAndMemberId(
-            COMMUNITY_POST_TYPE, communityPost.getId(), userDetails.getMember().getId());
+        boolean isLikedByMe;
+        if (userDetails == null) {
+            isLikedByMe = false;
+        } else {
+            isLikedByMe = likeRepository.existsByPostTypeAndPostIdAndMemberId(
+                COMMUNITY_POST_TYPE, communityPost.getId(), userDetails.getMember().getId());
+        }
 
         Long likeNum = likeRepository.countByPostTypeAndPostId(COMMUNITY_POST_TYPE,
             communityPost.getId());
@@ -108,9 +115,15 @@ public class CommunityPostService {
 
 
     @Transactional
-    public Long update(Long communityPostId, CommunityPostRequest communityPostRequest) {
+    public Long update(Long communityPostId, CommunityPostRequest communityPostRequest,
+        UsernamePasswordUserDetails userDetails) {
         CommunityPost communityPost = communityPostRepository.findById(communityPostId)
             .orElseThrow(() -> new IllegalStateException(COMMUNITY_POST_NOT_FOUND));
+
+        if (!communityPost.getMember().getId().equals(userDetails.getMember().getId())) {
+            throw new ResourceOwnershipException(ErrorMessages.POST_OWNER_MISMATCH_MESSAGE);
+        }
+
         updateCommunityPost(communityPostRequest, communityPost);
         return communityPost.getId();
     }
@@ -126,9 +139,14 @@ public class CommunityPostService {
     }
 
     @Transactional
-    public void delete(Long postId) {
+    public void delete(Long postId, UsernamePasswordUserDetails userDetails) {
         CommunityPost communityPost = communityPostRepository.findById(postId)
             .orElseThrow(() -> new IllegalStateException(COMMUNITY_POST_NOT_FOUND));
+
+        if (!communityPost.getMember().getId().equals(userDetails.getMember().getId())) {
+            throw new ResourceOwnershipException(ErrorMessages.POST_OWNER_MISMATCH_MESSAGE);
+        }
+
         communityPostRepository.delete(communityPost);
     }
 

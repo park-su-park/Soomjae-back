@@ -9,6 +9,8 @@ import static com.parksupark.soomjae.server.community.category.constant.Category
 import static com.parksupark.soomjae.server.community.common.constant.PostConstant.MEETING_POST_TYPE;
 
 import com.parksupark.soomjae.server.auth.username.dto.UsernamePasswordUserDetails;
+import com.parksupark.soomjae.server.common.exception.ErrorMessages;
+import com.parksupark.soomjae.server.common.exception.ResourceOwnershipException;
 import com.parksupark.soomjae.server.community.category.entity.Category;
 import com.parksupark.soomjae.server.community.category.repository.CategoryRepository;
 import com.parksupark.soomjae.server.community.comment.dto.CommentResponse;
@@ -26,6 +28,7 @@ import com.parksupark.soomjae.server.community.post.meetingpost.dto.MeetingPostR
 import com.parksupark.soomjae.server.community.post.meetingpost.dto.MeetingPostResponse;
 import com.parksupark.soomjae.server.community.post.meetingpost.dto.MeetingPostResponseWithComments;
 import com.parksupark.soomjae.server.community.post.meetingpost.dto.MeetingPostStatsResponse;
+import com.parksupark.soomjae.server.community.post.meetingpost.dto.ParticipationCreatedEvent;
 import com.parksupark.soomjae.server.community.post.meetingpost.entity.MeetingPost;
 import com.parksupark.soomjae.server.community.post.meetingpost.repository.MeetingPostRepository;
 import com.parksupark.soomjae.server.member.dto.MemberResponse;
@@ -35,6 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,6 +54,7 @@ public class MeetingPostService {
     private final CommentRepository commentRepository;
     private final LikeRepository likeRepository;
     private final ParticipationRepository participationRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Transactional
     public Long create(
@@ -107,8 +112,18 @@ public class MeetingPostService {
                 MEETING_POST_TYPE, meetingPost.getId()).stream().map(CommentResponse::of)
             .toList();
 
-        Boolean isLikedByMe = likeRepository.existsByPostTypeAndPostIdAndMemberId(
-            MEETING_POST_TYPE, meetingPost.getId(), userDetails.getMember().getId());
+        boolean isLikedByMe;
+        boolean isParticipatedByMe;
+        if (userDetails == null) {
+            isLikedByMe = false;
+            isParticipatedByMe = false;
+        } else {
+            isLikedByMe = likeRepository.existsByPostTypeAndPostIdAndMemberId(
+                MEETING_POST_TYPE, meetingPost.getId(), userDetails.getMember().getId());
+
+            isParticipatedByMe =  participationRepository.existsByMeetingPostIdAndParticipantId(
+                postId, userDetails.getMember().getId());
+        }
 
         Long likeNum = likeRepository.countByPostTypeAndPostId(MEETING_POST_TYPE,
             meetingPost.getId());
@@ -124,9 +139,16 @@ public class MeetingPostService {
 
 
     @Transactional
-    public Long update(Long meetingPostId, MeetingPostRequest meetingPostRequest) {
+    public Long update(Long meetingPostId, MeetingPostRequest meetingPostRequest,
+        UsernamePasswordUserDetails userDetails) {
+
         MeetingPost meetingPost = meetingPostRepository.findById(meetingPostId)
             .orElseThrow(() -> new IllegalStateException(MEETING_POST_NOT_FOUND));
+
+        if (!meetingPost.getMember().getId().equals(userDetails.getMember().getId())) {
+            throw new ResourceOwnershipException(ErrorMessages.POST_OWNER_MISMATCH_MESSAGE);
+        }
+
         updateCommunityPost(meetingPostRequest, meetingPost);
         return meetingPost.getId();
     }
@@ -143,9 +165,15 @@ public class MeetingPostService {
     }
 
     @Transactional
-    public void delete(Long postId) {
+    public void delete(Long postId, UsernamePasswordUserDetails userDetails) {
+
         MeetingPost meetingPost = meetingPostRepository.findById(postId)
             .orElseThrow(() -> new IllegalStateException(MEETING_POST_NOT_FOUND));
+
+        if (!meetingPost.getMember().getId().equals(userDetails.getMember().getId())) {
+            throw new ResourceOwnershipException(ErrorMessages.POST_OWNER_MISMATCH_MESSAGE);
+        }
+
         meetingPostRepository.delete(meetingPost);
     }
 
@@ -180,8 +208,10 @@ public class MeetingPostService {
             participant.getId())) {
             throw new IllegalStateException(ALREADY_PARTICIPATE_IN_POST);
         }
+        Participation participation = new Participation(participant, meetingPost);
+        participationRepository.save(participation);
 
-        participationRepository.save(new Participation(participant, meetingPost));
+        eventPublisher.publishEvent(new ParticipationCreatedEvent(participation.getId()));
 
         return ParticipationResponse.of(meetingPost.getId(), participantsNum + 1,
             meetingPost.getMaximumParticipants());
@@ -189,7 +219,6 @@ public class MeetingPostService {
 
     @Transactional
     public String cancelParticipation(Long postId, UsernamePasswordUserDetails userDetails) {
-        Member participant = userDetails.getMember();
 
         MeetingPost meetingPost = meetingPostRepository.findById(postId)
             .orElseThrow(() -> new IllegalStateException(
@@ -200,7 +229,7 @@ public class MeetingPostService {
         }
 
         Participation participation = participationRepository.findByMeetingPostIdAndParticipantId(
-                postId, participant.getId())
+                postId, userDetails.getMember().getId())
             .orElseThrow(() -> new IllegalStateException(NOT_PARTICIPANT_OF_POST));
 
         participationRepository.delete(participation);

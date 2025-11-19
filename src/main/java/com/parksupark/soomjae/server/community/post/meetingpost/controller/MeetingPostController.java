@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,6 +33,7 @@ public class MeetingPostController {
     private final MeetingPostService meetingPostService;
 
     @PostMapping("/v1/boards/meeting/posts")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Map<String, Object>> postMeetingPost(
         @RequestBody MeetingPostRequest postRequest,
         @AuthenticationPrincipal
@@ -54,7 +56,6 @@ public class MeetingPostController {
         return ResponseEntity.ok(meetingPostService.readByMemberId(memberId, zeroBasedPageable));
     }
 
-
     //postId로 상세 조회
     @GetMapping("/v1/boards/meeting/posts/{postId}")
     ResponseEntity<MeetingPostResponseWithComments> getByPostId(@PathVariable Long postId,
@@ -75,28 +76,37 @@ public class MeetingPostController {
 
     //수정
     @PutMapping("/v1/boards/meeting/posts/{postId}")
+    @PreAuthorize("isAuthenticated()")
     ResponseEntity<Long> putMeetingPost(@PathVariable Long postId,
-        @RequestBody MeetingPostRequest request) {
-        return ResponseEntity.ok(meetingPostService.update(postId, request));
+        @RequestBody MeetingPostRequest request,
+        @AuthenticationPrincipal UsernamePasswordUserDetails userDetails) {
+        return ResponseEntity.ok(
+            meetingPostService.update(postId, request, userDetails));
     }
 
     //삭제
     @DeleteMapping("/v1/boards/meeting/posts/{postId}")
-    ResponseEntity<Void> deleteMeetingPost(@PathVariable Long postId) {
-        meetingPostService.delete(postId);
+    @PreAuthorize("isAuthenticated()")
+    ResponseEntity<Void> deleteMeetingPost(@PathVariable Long postId,
+        @AuthenticationPrincipal UsernamePasswordUserDetails userDetails) {
+
+        meetingPostService.delete(postId, userDetails);
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/v1/boards/meeting/posts/{postId}/join")
+    @PreAuthorize("isAuthenticated()")
     ResponseEntity<ParticipationResponse> createParticipation(@PathVariable Long postId,
         @AuthenticationPrincipal UsernamePasswordUserDetails userDetails) {
         return ResponseEntity.ok(meetingPostService.participate(postId, userDetails));
     }
 
     @DeleteMapping("/v1/boards/meeting/posts/{postId}/join")
+    @PreAuthorize("isAuthenticated()")
     ResponseEntity<String> deleteParticipation(@PathVariable Long postId,
         @AuthenticationPrincipal UsernamePasswordUserDetails userDetails) {
-        return ResponseEntity.ok(meetingPostService.cancelParticipation(postId, userDetails));
+        return ResponseEntity.ok(
+            meetingPostService.cancelParticipation(postId, userDetails));
     }
 
     @GetMapping("/v1/boards/meeting/posts/{postId}/participants")
