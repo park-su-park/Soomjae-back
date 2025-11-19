@@ -18,12 +18,14 @@ import com.parksupark.soomjae.server.member.entity.Member;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Slf4j
 public class AlarmNotificationService {
 
     private final PostValidatorFactory postValidatorFactory;
@@ -80,11 +82,14 @@ public class AlarmNotificationService {
 
     @Transactional
     public void sendNewLikeAlarm(Like like) {
+        log.info("좋아요 알림 발송 메소드 시작");
         validatePost(like.getPostType(), like.getPostId());
         Member postOwner = getPostOwner(like.getPostType(), like.getPostId());
 
         List<Token> tokens = tokenRepository.findByMemberIn(List.of(postOwner));
+        log.info("postowner id= {}", postOwner.getId());
         if (tokens.isEmpty()) {
+            log.info("토큰이 비었음");
             return;
         }
 
