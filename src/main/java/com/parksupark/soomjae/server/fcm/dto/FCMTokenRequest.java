@@ -1,12 +1,12 @@
 package com.parksupark.soomjae.server.fcm.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
-@AllArgsConstructor
+@NoArgsConstructor
 public class FCMTokenRequest {
 
-    private final String fcmToken;
-    private final String device;
+    private String fcmToken;
+    private String device;
 }
