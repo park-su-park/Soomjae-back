@@ -8,7 +8,9 @@ import com.parksupark.soomjae.server.community.post.communitypost.service.Commun
 import java.util.HashMap;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -65,8 +67,13 @@ public class CommunityPostController {
     ResponseEntity<PostListResponse> getCommunityList(
         @PageableDefault(size = 10, page = 0) Pageable pageable,
         @AuthenticationPrincipal UsernamePasswordUserDetails userDetails) {
-        Pageable zeroBasedPageable = Pageable.ofSize(pageable.getPageSize())
-            .withPage(Math.max(pageable.getPageNumber() - 1, 0));
+
+        Pageable zeroBasedPageable = PageRequest.of(
+            Math.max(pageable.getPageNumber() - 1, 0),
+            pageable.getPageSize(),
+            Sort.by(Sort.Direction.DESC, "createTime")
+        );
+
         return ResponseEntity.ok(
             communityPostService.readCommunityPostList(zeroBasedPageable, userDetails));
     }
