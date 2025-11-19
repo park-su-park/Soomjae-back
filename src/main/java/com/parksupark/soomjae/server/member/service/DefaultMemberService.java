@@ -2,6 +2,7 @@ package com.parksupark.soomjae.server.member.service;
 
 import com.parksupark.soomjae.server.auth.oauth.AuthProvider;
 import com.parksupark.soomjae.server.common.exception.ErrorMessages;
+import com.parksupark.soomjae.server.common.exception.ResourceNotFoundException;
 import com.parksupark.soomjae.server.email.repository.EmailVerificationRepository;
 import com.parksupark.soomjae.server.member.dto.CheckDuplicateEmailResponse;
 import com.parksupark.soomjae.server.member.dto.CreateMemberRequest;
@@ -117,7 +118,12 @@ public class DefaultMemberService implements MemberService {
     }
 
     private MemberResponse createMemberResponse(MemberBasicInfo memberBasicInfo) {
-        return MemberResponse.create(memberBasicInfo);
+        Long memberId = memberBasicInfo.getId();
+        Member member = memberRepository.findById(memberId).orElseThrow(
+            () -> new ResourceNotFoundException(ErrorMessages.MEMBER_NOT_FOUND_EXCEPTION_MESSAGE));
+
+        return MemberResponse.create(memberBasicInfo,
+            member.getProfile().getProfileImage().getImageUrl());
     }
 
 
