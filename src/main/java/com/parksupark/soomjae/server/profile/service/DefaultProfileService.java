@@ -58,19 +58,34 @@ public class DefaultProfileService implements ProfileService {
     public ProfileResponse updateProfile(UpdateProfileRequest request,
             UsernamePasswordUserDetails userDetails) {
 
-        Member member = userDetails.getMember();
-        Long memberId = member.getId();
+        Long memberId = userDetails.getMember().getId();
+
+        Member member = memberRepository.findById(memberId).orElseThrow(
+            () -> new ResourceNotFoundException(ErrorMessages.MEMBER_NOT_FOUND_EXCEPTION_MESSAGE));
+
         String newNickname = request.getNickname();
+        String newBio = request.getBio();
+        String newProfileImageUrl = request.getProfileImageUrl();
 
         Profile profile = profileRepository.findByMemberId(memberId)
             .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.RESOURCE_NOT_FOUND));
 
-        if (memberRepository.existsByNickname(newNickname)) {
-            throw new ResourceAlreadyExistsException(ErrorMessages.NICKNAME_ALREADY_USED_MESSAGE);
+        if (newNickname != null) {
+            if (memberRepository.existsByNickname(newNickname)) {
+                throw new ResourceAlreadyExistsException(
+                    ErrorMessages.NICKNAME_ALREADY_USED_MESSAGE);
+            }
+            member.updateNickname(request.getNickname());
         }
 
-        profile.updateProfile(request);
-        member.updateNickname(request.getNickname());
+        if (newBio != null) {
+            profile.setBio(newBio);
+        }
+
+        if (newProfileImageUrl != null) {
+            profile.setProfileImageUrl(newProfileImageUrl);
+        }
+
         return new ProfileResponse(memberId, profile.getId(), profile.getBio(),
             profile.getProfileImage().getImageUrl(), profile.getMember().getNickname());
     }

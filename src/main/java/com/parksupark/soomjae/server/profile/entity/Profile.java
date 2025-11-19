@@ -48,8 +48,11 @@ public class Profile {
         profileImage.setProfile(this);
     }
 
-    public void updateProfile(UpdateProfileRequest request) {
-        this.profileImage.updateImageUrl(request.getProfileImageUrl());
-        this.bio = request.getBio();
+    public void setBio(String bio) {
+        this.bio = bio;
+    }
+
+    public void setProfileImageUrl(String profileImageUrl) {
+        this.profileImage.updateImageUrl(profileImageUrl);
     }
 }

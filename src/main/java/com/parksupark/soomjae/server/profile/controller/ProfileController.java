@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/v1/member")
+@RequestMapping("/v1/members")
 public class ProfileController {
 
     private final ProfileService profileService;
@@ -27,7 +27,7 @@ public class ProfileController {
         return ResponseEntity.ok(response);
     }
 
-    @PutMapping
+    @PutMapping("/profiles")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<ProfileResponse> putProfile(@RequestBody UpdateProfileRequest request,
         @AuthenticationPrincipal UsernamePasswordUserDetails userDetails) {
