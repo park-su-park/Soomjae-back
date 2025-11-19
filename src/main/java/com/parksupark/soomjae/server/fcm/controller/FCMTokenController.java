@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class FCMTokenController {
 
-    private FCMTokenService fcmTokenService;
+    private final FCMTokenService fcmTokenService;
 
     @PostMapping("/v1/fcm-token")
     public ResponseEntity<String> registerToken(@RequestBody FCMTokenRequest request,
