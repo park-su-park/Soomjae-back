@@ -24,6 +24,7 @@ public class FCMService {
     private final TokenRepository tokenRepository;
 
     public void sendByAlarm(AlarmDto alarmDto, List<Token> tokens) {
+        log.info("알림 전송 메소드 시작");
 
         if (tokens == null || tokens.isEmpty()) {
             log.info("보낼 FCM 토큰이 없습니다. alarmDto={}", alarmDto);
