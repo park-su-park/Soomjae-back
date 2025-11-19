@@ -11,7 +11,7 @@ public class CheckDuplicateNicknameRequest {
 
     @JsonCreator
     public CheckDuplicateNicknameRequest(
-        @JsonProperty String nickname
+        @JsonProperty("nickname") String nickname
     ) {
         this.nickname = nickname;
     }
