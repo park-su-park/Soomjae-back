@@ -1,7 +1,9 @@
 package com.parksupark.soomjae.server.community.post.meetingpost.dto;
 
+import com.parksupark.soomjae.server.community.category.dto.CategoryResponse;
 import com.parksupark.soomjae.server.community.comment.dto.CommentResponse;
 import com.parksupark.soomjae.server.community.common.constant.PostConstant;
+import com.parksupark.soomjae.server.community.location.dto.LocationResponseDto;
 import com.parksupark.soomjae.server.community.post.meetingpost.entity.MeetingPost;
 import com.parksupark.soomjae.server.member.dto.MemberResponse;
 import jakarta.annotation.Nullable;
@@ -20,9 +22,9 @@ public class MeetingPostResponseWithComments {
     private final MemberResponse author;
 
     @Nullable
-    private final String category;
+    private final CategoryResponse category;
     @Nullable
-    private final String location;
+    private final LocationResponseDto location;
 
     private final Instant createdTime;
 
@@ -48,8 +50,8 @@ public class MeetingPostResponseWithComments {
         this.title = meetingPost.getTitle();
         this.content = meetingPost.getContent();
         this.author = MemberResponse.create(meetingPost.getMember());
-        this.category = meetingPost.getCategory().getName();
-        this.location = meetingPost.getLocation().getName();
+        this.category = CategoryResponse.of(meetingPost.getCategory());
+        this.location = LocationResponseDto.of(meetingPost.getLocation());
         this.createdTime = meetingPost.getCreatedTime();
         this.likeNum = likeNum;
         this.isLikedByMe = isLikedByMe;
