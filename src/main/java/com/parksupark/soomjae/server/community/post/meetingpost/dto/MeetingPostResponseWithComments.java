@@ -1,17 +1,18 @@
 package com.parksupark.soomjae.server.community.post.meetingpost.dto;
 
 import com.parksupark.soomjae.server.community.category.dto.CategoryResponse;
+import com.parksupark.soomjae.server.community.comment.dto.CommentResponse;
 import com.parksupark.soomjae.server.community.common.constant.PostConstant;
 import com.parksupark.soomjae.server.community.location.dto.LocationResponseDto;
-import com.parksupark.soomjae.server.community.post.common.dto.PostResponse;
 import com.parksupark.soomjae.server.community.post.meetingpost.entity.MeetingPost;
 import com.parksupark.soomjae.server.member.dto.MemberResponse;
 import jakarta.annotation.Nullable;
 import java.time.Instant;
+import java.util.List;
 import lombok.Getter;
 
 @Getter
-public class MeetingPostResponse implements PostResponse {
+public class MeetingPostResponseWithComments {
 
     private final Long postId;
     private final String postType;
@@ -36,11 +37,14 @@ public class MeetingPostResponse implements PostResponse {
     private final Instant startTime;
     private final Instant endTime;
 
-    private final Long commentNum;
+    private final List<CommentResponse> comments;
+
+    private final Boolean isParticipatedByMe;
 
 
-    private MeetingPostResponse(MeetingPost meetingPost,
-        MeetingPostStatsResponse postStatsResponse) {
+    private MeetingPostResponseWithComments(MeetingPost meetingPost, Long likeNum,
+        Boolean isLikedByMe, List<CommentResponse> comments,
+        int currentParticipantCount, Boolean isParticipatedByMe) {
         this.postId = meetingPost.getId();
         this.postType = PostConstant.MEETING_POST_TYPE;
         this.title = meetingPost.getTitle();
@@ -49,17 +53,20 @@ public class MeetingPostResponse implements PostResponse {
         this.category = CategoryResponse.of(meetingPost.getCategory());
         this.location = LocationResponseDto.of(meetingPost.getLocation());
         this.createdTime = meetingPost.getCreatedTime();
-        this.likeNum = postStatsResponse.getLikeCount();
-        this.isLikedByMe = postStatsResponse.isLikedByMe();
+        this.likeNum = likeNum;
+        this.isLikedByMe = isLikedByMe;
         this.maximumParticipants = meetingPost.getMaximumParticipants();
-        this.currentParticipantCount = postStatsResponse.getParticipantCount().intValue();
+        this.currentParticipantCount = currentParticipantCount;
         this.startTime = meetingPost.getStartTime();
         this.endTime = meetingPost.getEndTime();
-        this.commentNum = postStatsResponse.getCommentCount();
+        this.comments = comments;
+        this.isParticipatedByMe = isParticipatedByMe;
     }
 
-    public static MeetingPostResponse of(MeetingPost meetingPost,
-        MeetingPostStatsResponse postStatsResponse) {
-        return new MeetingPostResponse(meetingPost, postStatsResponse);
+    public static MeetingPostResponseWithComments of(MeetingPost meetingPost, Long likeNum,
+        Boolean isLikedByMe, List<CommentResponse> comments, int currentParticipantCount,
+        Boolean isParticipatedByMe) {
+        return new MeetingPostResponseWithComments(meetingPost, likeNum, isLikedByMe, comments,
+            currentParticipantCount, isParticipatedByMe);
     }
 }

@@ -6,13 +6,15 @@ import com.parksupark.soomjae.server.auth.username.dto.UsernamePasswordUserDetai
 import com.parksupark.soomjae.server.community.participation.dto.ParticipantListResponse;
 import com.parksupark.soomjae.server.community.participation.dto.ParticipationResponse;
 import com.parksupark.soomjae.server.community.post.common.dto.PostListResponse;
-import com.parksupark.soomjae.server.community.post.meetingpost.dto.MeetingPostDetailResponse;
 import com.parksupark.soomjae.server.community.post.meetingpost.dto.MeetingPostRequest;
+import com.parksupark.soomjae.server.community.post.meetingpost.dto.MeetingPostResponseWithComments;
 import com.parksupark.soomjae.server.community.post.meetingpost.service.MeetingPostService;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -58,7 +60,7 @@ public class MeetingPostController {
 
     //postId로 상세 조회
     @GetMapping("/v1/boards/meeting/posts/{postId}")
-    ResponseEntity<MeetingPostDetailResponse> getByPostId(@PathVariable Long postId,
+    ResponseEntity<MeetingPostResponseWithComments> getByPostId(@PathVariable Long postId,
         @AuthenticationPrincipal UsernamePasswordUserDetails userDetails) {
         return ResponseEntity.ok(meetingPostService.readByPostId(postId, userDetails));
     }
@@ -68,8 +70,11 @@ public class MeetingPostController {
     ResponseEntity<PostListResponse> getMeetingPostList(
         @PageableDefault(size = 10, page = 0) Pageable pageable,
         @AuthenticationPrincipal UsernamePasswordUserDetails userDetails) {
-        Pageable zeroBasedPageable = Pageable.ofSize(pageable.getPageSize())
-            .withPage(Math.max(pageable.getPageNumber() - 1, 0));
+        Pageable zeroBasedPageable = PageRequest.of(
+            Math.max(pageable.getPageNumber() - 1, 0),
+            pageable.getPageSize(),
+            Sort.by(Sort.Direction.DESC, "createTime")
+        );
         return ResponseEntity.ok(
             meetingPostService.readMeetingPostList(zeroBasedPageable, userDetails));
     }
