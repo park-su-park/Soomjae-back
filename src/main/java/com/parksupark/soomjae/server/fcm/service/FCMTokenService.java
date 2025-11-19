@@ -1,6 +1,7 @@
 package com.parksupark.soomjae.server.fcm.service;
 
 import com.parksupark.soomjae.server.fcm.domain.Token;
+import com.parksupark.soomjae.server.fcm.dto.FCMTokenDelteRequest;
 import com.parksupark.soomjae.server.fcm.dto.FCMTokenRequest;
 import com.parksupark.soomjae.server.fcm.repository.TokenRepository;
 import com.parksupark.soomjae.server.member.entity.Member;
@@ -30,6 +31,12 @@ public class FCMTokenService {
     @Transactional
     public void saveFCMToken(Member member, FCMTokenRequest request) {
         log.info("saveFCMToken 메서드 호출");
+        if (isTokenUsedByAnotherMember(request.getFcmToken(), member)) {
+            Token token = tokenRepository.findByTokenValue(request.getFcmToken()).get();
+            token.updateMember(member);
+            tokenRepository.save(token);
+            return;
+        }
 
         // token이 이미 있는지 체크
         Optional<Token> existingToken = tokenRepository.findByDeviceAndMember(request.getDevice(),
@@ -49,10 +56,18 @@ public class FCMTokenService {
         }
     }
 
+    Boolean isTokenUsedByAnotherMember(String token, Member member) {
+        Optional<Token> byTokenValue = tokenRepository.findByTokenValue(token);
+        if (byTokenValue.isPresent()) {
+            return !byTokenValue.get().getMember().equals(member);
+        }
+        return false;
+    }
+
     @Transactional
-    public void delete(Member member, FCMTokenRequest request) {
+    public void delete(Member member, FCMTokenDelteRequest request) {
         Optional<Token> byDeviceAndMemberAndTokenValue = tokenRepository
-            .findByDeviceAndMemberAndTokenValue(request.getDevice(), member, request.getFcmToken());
+            .findByDeviceAndMember(request.getDevice(), member);
         byDeviceAndMemberAndTokenValue.ifPresent(tokenRepository::delete);
     }
 

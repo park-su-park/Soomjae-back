@@ -12,11 +12,10 @@ import org.springframework.data.repository.query.Param;
 
 public interface TokenRepository extends JpaRepository<Token, Long> {
 
+    Optional<Token> findByTokenValue(String tokenValue);
 
     Optional<Token> findByDeviceAndMember(String device, Member member);
 
-    Optional<Token> findByDeviceAndMemberAndTokenValue(String device, Member member,
-        String tokenValue);
 
     List<Token> findByMemberIn(List<Member> members);
 
