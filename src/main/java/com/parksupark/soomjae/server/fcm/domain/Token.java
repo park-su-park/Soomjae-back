@@ -44,4 +44,8 @@ public class Token {
     private Member member;
 
     private String device;
+
+    public void updateMember(Member member) {
+        this.member = member;
+    }
 }

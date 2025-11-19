@@ -31,12 +31,11 @@ public class FCMTokenService {
     @Transactional
     public void saveFCMToken(Member member, FCMTokenRequest request) {
         log.info("saveFCMToken 메서드 호출");
-        Optional<Token> byTokenValue = tokenRepository.findByTokenValue(request.getFcmToken());
-        if (byTokenValue.isPresent()) {
-            Token token = byTokenValue.get();
-            if (!token.getMember().getId().equals(member.getId())) {
-                throw new IllegalArgumentException("이미 토큰을 사용중인 멤버가 있습니다.");
-            }
+        if (isTokenUsedByAnotherMember(request.getFcmToken(), member)) {
+            Token token = tokenRepository.findByTokenValue(request.getFcmToken()).get();
+            token.updateMember(member);
+            tokenRepository.save(token);
+            return;
         }
 
         // token이 이미 있는지 체크
@@ -55,6 +54,14 @@ public class FCMTokenService {
             log.info("DB에 저장하는 token : " + token.getTokenValue());
             tokenRepository.save(token);
         }
+    }
+
+    Boolean isTokenUsedByAnotherMember(String token, Member member) {
+        Optional<Token> byTokenValue = tokenRepository.findByTokenValue(token);
+        if (byTokenValue.isPresent()) {
+            return !byTokenValue.get().getMember().equals(member);
+        }
+        return false;
     }
 
     @Transactional
