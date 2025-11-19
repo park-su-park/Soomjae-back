@@ -72,7 +72,8 @@ public class DefaultProfileService implements ProfileService {
 
         if (newNickname != null) {
             if (memberRepository.existsByNickname(newNickname)) {
-                throw new ResourceAlreadyExistsException(ErrorMessages.NICKNAME_ALREADY_USED_MESSAGE);
+                throw new ResourceAlreadyExistsException(
+                    ErrorMessages.NICKNAME_ALREADY_USED_MESSAGE);
             }
             member.updateNickname(request.getNickname());
         }
