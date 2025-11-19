@@ -20,6 +20,13 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x gradlew
 
+      - name: Create firebase config file from secret
+        run: |
+          mkdir -p src/main/resources/firebase
+          cat << 'EOF' > src/main/resources/firebase/soom-jae-oauth-firebase-adminsdk-fbsvc-2dfabde71c.json
+          ${{ secrets.FIREBASE_ADMIN_JSON }}
+          EOF
+
       # 2. Java 환경 설정
       - name: Set up JDK
         uses: actions/setup-java@v3
