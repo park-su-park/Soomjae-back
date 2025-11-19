@@ -10,6 +10,7 @@ import com.parksupark.soomjae.server.community.comment.repository.CommentReposit
 import com.parksupark.soomjae.server.community.common.exception.InvalidPostIdException;
 import com.parksupark.soomjae.server.community.validator.PostValidator;
 import com.parksupark.soomjae.server.community.validator.PostValidatorFactory;
+import com.parksupark.soomjae.server.fcm.service.AlarmNotificationService;
 import com.parksupark.soomjae.server.member.entity.Member;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -24,22 +25,25 @@ public class CommentService {
 
     private final PostValidatorFactory postValidatorFactory;
     private final CommentRepository commentRepository;
+    private final AlarmNotificationService alarmNotificationService;
 
     @Transactional
     public CommentResponse create(CommentRequest request, String postType, Long postId,
-            UsernamePasswordUserDetails userDetails) {
+        UsernamePasswordUserDetails userDetails) {
         validatePost(postType, postId);
 
         Member member = userDetails.getMember();
 
         Comment comment = Comment.builder()
-                .postId(postId)
-                .postType(postType)
-                .content(request.getContent())
-                .member(member)
-                .build();
+            .postId(postId)
+            .postType(postType)
+            .content(request.getContent())
+            .member(member)
+            .build();
 
         Comment savedComment = commentRepository.save(comment);
+
+        alarmNotificationService.sendNewCommentAlarm(savedComment);
 
         return CommentResponse.of(savedComment);
     }
@@ -48,28 +52,28 @@ public class CommentService {
         validatePost(postType, postId);
 
         List<Comment> byPostTypeAndPostId = commentRepository
-                .findByPostTypeAndPostIdAndDeletedTimeIsNull(postType, postId);
+            .findByPostTypeAndPostIdAndDeletedTimeIsNull(postType, postId);
 
         List<CommentResponse> commentResponseList = byPostTypeAndPostId.stream()
-                .map(CommentResponse::of)
-                .toList();
+            .map(CommentResponse::of)
+            .toList();
 
         return CommentListResponse.of(commentResponseList);
     }
 
     @Transactional
     public void delete(String postType, Long postId, Long commentId,
-            UsernamePasswordUserDetails userDetails) {
+        UsernamePasswordUserDetails userDetails) {
         validatePost(postType, postId);
         Comment comment = commentRepository.findByIdAndDeletedTimeIsNull(commentId)
-                .orElseThrow(() -> new IllegalStateException("해당 Id를 가진 comment가 존재하지 않습니다."));
+            .orElseThrow(() -> new IllegalStateException("해당 Id를 가진 comment가 존재하지 않습니다."));
 
         validateCommentOwner(userDetails, comment);
         comment.markDeleted();
     }
 
     private static void validateCommentOwner(UsernamePasswordUserDetails userDetails,
-            Comment comment) {
+        Comment comment) {
         if (!comment.getMember().getId().equals(userDetails.getMember().getId())) {
             throw new IllegalStateException(ErrorMessages.COMMENT_OWNER_MISMATCH_EXCEPTION_MESSAGE);
         }
@@ -79,7 +83,7 @@ public class CommentService {
         PostValidator validator = postValidatorFactory.getValidator(postType);
         if (!validator.isValid(postId)) {
             throw new InvalidPostIdException(
-                    ErrorMessages.INVALID_POST_ID_EXCEPTION_MESSAGE + postId);
+                ErrorMessages.INVALID_POST_ID_EXCEPTION_MESSAGE + postId);
         }
     }
 }

@@ -9,6 +9,7 @@ import com.parksupark.soomjae.server.community.review.service.ReviewService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,6 +27,7 @@ public class ReviewController {
 
     private final ReviewService reviewService;
 
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/boards/meeting/posts/{postId}/reviews")
     public ResponseEntity<ReviewResponse> postReview(@PathVariable Long postId,
         @RequestBody @Valid CreateReviewRequest request,
@@ -46,6 +48,7 @@ public class ReviewController {
         return ResponseEntity.ok(response);
     }
 
+    @PreAuthorize("isAuthenticated()")
     @PutMapping("/boards/meeting/posts/{postId}/reviews/{reviewId}")
     public ResponseEntity<ReviewResponse> putReview(@PathVariable Long postId,
         @PathVariable Long reviewId,
@@ -58,6 +61,7 @@ public class ReviewController {
         return ResponseEntity.ok(response);
     }
 
+    @PreAuthorize("isAuthenticated()")
     @DeleteMapping("/boards/meeting/posts/{postId}/reviews/{reviewId}")
     public ResponseEntity<Void> deleteReview(@PathVariable Long postId,
         @PathVariable Long reviewId,
@@ -68,6 +72,7 @@ public class ReviewController {
         return ResponseEntity.ok().build();
     }
 
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/boards/meeting/posts/{postId}/reviews/me")
     public ResponseEntity<ReviewExistenceResponse> checkReviewExistence(@PathVariable Long postId,
         @AuthenticationPrincipal UsernamePasswordUserDetails userDetails) {

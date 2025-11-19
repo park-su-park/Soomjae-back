@@ -49,7 +49,6 @@ class RefreshTokenE2ETest {
 
     private final String email = "test@example.com";
     private final String password = "test";
-    private final String nickname = "test";
 
     private String refreshToken;
 
@@ -61,7 +60,7 @@ class RefreshTokenE2ETest {
         expiredRefreshTokenGenerator = new ExpiredRefreshTokenGenerator(refreshSecret);
 
         // 1. 회원 생성
-        CreateMemberRequest request = new CreateMemberRequest(email, password, nickname);
+        CreateMemberRequest request = new CreateMemberRequest(email, password);
         memberService.createMember(request);
 
         // 2. 로그인

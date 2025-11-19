@@ -77,7 +77,7 @@ class MemberE2ETest {
     @DisplayName("Member를 생성 할 수 있다")
     void createMember() throws Exception {
         // given
-        CreateMemberRequest request = new CreateMemberRequest(email, rawPassword, nickname);
+        CreateMemberRequest request = new CreateMemberRequest(email, rawPassword);
 
         // when + then
         mockMvc.perform(post(CREATE_MEMBER_URI)
@@ -93,8 +93,7 @@ class MemberE2ETest {
     @DisplayName("중복된 email로 Member 생성 요청시 400반환")
     void createMemberWithDuplicateEmail_shouldReturnBadRequest() throws Exception {
         // given
-        CreateMemberRequest request = new CreateMemberRequest(email, rawPassword,
-            nickname);
+        CreateMemberRequest request = new CreateMemberRequest(email, rawPassword);
 
         memberService.createMember(request);
 
@@ -137,7 +136,7 @@ class MemberE2ETest {
                 try {
                     // 이 데이터가 롤백되지 않고 db에 계속 남게됨
                     CreateMemberRequest request = new CreateMemberRequest("concurrent@example",
-                        "password" + index, "nickname" + index);
+                        "password" + index);
 
                     MvcResult result = mockMvc.perform(post(CREATE_MEMBER_URI)
                             .contentType(MediaType.APPLICATION_JSON)
@@ -248,8 +247,7 @@ class MemberE2ETest {
 
         // 이미 존재할 Member 생성
         final String duplicateEmail = "duplicate@example.com";
-        CreateMemberRequest request = new CreateMemberRequest(duplicateEmail, "test",
-            "testnickname1");
+        CreateMemberRequest request = new CreateMemberRequest(duplicateEmail, "test");
         memberService.createMember(request);
 
         // 요청 바디 생성
@@ -334,7 +332,7 @@ class MemberE2ETest {
     }
 
     private Member saveMember() {
-        CreateMemberRequest request = new CreateMemberRequest(email, rawPassword, nickname);
+        CreateMemberRequest request = new CreateMemberRequest(email, rawPassword);
         MemberResponse response = memberService.createMember(request);
         Long memberId = response.getMemberId();
         Optional<Member> memberOpt = memberRepository.findById(memberId);

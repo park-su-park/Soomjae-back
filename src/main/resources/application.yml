@@ -8,6 +8,11 @@ spring:
 
 server:
   env: blue
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+    org.springframework.security.oauth2: TRACE
 ---
 spring:
   config:
@@ -64,6 +69,9 @@ serverName: green_server
 ---
 
 spring:
+  jackson:
+    deserialization:
+      fail-on-unknown-properties: false
   config:
     activate:
       on-profile: common
@@ -87,8 +95,8 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: ${mail.username}
-    password: ${mail.password}
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
     properties:
       mail:
         smtp:
@@ -109,10 +117,12 @@ spring:
           google:
             client-id: ${GOOGLE_CLIENT_ID}
             client-secret: ${GOOGLE_CLIENT_SECRET}
-            scope: email+profile
+            scope:
+              - email
+              - profile
         provider:
           google:
-            authorization-uri: https://accounts.google.com/o/oauth2/auth
+            authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
             token-uri: https://oauth2.googleapis.com/token
             user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
             user-name-attribute: sub
@@ -136,6 +146,8 @@ spring:
 app:
   cookie:
     secure: false
+  profile:
+    default-image-url: ${DEFAULT_PROFILE_IMAGE_URL}
 
 server:
   ssl:
@@ -149,3 +161,14 @@ jwt:
   secret: ${JWT_SECRET}
   refresh:
     secret: ${JWT_REFRESH_SECRET}
+
+fcm:
+  firebase_config_path: ${FIREBASE_CONFIG_PATH}
+cloud:
+  aws:
+    s3:
+      bucket: ${AWS_S3_BUCKET}
+    region:
+      static: ${AWS_S3_BUCKET_REGION}
+    stack:
+      auto: false
