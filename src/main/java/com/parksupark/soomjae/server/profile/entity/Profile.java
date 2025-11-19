@@ -12,6 +12,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.security.core.parameters.P;
 
 @Entity
 @Getter
@@ -39,8 +40,10 @@ public class Profile {
     }
 
     public static Profile create(Member member) {
+        Profile profile = new Profile(member);
+        member.setProfile(profile);
 
-        return new Profile(member);
+        return profile;
     }
 
     public void setProfileImage(ProfileImage profileImage) {
