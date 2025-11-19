@@ -2,8 +2,8 @@ package com.parksupark.soomjae.server.community.post.communitypost.controller;
 
 import com.parksupark.soomjae.server.auth.username.dto.UsernamePasswordUserDetails;
 import com.parksupark.soomjae.server.community.post.common.dto.PostListResponse;
-import com.parksupark.soomjae.server.community.post.communitypost.dto.CommunityPostDetailResponse;
 import com.parksupark.soomjae.server.community.post.communitypost.dto.CommunityPostRequest;
+import com.parksupark.soomjae.server.community.post.communitypost.dto.CommunityPostResponseWithComments;
 import com.parksupark.soomjae.server.community.post.communitypost.service.CommunityPostService;
 import java.util.HashMap;
 import java.util.Map;
@@ -55,7 +55,7 @@ public class CommunityPostController {
 
     //postId로 상세 조회
     @GetMapping("/v1/boards/community/posts/{postId}")
-    ResponseEntity<CommunityPostDetailResponse> getByPostId(@PathVariable Long postId,
+    ResponseEntity<CommunityPostResponseWithComments> getByPostId(@PathVariable Long postId,
         @AuthenticationPrincipal UsernamePasswordUserDetails userDetails) {
         return ResponseEntity.ok(communityPostService.readByPostId(postId, userDetails));
     }

@@ -1,15 +1,16 @@
 package com.parksupark.soomjae.server.community.post.communitypost.dto;
 
-import static com.parksupark.soomjae.server.community.common.constant.PostConstant.COMMUNITY_POST_TYPE;
-
+import com.parksupark.soomjae.server.community.comment.dto.CommentResponse;
+import com.parksupark.soomjae.server.community.common.constant.PostConstant;
 import com.parksupark.soomjae.server.community.post.communitypost.entity.CommunityPost;
 import com.parksupark.soomjae.server.member.dto.MemberResponse;
 import jakarta.annotation.Nullable;
 import java.time.Instant;
+import java.util.List;
 import lombok.Getter;
 
 @Getter
-public abstract class CommunityPostBaseResponse {
+public class CommunityPostResponseWithComments {
 
     private final Long postId;
     private final String postType;
@@ -24,19 +25,26 @@ public abstract class CommunityPostBaseResponse {
     private final Long likeNum;
     private final Boolean isLikedByMe;
 
-    protected CommunityPostBaseResponse(CommunityPost communityPost, Long likeNum,
-        Boolean isLikedByMe) {
+    private final List<CommentResponse> comments;
+
+    private CommunityPostResponseWithComments(CommunityPost communityPost, Long likeNum,
+        Boolean isLikedByMe, List<CommentResponse> comments) {
         this.postId = communityPost.getId();
-        this.postType = COMMUNITY_POST_TYPE;
+        this.postType = PostConstant.COMMUNITY_POST_TYPE;
         this.title = communityPost.getTitle();
         this.content = communityPost.getContent();
         this.author = MemberResponse.create(communityPost.getMember());
+        this.category = communityPost.getCategory().getName();
+        this.location = communityPost.getLocation().getName();
         this.createdTime = communityPost.getCreatedTime();
-        this.category =
-            communityPost.getCategory() != null ? communityPost.getCategory().getName() : null;
-        this.location =
-            communityPost.getLocation() != null ? communityPost.getLocation().getName() : null;
         this.likeNum = likeNum;
         this.isLikedByMe = isLikedByMe;
+        this.comments = comments;
+
+    }
+
+    public static CommunityPostResponseWithComments of(CommunityPost communityPost, Long likeNum,
+        Boolean isLikedByMe, List<CommentResponse> comments) {
+        return new CommunityPostResponseWithComments(communityPost, likeNum, isLikedByMe, comments);
     }
 }
