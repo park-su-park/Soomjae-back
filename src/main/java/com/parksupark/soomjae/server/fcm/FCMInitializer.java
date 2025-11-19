@@ -27,10 +27,14 @@ public class FCMInitializer {
                 .build();
             if (FirebaseApp.getApps().isEmpty()) {
                 FirebaseApp.initializeApp(options);
+                log.info("==================================");
                 log.info("Firebase application has been initialized");
+                log.info("==================================");
             }
         } catch (IOException e) {
+            log.info("==================================");
             log.error(e.getMessage());
+            log.info("==================================");
         }
     }
 
