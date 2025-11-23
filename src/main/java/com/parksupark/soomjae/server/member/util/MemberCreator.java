@@ -1,6 +1,8 @@
 package com.parksupark.soomjae.server.member.util;
 
 import com.parksupark.soomjae.server.auth.oauth.AuthProvider;
+import com.parksupark.soomjae.server.community.post.introductionpost.entity.IntroductionPost;
+import com.parksupark.soomjae.server.community.post.introductionpost.repository.IntroductionPostRepository;
 import com.parksupark.soomjae.server.member.entity.Member;
 import com.parksupark.soomjae.server.member.repository.MemberRepository;
 import com.parksupark.soomjae.server.profile.service.ProfileService;
@@ -19,6 +21,7 @@ public class MemberCreator {
     private final MemberRepository memberRepository;
     private final RandomNicknameCreator randomNicknameCreator;
     private final ProfileService profileService;
+    private final IntroductionPostRepository introductionPostRepository;
 
     @Retryable(
         retryFor = {DataIntegrityViolationException.class},
@@ -31,6 +34,10 @@ public class MemberCreator {
         Member member = Member.create(email, encodedPassword, nickname);
         Member saved = memberRepository.save(member);
         Long profile = profileService.createProfile(member);
+        IntroductionPost introductionPost = IntroductionPost.create(null);
+        introductionPost.setMember(member);
+        introductionPostRepository.save(introductionPost);
+
         return saved;
     }
 
@@ -45,6 +52,10 @@ public class MemberCreator {
         Member member = Member.createOAuthMember(email, provider, nickname, providerId);
         Member saved = memberRepository.save(member);
         Long profile = profileService.createProfile(member);
+        IntroductionPost introductionPost = IntroductionPost.create(null);
+        introductionPost.setMember(member);
+        introductionPostRepository.save(introductionPost);
+
         return saved;
     }
 
