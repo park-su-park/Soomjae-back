@@ -4,6 +4,7 @@ import com.parksupark.soomjae.server.auth.username.dto.UsernamePasswordUserDetai
 import com.parksupark.soomjae.server.common.exception.ErrorMessages;
 import com.parksupark.soomjae.server.common.exception.ResourceAlreadyExistsException;
 import com.parksupark.soomjae.server.common.exception.ResourceNotFoundException;
+import com.parksupark.soomjae.server.common.exception.ResourceOwnershipException;
 import com.parksupark.soomjae.server.community.post.common.dto.PostResponse;
 import com.parksupark.soomjae.server.community.post.introducepost.dto.CreateIntroducePostRequest;
 import com.parksupark.soomjae.server.community.post.introducepost.dto.IntroducePostResponse;
@@ -90,7 +91,7 @@ public class DefaultIntroducePostService implements IntroducePostService {
             .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.RESOURCE_NOT_FOUND));
 
         if (!member.getId().equals(introducePost.getMember().getId())) {
-            throw new ResourceNotFoundException(ErrorMessages.POST_OWNER_MISMATCH_MESSAGE);
+            throw new ResourceOwnershipException(ErrorMessages.POST_OWNER_MISMATCH_MESSAGE);
         }
 
         introducePostRepository.delete(introducePost);
@@ -107,7 +108,7 @@ public class DefaultIntroducePostService implements IntroducePostService {
             .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.RESOURCE_NOT_FOUND));
 
         if (!member.getId().equals(introducePost.getMember().getId())) {
-            throw new ResourceNotFoundException(ErrorMessages.POST_OWNER_MISMATCH_MESSAGE);
+            throw new ResourceOwnershipException(ErrorMessages.POST_OWNER_MISMATCH_MESSAGE);
         }
 
         introducePostRepository.delete(introducePost);
