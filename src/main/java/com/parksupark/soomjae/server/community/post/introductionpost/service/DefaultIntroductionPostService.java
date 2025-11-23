@@ -36,8 +36,8 @@ public class DefaultIntroductionPostService implements IntroductionPostService {
     @Override
     @Transactional(readOnly = true)
     public PostResponse readIntroductionPostByMemberId(Long memberId) {
-        IntroductionPost introductionPost = introductionPostRepository.findByMemberId(memberId).orElseThrow(
-            () -> new ResourceNotFoundException(ErrorMessages.RESOURCE_NOT_FOUND));
+        IntroductionPost introductionPost = introductionPostRepository.findByMemberId(memberId)
+            .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.RESOURCE_NOT_FOUND));
 
         MemberResponse memberResponse = MemberResponse.create(introductionPost.getMember());
 
@@ -52,14 +52,15 @@ public class DefaultIntroductionPostService implements IntroductionPostService {
 
         Member member = userDetails.getMember();
 
-        IntroductionPost introductionPost = introductionPostRepository.findByMemberId(member.getId())
+        IntroductionPost introductionPost = introductionPostRepository.findByMemberId(
+                member.getId())
             .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.RESOURCE_NOT_FOUND));
 
         introductionPost.updateIntroductionPost(request);
 
-        return new IntroductionPostResponse(introductionPost.getId(), MemberResponse.create(member),
-            introductionPost.getContent(), introductionPost.getCreatedTime());
-
+        return new IntroductionPostResponse(introductionPost.getId(),
+            MemberResponse.create(member), introductionPost.getContent(),
+            introductionPost.getCreatedTime());
     }
 
     @Override
