@@ -45,7 +45,8 @@ public class IntroductionPostController {
         @RequestBody UpdateIntroductionPostRequest request,
         @AuthenticationPrincipal UsernamePasswordUserDetails userDetails) {
 
-        PostResponse response = introductionPostService.updateIntroductionPost(request, userDetails);
+        PostResponse response = introductionPostService.updateIntroductionPost(request,
+            userDetails);
 
         return ResponseEntity.ok(response);
     }
