@@ -1,8 +1,7 @@
-package com.parksupark.soomjae.server.community.post.introducepost.entity;
+package com.parksupark.soomjae.server.community.post.introductionpost.entity;
 
 import com.parksupark.soomjae.server.common.entity.BaseEntity;
-import com.parksupark.soomjae.server.community.post.introducepost.dto.CreateIntroducePostRequest;
-import com.parksupark.soomjae.server.community.post.introducepost.dto.UpdateIntroducePostRequest;
+import com.parksupark.soomjae.server.community.post.introductionpost.dto.UpdateIntroductionPostRequest;
 import com.parksupark.soomjae.server.member.entity.Member;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -17,7 +16,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor
-public class IntroducePost extends BaseEntity {
+public class IntroductionPost extends BaseEntity {
 
     @Id
     @GeneratedValue
@@ -27,22 +26,22 @@ public class IntroducePost extends BaseEntity {
     @JoinColumn(name = "author_id")
     private Member member;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT", nullable = true)
     private String content;
 
-    private IntroducePost(String content) {
+    private IntroductionPost(String content) {
         this.content = content;
     }
 
-    public static IntroducePost create(CreateIntroducePostRequest request) {
-        return new IntroducePost(request.getContent());
+    public static IntroductionPost create(String content) {
+        return new IntroductionPost(content);
     }
 
     public void setMember(Member member) {
         this.member = member;
     }
 
-    public void updateIntroducePost(UpdateIntroducePostRequest request) {
+    public void updateIntroductionPost(UpdateIntroductionPostRequest request) {
         this.content = request.getContent();
     }
 }
