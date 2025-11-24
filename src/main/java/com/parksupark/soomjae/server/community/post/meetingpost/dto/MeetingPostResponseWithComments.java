@@ -50,8 +50,19 @@ public class MeetingPostResponseWithComments {
         this.title = meetingPost.getTitle();
         this.content = meetingPost.getContent();
         this.author = MemberResponse.create(meetingPost.getMember());
-        this.category = CategoryResponse.of(meetingPost.getCategory());
-        this.location = LocationResponseDto.of(meetingPost.getLocation());
+
+        if (meetingPost.getCategory() == null) {
+            this.category = null;
+        } else {
+            this.category = CategoryResponse.of(meetingPost.getCategory());
+        }
+
+        if (meetingPost.getCategory() == null) {
+            this.location = null;
+        } else {
+            this.location = LocationResponseDto.of(meetingPost.getLocation());
+        }
+
         this.createdTime = meetingPost.getCreatedTime();
         this.likeNum = likeNum;
         this.isLikedByMe = isLikedByMe;
