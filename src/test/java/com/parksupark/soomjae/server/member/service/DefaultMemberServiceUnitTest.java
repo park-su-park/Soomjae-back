@@ -30,7 +30,7 @@ class DefaultMemberServiceUnitTest {
     private final EmailVerificationRepository emailVerificationRepository =
         new NoOpEmailVerificationRepository();
     private final MemberCreator memberCreator = new MemberCreator(memberRepository,
-        new RandomNicknameCreator(new SecureRandom()), null);
+        new RandomNicknameCreator(new SecureRandom()), null, null);
     private final String email = "test@example.com";
     private final String password = "test";
     private final String nickname = "test";
