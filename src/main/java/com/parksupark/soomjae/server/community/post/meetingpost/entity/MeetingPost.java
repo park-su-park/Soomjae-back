@@ -6,6 +6,8 @@ import com.parksupark.soomjae.server.community.location.entity.Location;
 import com.parksupark.soomjae.server.member.entity.Member;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -52,4 +54,8 @@ public class MeetingPost extends BaseEntity {
     private Instant startTime;
 
     private Instant endTime;
+
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private MeetingStatus status = MeetingStatus.OPEN;
 }

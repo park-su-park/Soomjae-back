@@ -20,6 +20,9 @@ public class ErrorMessages {
     public static final String COMMENT_OWNER_MISMATCH_EXCEPTION_MESSAGE = "본인의 댓글만 삭제할 수 있습니다.";
     public static final String VALIDATION_FAILED_MESSAGE = "요청 바디 값 검증에 실패했습니다.";
 
+    public static final String NOT_AUTHOR_OF_POST = "게시글 작성자가 아닙니다.";
+
+
     public static final String CLOSED_MEETING = "이미 모집종료된 모임입니다";
 
     public static final String PROFILE_ALREADY_EXISTS_MESSAGE = "프로필이 이미 존재 하는 계정입니다.";
