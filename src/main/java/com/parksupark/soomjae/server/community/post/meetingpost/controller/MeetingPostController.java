@@ -108,7 +108,7 @@ public class MeetingPostController {
 
     @DeleteMapping("/v1/boards/meeting/posts/{postId}/join")
     @PreAuthorize("isAuthenticated()")
-    ResponseEntity<String> deleteParticipation(@PathVariable Long postId,
+    ResponseEntity<ParticipationResponse> deleteParticipation(@PathVariable Long postId,
         @AuthenticationPrincipal UsernamePasswordUserDetails userDetails) {
         return ResponseEntity.ok(
             meetingPostService.cancelParticipation(postId, userDetails));
