@@ -71,7 +71,7 @@ public class CommunityPostController {
         Pageable zeroBasedPageable = PageRequest.of(
             Math.max(pageable.getPageNumber() - 1, 0),
             pageable.getPageSize(),
-            Sort.by(Sort.Direction.DESC, "createTime")
+            Sort.by(Sort.Direction.DESC, "createdTime")
         );
 
         return ResponseEntity.ok(
