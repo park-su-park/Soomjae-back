@@ -215,7 +215,9 @@ public class MeetingPostService {
     }
 
     @Transactional
-    public String cancelParticipation(Long postId, UsernamePasswordUserDetails userDetails) {
+    public ParticipationResponse cancelParticipation(Long postId,
+        UsernamePasswordUserDetails userDetails) {
+        Member participant = userDetails.getMember();
 
         MeetingPost meetingPost = meetingPostRepository.findById(postId)
             .orElseThrow(() -> new IllegalStateException(
@@ -230,7 +232,11 @@ public class MeetingPostService {
             .orElseThrow(() -> new IllegalStateException(NOT_PARTICIPANT_OF_POST));
 
         participationRepository.delete(participation);
-        return "참여 취소 성공";
+
+        long participantsNum = participationRepository.countByMeetingPostId(postId);
+
+        return ParticipationResponse.of(meetingPost.getId(), participantsNum,
+            meetingPost.getMaximumParticipants());
     }
 
     public ParticipantListResponse findAllParticipantsByPostId(Long postId) {
