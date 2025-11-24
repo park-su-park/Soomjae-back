@@ -2,6 +2,7 @@ package com.parksupark.soomjae.server.community.post.communitypost.dto;
 
 import static com.parksupark.soomjae.server.community.common.constant.PostConstant.COMMUNITY_POST_TYPE;
 
+import com.parksupark.soomjae.server.community.category.entity.Category;
 import com.parksupark.soomjae.server.community.post.common.dto.PostResponse;
 import com.parksupark.soomjae.server.community.post.communitypost.entity.CommunityPost;
 import com.parksupark.soomjae.server.member.dto.MemberResponse;
@@ -44,10 +45,25 @@ public class CommunityPostResponse implements PostResponse {
 
     public static CommunityPostResponse of(CommunityPost communityPost,
         CommunityPostStatsResponse communityPostStatsResponse) {
+
+        String categoryName;
+        String locationName;
+        if (communityPost.getCategory() == null) {
+            categoryName = null;
+        } else {
+            categoryName = communityPost.getCategory().getName();
+        }
+
+        if (communityPost.getLocation() == null) {
+            locationName = null;
+        } else {
+            locationName = communityPost.getLocation().getName();
+        }
+
         return new CommunityPostResponse(communityPost.getId(),
             communityPost.getTitle(), communityPost.getContent(),
-            MemberResponse.create(communityPost.getMember()), communityPost.getCategory().getName(),
-            communityPost.getLocation().getName(), communityPost.getCreatedTime(),
+            MemberResponse.create(communityPost.getMember()), categoryName,
+            locationName, communityPost.getCreatedTime(),
             communityPostStatsResponse.getLikeCount(), communityPostStatsResponse.isLikedByMe(),
             communityPostStatsResponse.getCommentCount());
     }

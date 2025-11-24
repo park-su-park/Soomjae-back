@@ -34,8 +34,18 @@ public class CommunityPostResponseWithComments {
         this.title = communityPost.getTitle();
         this.content = communityPost.getContent();
         this.author = MemberResponse.create(communityPost.getMember());
-        this.category = communityPost.getCategory().getName();
-        this.location = communityPost.getLocation().getName();
+        if (communityPost.getCategory() == null) {
+            this.category = null;
+        } else {
+            this.category = communityPost.getCategory().getName();
+        }
+
+        if (communityPost.getLocation() == null) {
+            this.location = null;
+        } else {
+            this.location = communityPost.getLocation().getName();
+        }
+
         this.createdTime = communityPost.getCreatedTime();
         this.likeNum = likeNum;
         this.isLikedByMe = isLikedByMe;
