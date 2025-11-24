@@ -2,15 +2,18 @@ package com.parksupark.soomjae.server.community.post.communitypost.controller;
 
 import com.parksupark.soomjae.server.auth.username.dto.UsernamePasswordUserDetails;
 import com.parksupark.soomjae.server.community.post.common.dto.PostListResponse;
-import com.parksupark.soomjae.server.community.post.communitypost.dto.CommunityPostDetailResponse;
 import com.parksupark.soomjae.server.community.post.communitypost.dto.CommunityPostRequest;
+import com.parksupark.soomjae.server.community.post.communitypost.dto.CommunityPostResponseWithComments;
 import com.parksupark.soomjae.server.community.post.communitypost.service.CommunityPostService;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,6 +31,7 @@ public class CommunityPostController {
     private final CommunityPostService communityPostService;
 
     @PostMapping("/v1/boards/community/posts")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Map<String, Object>> postCommunityPost(
         @RequestBody CommunityPostRequest communityPostRequest,
         @AuthenticationPrincipal
@@ -53,7 +57,7 @@ public class CommunityPostController {
 
     //postId로 상세 조회
     @GetMapping("/v1/boards/community/posts/{postId}")
-    ResponseEntity<CommunityPostDetailResponse> getByPostId(@PathVariable Long postId,
+    ResponseEntity<CommunityPostResponseWithComments> getByPostId(@PathVariable Long postId,
         @AuthenticationPrincipal UsernamePasswordUserDetails userDetails) {
         return ResponseEntity.ok(communityPostService.readByPostId(postId, userDetails));
     }
@@ -63,23 +67,32 @@ public class CommunityPostController {
     ResponseEntity<PostListResponse> getCommunityList(
         @PageableDefault(size = 10, page = 0) Pageable pageable,
         @AuthenticationPrincipal UsernamePasswordUserDetails userDetails) {
-        Pageable zeroBasedPageable = Pageable.ofSize(pageable.getPageSize())
-            .withPage(Math.max(pageable.getPageNumber() - 1, 0));
+
+        Pageable zeroBasedPageable = PageRequest.of(
+            Math.max(pageable.getPageNumber() - 1, 0),
+            pageable.getPageSize(),
+            Sort.by(Sort.Direction.DESC, "createdTime")
+        );
+
         return ResponseEntity.ok(
             communityPostService.readCommunityPostList(zeroBasedPageable, userDetails));
     }
 
     //수정
     @PutMapping("/v1/boards/community/posts/{postId}")
+    @PreAuthorize("isAuthenticated()")
     ResponseEntity<Long> putCommunityPost(@PathVariable Long postId,
-        @RequestBody CommunityPostRequest request) {
-        return ResponseEntity.ok(communityPostService.update(postId, request));
+        @RequestBody CommunityPostRequest request,
+        @AuthenticationPrincipal UsernamePasswordUserDetails userDetails) {
+        return ResponseEntity.ok(communityPostService.update(postId, request, userDetails));
     }
 
     //삭제
     @DeleteMapping("/v1/boards/community/posts/{postId}")
-    ResponseEntity<Void> deleteCommunityPost(@PathVariable Long postId) {
-        communityPostService.delete(postId);
+    @PreAuthorize("isAuthenticated()")
+    ResponseEntity<Void> deleteCommunityPost(@PathVariable Long postId,
+        @AuthenticationPrincipal UsernamePasswordUserDetails userDetails) {
+        communityPostService.delete(postId, userDetails);
         return ResponseEntity.ok().build();
     }
 

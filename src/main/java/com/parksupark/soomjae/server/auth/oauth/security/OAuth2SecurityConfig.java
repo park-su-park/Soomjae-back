@@ -1,17 +1,21 @@
 package com.parksupark.soomjae.server.auth.oauth.security;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.parksupark.soomjae.server.auth.oauth.handler.OAuth2FailureHandler;
 import com.parksupark.soomjae.server.auth.oauth.handler.OAuth2SuccessHandler;
 import com.parksupark.soomjae.server.auth.oauth.service.CustomOAuth2UserService;
+import com.parksupark.soomjae.server.common.filter.RequestLoggingFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -21,6 +25,7 @@ public class OAuth2SecurityConfig {
     private final CustomOAuth2UserService customOAuth2UserService;
     private final OAuth2SuccessHandler oauth2Successhandler;
     private final OAuth2FailureHandler oauth2Failurehandler;
+    private final ObjectMapper objectMapper;
 
     /**
      * <b>Why CSRF is disabled:</b>
@@ -30,10 +35,12 @@ public class OAuth2SecurityConfig {
      * </ul>
      */
     @Bean
-    @Order(2)
+    @Order(Ordered.HIGHEST_PRECEDENCE)
     public SecurityFilterChain oauth2FilterChain(HttpSecurity http) throws Exception {
         http
             .securityMatcher("/oauth2/**", "/login/oauth2/**")
+            .addFilterBefore(new RequestLoggingFilter(objectMapper),
+                UsernamePasswordAuthenticationFilter.class)
             .csrf(AbstractHttpConfigurer::disable)
             .sessionManagement(session ->
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

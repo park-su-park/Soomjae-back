@@ -3,12 +3,15 @@ package com.parksupark.soomjae.server.member.entity;
 import com.parksupark.soomjae.server.auth.oauth.AuthProvider;
 import com.parksupark.soomjae.server.common.entity.BaseEntity;
 import com.parksupark.soomjae.server.member.Role;
+import com.parksupark.soomjae.server.profile.entity.Profile;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import lombok.Getter;
@@ -36,7 +39,7 @@ public class Member extends BaseEntity {
     @Column(nullable = true)
     private String password;
 
-    @Column(nullable = true)
+    @Column(nullable = false, unique = true)
     private String nickname;
 
     @Enumerated(EnumType.STRING)
@@ -49,8 +52,11 @@ public class Member extends BaseEntity {
     @Column(nullable = false)
     private Role role;
 
-    private Member(String email, String password, Role role, String nickname, AuthProvider provider,
-        String providerId) {
+    @OneToOne(mappedBy = "member", cascade = CascadeType.ALL)
+    private Profile profile;
+
+    private Member(String email, String password, Role role, AuthProvider provider,
+        String nickname, String providerId) {
         this.email = email;
         this.password = password;
         this.role = role;
@@ -60,12 +66,12 @@ public class Member extends BaseEntity {
     }
 
     public static Member create(String email, String password, String nickname) {
-        return new Member(email, password, Role.USER, nickname, AuthProvider.LOCAL, null);
+        return new Member(email, password, Role.USER, AuthProvider.LOCAL, nickname, null);
     }
 
     public static Member createOAuthMember(String email, AuthProvider provider,
-        String providerId) {
-        return new Member(email, null, Role.USER, null, provider, providerId);
+        String nickname, String providerId) {
+        return new Member(email, null, Role.USER, provider, nickname, providerId);
     }
 
     public void updateNickname(String nickname) {
@@ -78,5 +84,9 @@ public class Member extends BaseEntity {
 
     public void updatePassword(String password) {
         this.password = password;
+    }
+
+    public void setProfile(Profile profile) {
+        this.profile = profile;
     }
 }

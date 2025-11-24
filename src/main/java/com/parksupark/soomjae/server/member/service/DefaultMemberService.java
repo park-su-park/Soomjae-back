@@ -2,6 +2,7 @@ package com.parksupark.soomjae.server.member.service;
 
 import com.parksupark.soomjae.server.auth.oauth.AuthProvider;
 import com.parksupark.soomjae.server.common.exception.ErrorMessages;
+import com.parksupark.soomjae.server.common.exception.ResourceNotFoundException;
 import com.parksupark.soomjae.server.email.repository.EmailVerificationRepository;
 import com.parksupark.soomjae.server.member.dto.CheckDuplicateEmailResponse;
 import com.parksupark.soomjae.server.member.dto.CreateMemberRequest;
@@ -11,6 +12,7 @@ import com.parksupark.soomjae.server.member.entity.Member;
 import com.parksupark.soomjae.server.member.exception.DuplicateEmailException;
 import com.parksupark.soomjae.server.member.exception.MemberNotFoundException;
 import com.parksupark.soomjae.server.member.repository.MemberRepository;
+import com.parksupark.soomjae.server.member.util.MemberCreator;
 import java.time.Instant;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,8 +28,8 @@ public class DefaultMemberService implements MemberService {
     private final PasswordEncoder passwordEncoder;
     private final MemberRepository memberRepository;
     private final EmailVerificationRepository emailVerificationRepository;
+    private final MemberCreator memberCreator;
 
-    // nickname 필드에 대한 중복 체크는 추후에 자세한 nickname 초기화 정책이 나오면 구현
     @Transactional
     @Override
     public MemberResponse createMember(CreateMemberRequest request) {
@@ -41,10 +43,9 @@ public class DefaultMemberService implements MemberService {
         }
 
         final String encodedPassword = passwordEncoder.encode(request.getPassword());
-        final String nickname = request.getNickname();
 
-        Member member = Member.create(email, encodedPassword, nickname);
-        memberRepository.save(member);
+        Member member = memberCreator.createLocalMember(email, encodedPassword);
+
         emailVerificationRepository.deleteByEmail(email);
         return createMemberResponse(member);
     }
@@ -117,7 +118,12 @@ public class DefaultMemberService implements MemberService {
     }
 
     private MemberResponse createMemberResponse(MemberBasicInfo memberBasicInfo) {
-        return MemberResponse.create(memberBasicInfo);
+        Long memberId = memberBasicInfo.getId();
+        Member member = memberRepository.findById(memberId).orElseThrow(
+            () -> new ResourceNotFoundException(ErrorMessages.MEMBER_NOT_FOUND_EXCEPTION_MESSAGE));
+
+        return MemberResponse.create(memberBasicInfo,
+            member.getProfile().getProfileImage().getImageUrl());
     }
 
 

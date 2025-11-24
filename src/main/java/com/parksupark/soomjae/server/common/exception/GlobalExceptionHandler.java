@@ -78,4 +78,14 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(400)
             .body(e.getMessage());
     }
+
+    @ExceptionHandler(ResourceOwnershipException.class)
+    protected ResponseEntity<String> handleUnauthenticatedAccessException(RuntimeException e) {
+        return ResponseEntity.status(403).body(e.getMessage());
+    }
+
+    @ExceptionHandler(ResourceAlreadyExistsException.class)
+    protected ResponseEntity<String> handleResourceAlreadyExistsException(RuntimeException e) {
+        return ResponseEntity.status(400).body(e.getMessage());
+    }
 }
